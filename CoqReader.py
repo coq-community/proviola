@@ -106,7 +106,19 @@ class CoqReader(Reader.Reader):
         return self.getWord(acc)
     else: 
       return self.getWord(acc)
-    
+  
+  def parse(self, buffer):
+    print "Parsing: " + buffer
+    self.script = buffer
+    command = self.getCommand()
+    result = []
+    while (len(command) != 0):
+      print "Command: " + command
+      result.append(command)
+      command = self.getCommand()
+
+    return result
+  
   def makeFrames(self, document, pw, remaining = ""):
     command = self.getCommand()
     print "Command: " + command

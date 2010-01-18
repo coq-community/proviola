@@ -7,6 +7,8 @@ Created on Jan 13, 2010
 import time
 
 from xml.dom import minidom
+
+from Film import FilmDocument
 from CoqReader import CoqReader
 from ProofWeb import ProofWeb
 from DocXMLRPCServer import DocXMLRPCServer
@@ -17,12 +19,23 @@ class CameraServer:
     self.proofWeb = ProofWeb("http://hair-dryer.cs.ru.nl/proofweb/index.html")
     self.reader = CoqReader()
   
+  def newFilm(self):
+    self.film = FilmDocument()
+    return True
     
   def sendFrame(self, frame):
+    print "In sendFrame"
     xmlFrame = minidom.parseString(frame)
     data = xmlFrame.getElementsByTagName(self.payloadTag)
     payload = data[0].firstChild.data
-    return self.reader.appendData(self.proofWeb, payload)  
+    
+    for command in self.reader.parse(payload):
+      self.film.addFrame(command, "")
+    
+    
+    return self.film.toprettyxml("  ")    
+    
+    #return self.reader.appendData(self.proofWeb, payload)  
 
 if __name__ == '__main__':
   server = DocXMLRPCServer(("", 8000), logRequests = 0)

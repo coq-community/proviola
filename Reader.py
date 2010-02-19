@@ -39,7 +39,6 @@ class Reader:
   def readChar(self):
     self.getLine()
     
-    
     if len(self.line) == 0:
       return None
     

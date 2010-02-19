@@ -108,12 +108,10 @@ class CoqReader(Reader.Reader):
       return self.getWord(acc)
   
   def parse(self, buffer):
-    print "Parsing: " + buffer
     self.script = buffer
     command = self.getCommand()
     result = []
     while (len(command) != 0):
-      print "Command: " + command
       result.append(command)
       command = self.getCommand()
 
@@ -121,7 +119,6 @@ class CoqReader(Reader.Reader):
   
   def makeFrames(self, document, pw, remaining = ""):
     command = self.getCommand()
-    print "Command: " + command
     if len(command) == 0:
       return
     
@@ -129,10 +126,11 @@ class CoqReader(Reader.Reader):
       response = ""
     else:
       response = pw.send(command)
-      print "Response: " + response
   
     document.addFrame(command, response) 
     self.makeFrames(document, pw)
 
   def isComment(self, text):
+    if len(text.split()) <= 0:
+      return True
     return text.split()[0].startswith("(*") and text.endswith("*)")

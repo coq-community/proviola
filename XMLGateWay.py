@@ -24,7 +24,6 @@ class CameraServer:
     return True
     
   def sendFrame(self, frame):
-    print "In sendFrame"
     xmlFrame = minidom.parseString(frame)
     data = xmlFrame.getElementsByTagName(self.payloadTag)
     payload = data[0].firstChild.data

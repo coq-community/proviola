@@ -20,17 +20,15 @@ class CoqReader(Reader.Reader):
     return result
   
   def getComment(self, acc, open = 1):
-    char = self.readChar()
-    
+    char = self.readChar() 
     if char == None:
       return acc
-    
     acc = acc + char
     
     if char == "*":
-      char2 = self.readChar()
-      acc = acc + char2
+      char2 = self.peekChar()
       if char2 == ")":
+        acc = acc + self.readChar()
         open = open - 1
         if open == 0:
           return acc
@@ -39,9 +37,9 @@ class CoqReader(Reader.Reader):
       else:
         return self.getComment(acc, open)
     elif char == "(":
-      char2 = self.readChar()
-      acc = acc + char2
+      char2 = self.peekChar()
       if char2 == "*":
+        acc = acc + self.readChar()
         return self.getComment(acc, open + 1)
       else:
         return self.getComment(acc, open)
@@ -131,6 +129,8 @@ class CoqReader(Reader.Reader):
     self.makeFrames(document, pw)
 
   def isComment(self, text):
-    if len(text.split()) <= 0:
-      return True
-    return text.split()[0].startswith("(*") and text.endswith("*)")
+    return text in string.whitespace or\
+           text.split()[0].startswith("(*") and text.endswith("*)")
+  
+  def isCommand(self, text):
+    return text.endswith(".") and not text.endswith("..")

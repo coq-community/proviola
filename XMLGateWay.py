@@ -1,8 +1,10 @@
+#!/usr/bin/python
 '''
 Created on Jan 13, 2010
 
 @author: carst
 '''
+
 
 import time
 
@@ -29,12 +31,12 @@ class CameraServer:
     payload = data[0].firstChild.data
     
     for command in self.reader.parse(payload):
-      self.film.addFrame(command, "")
-    
-    
-    return self.film.toprettyxml("  ")    
-    
-    #return self.reader.appendData(self.proofWeb, payload)  
+      if self.reader.isCommand(command):
+        self.film.addFrame(command, "")
+      else:
+        self.film.addRawFrame(command, "")
+     
+    return self.film.tolist()  
 
 if __name__ == '__main__':
   server = DocXMLRPCServer(("", 8000), logRequests = 0)

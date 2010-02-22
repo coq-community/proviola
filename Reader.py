@@ -30,10 +30,10 @@ class Reader:
     if self.findNewLine() >= 0:
       result = self.script[0:self.findNewLine() + 1]
       self.script =  self.script[self.findNewLine() + 1 :]
+      
     else:
       result = self.script
       self.script = "" 
-
     return result  
     
   def readChar(self):

@@ -21,90 +21,79 @@ class CoqReader(Reader.Reader):
   
   def getComment(self, acc, open = 1):
     char = self.readChar() 
-    if char == None:
-      return acc
-    acc = acc + char
+    while char != None and open > 0:
+      acc = acc + char
     
-    if char == "*":
-      char2 = self.peekChar()
-      if char2 == ")":
-        acc = acc + self.readChar()
-        open = open - 1
-        if open == 0:
-          return acc
-        else:
-          return self.getComment(acc, open)
-      else:
-        return self.getComment(acc, open)
-    elif char == "(":
-      char2 = self.peekChar()
-      if char2 == "*":
-        acc = acc + self.readChar()
-        return self.getComment(acc, open + 1)
-      else:
-        return self.getComment(acc, open)
-    else:
-      return self.getComment(acc, open)
-  
+      if char == "*":
+        char2 = self.peekChar()
+        if char2 == ")":
+          acc = acc + self.readChar()
+          open -= 1
+          
+      elif char == "(":
+        char2 = self.peekChar()
+        if char2 == "*":
+          acc = acc + self.readChar()
+          open += 1
+
+      char = self.readChar() 
+    return acc
+
+  def terminator(self, char, open):
+    if char == ".":
+      return self.peekChar() != "." and open == 0
+
   def getWord(self, acc, open = 0):
     char = self.readChar()
     
-    if char == None:
-      return acc
     
-    acc = acc + char
-    
-    if char == "(":
-      char2 = self.readChar()
-      acc = acc + char2
-      if char2 == "*":
-        return self.getWord(acc, open + 1)
-      else:
-        return self.getWord(acc, open)
-    elif char == "*":
-      char2 = self.readChar()
-      acc = acc + char2
-      if char2 == ")":
-        return self.getWord(acc, open - 1)
-      elif char2 == ".":
-        if open == 0: 
-          return acc
-      else:
-        return self.getWord(acc, open)
-    elif char == ".":
-      nextChar = self.peekChar()
-      if nextChar != ".":
-        if open == 0:
-          return acc
-        else:
-          return self.getWord(acc, open)  
-      else:
-        acc += self.readChar()
-        return self.getWord(acc, open)
-    else:
-      return self.getWord(acc, open)
-      
+    while char != None: 
+      acc = acc + char
+
+      if self.terminator(char, open):
+        break
+
+      if char == "(":
+        char2 = self.peekChar()
+        if char2 == "*":
+          acc = acc + self.readChar()
+          open += 1
+
+      elif char == "*":
+        char2 = self.peekChar()
+        if char2 == ")":
+          acc = acc + self.readChar()
+          open -= 1
+
+      char = self.readChar()
+
+
+    return acc
+     
       
   def getCommand(self, acc = ""):
     char = self.readChar()
     
-    if char == None:
-      return acc
-    
-    acc = acc + char
-    
-    if char in string.whitespace:
-      return self.getCommand(acc)
-    elif char == "(":
-      char2 = self.readChar()
-      acc = acc + char2
-      if char2 == "*":
-        return self.getComment(acc)
-      else:
+    while char != None:
+      acc = acc + char
+
+      if char == "(":
+        char2 = self.peekChar()
+        
+        if char2 == "*":
+          acc = acc + self.readChar()
+          return self.getComment(acc)
+
+        else:
+          return self.getWord(acc)
+
+      elif not(char in string.whitespace): 
         return self.getWord(acc)
-    else: 
-      return self.getWord(acc)
-  
+    
+      char = self.readChar()
+
+    return acc
+
   def parse(self, buffer):
     self.script = buffer
     command = self.getCommand()
@@ -117,19 +106,18 @@ class CoqReader(Reader.Reader):
   
   def makeFrames(self, document, pw, remaining = ""):
     command = self.getCommand()
-    if len(command) == 0:
-      return
+    while command != None and len(command) != 0:
+      if self.isComment(command):
+        response = ""
+      else:
+        response = pw.send(command)
     
-    if self.isComment(command):
-      response = ""
-    else:
-      response = pw.send(command)
-  
-    document.addFrame(command, response) 
-    self.makeFrames(document, pw)
+      document.addFrame(command, response) 
+      command = self.getCommand()
 
+    
   def isComment(self, text):
-    return text in string.whitespace or\
+    return len(text.split()) <= 0 or\
            text.split()[0].startswith("(*") and text.endswith("*)")
   
   def isCommand(self, text):

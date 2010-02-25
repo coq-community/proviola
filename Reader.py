@@ -34,11 +34,11 @@ class Reader:
     else:
       result = self.script
       self.script = "" 
+
     return result  
     
   def readChar(self):
     self.getLine()
-    
     if len(self.line) == 0:
       return None
     

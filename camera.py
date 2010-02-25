@@ -12,10 +12,12 @@ def main(argv = None):
     argv = sys.argv
   if len(argv) > 1:
     proofScript = argv[1]
+    print "Processing: %s"%proofScript
   else:
     print "Too few arguments"
     return 2
-
+  
+  sys.setrecursionlimit(2000)
   make_film(proofScript)
 
 """Main method of the program/script: This creates a flattened 'film' for

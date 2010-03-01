@@ -34,7 +34,6 @@ class Reader:
     else:
       result = self.script
       self.script = "" 
-
     return result  
     
   def readChar(self):

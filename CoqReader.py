@@ -40,7 +40,7 @@ class CoqReader(Reader.Reader):
 
   def terminator(self, char, open):
     if char == ".":
-      return self.peekChar() != "." and open == 0
+      return self.peekChar() in string.whitespace and open == 0
 
   def getWord(self, acc, open = 0):
     char = self.readChar()
@@ -103,4 +103,4 @@ class CoqReader(Reader.Reader):
            text.split()[0].startswith("(*") and text.endswith("*)")
   
   def isCommand(self, text):
-    return text.endswith(".") and not text.endswith("..")
+    return self.terminator(text[len(text) - 1], 0)

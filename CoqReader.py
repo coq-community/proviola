@@ -45,9 +45,13 @@ class CoqReader(Reader.Reader):
   def getWord(self, acc, open = 0):
     char = self.readChar()
     while char != None:
-      acc = acc + char
+      acc += char
+
       if self.terminator(char, open):
         break
+      if char == "." and self.peekChar() == '.':
+        acc += self.readChar()
+
       if char == "(":
         char2 = self.peekChar()
         if char2 == "*":
@@ -60,12 +64,13 @@ class CoqReader(Reader.Reader):
           open -= 1
 
       char = self.readChar()
+
     return acc
       
   def getCommand(self, acc = ""):
     char = self.readChar()
     while char != None:
-      acc = acc + char
+      acc += char
       if char == "(":
         char2 = self.peekChar()
         if char2 == "*":
@@ -73,6 +78,7 @@ class CoqReader(Reader.Reader):
           return self.getComment(acc)
         else:
           return self.getWord(acc)
+
       elif not(char in string.whitespace): 
         return self.getWord(acc)
       char = self.readChar()

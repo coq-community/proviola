@@ -29,7 +29,7 @@ import time
 
 from xml.dom import minidom
 
-from Film import FilmDocument
+from FilmDocument import FilmDocument
 from CoqReader import CoqReader
 from ProofWeb import ProofWeb
 from DocXMLRPCServer import DocXMLRPCServer

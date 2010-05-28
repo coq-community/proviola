@@ -21,7 +21,7 @@
 
 import sys
 
-from Film import FilmDocument
+from FilmDocument import FilmDocument
 import Reader
 from ProofWeb import ProofWeb
 

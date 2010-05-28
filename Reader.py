@@ -17,7 +17,7 @@
 # along with Proof Camera.  If not, see <http://www.gnu.org/licenses/>.
 
 
-from Film import FilmDocument
+from FilmDocument import FilmDocument
 
 class Reader:
   def __init__(self):

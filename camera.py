@@ -21,7 +21,7 @@
 
 import sys
 
-from FilmDocument import FilmDocument
+from Movie import Movie
 import Reader
 from ProofWeb import ProofWeb
 
@@ -43,16 +43,18 @@ def main(argv = None):
 """Main method of the program/script: This creates a flattened 'film' for
    the given file filename
 """
-def make_film(filename):
+def make_film(filename, filmName = None):
   reader = Reader.getReader(filename)
-  doc = FilmDocument()
+  movie = Movie()
   pw = ProofWeb("http://hair-dryer.cs.ru.nl/proofweb/index.html")
  
-  basename = reader.basename
-  reader.makeFrames(doc, pw)
+  reader.makeFrames(movie, pw)
 
-  filmName = basename + ".flm" 
-  doc.writeFilm(filmName)
+  if filmName is None:
+    basename = reader.basename
+    filmName = basename + ".flm" 
+
+  movie.toFile(filmName)
 
 if __name__ == "__main__":
   sys.exit(main())

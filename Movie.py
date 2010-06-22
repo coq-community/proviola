@@ -16,53 +16,80 @@
 # You should have received a copy of the GNU General Public License
 # along with Proof Camera.  If not, see <http://www.gnu.org/licenses/>.
 
-from xml.dom.minidom import Document
+from xml.dom.minidom import Document, parse
+from Frame import TAG_FRAME, Frame
+
+TAG_FILM = "film"
 
 class Movie:
-
   """ A data class for movies """
   
   def __init__(self):
     """ A movie gets  a list of frames. """
+    # TODO Having both a list of frames (ordered) and a dictionary 
+    # (unordered) is a bit unelegant. Better to have frameId -> frame
+    # and an ordering on the individual frames. 
+    # For now, however, this suffices.
     self._frames = []
+    self._frameIds = {}
+  
+  def fromxml(self, document):
+    """ Load the movie frames from the given xml document """
+    
+    film = document.getElementsByTagName(TAG_FILM)[0]
+    frameElements = film.getElementsByTagName(TAG_FRAME)
+    
+    for element in frameElements:
+      frame = Frame()
+      frame.fromxml(element)
+      self.addFrame(frame)
 
   def addFrame(self, frame):
+    frame.setId(self.getLength())
     self._frames.append(frame)
+    self._frameIds[frame.getId()] = self.getLength() - 1
 
   def removeFrame(self, frame):
     self._frames.remove(frame)
 
   def getLength(self):
-    """ The length of a movie is the length of its frames """
+    """ The length of a movie is the number of its frames """
     return len(self._frames)
 
   def getFrame(self, i):  
     return self._frames[i]
 
-  def toxml():
+  def toxml(self):
     """ Marshall the movie to an XML document. """
     doc = Document()
 
     styleSheetRef = doc.createProcessingInstruction("xml-stylesheet",\
-                              "type=\"text/xsl\" href=\"moviola.xsl\"")
+                              "type=\"text/xsl\" href=\"proviola.xsl\"")
     doc.appendChild(styleSheetRef)
 
     movie = doc.createElement("movie")
     doc.appendChild(movie)
 
-    film = doc.createElement("film")
+    film = doc.createElement(TAG_FILM)
     movie.appendChild(film)
     
-    for frame in self.frames:
-      # TODO: Append the frames (as XML nodes) to the film
-      frame = doc.createElement("frame")
-      frame.setAttribute("frameNumber", "%s"%frame.getId())
-      frame.appendChild(doc.createTextElement("command", frame.getCommand())
+    for frame in self._frames:
+      film.appendChild(frame.toxml(doc))
+    
+    return doc.toxml()
 
-      if frame.hasResponse():
-        frame.appendChild(doc.createTextElement("response", 
-                                                frame.getResponse())
+  def toFile(self, fileName):
+    """ Write the file, in XML, to filmName """ 
+    filmFile = open(fileName, 'w')
 
-      film.appendChild(frame)
+    filmFile.write(self.toxml())
+    filmFile.close()
 
-    return film.toxml()
+  def openFile(self, fileName):
+    """ Open an XML file and load its data in memory. """
+    doc = parse(fileName)
+    self.fromxml(doc)
+
+  def getFrameById(self, id):
+    """ Return the frame identified by the given id. """
+    return self.getFrame(self._frameIds[id])

@@ -20,7 +20,7 @@
 from xml.dom.minidom import Document
 
 class FilmDocument(Document):
-  def __init__(self, styleSheetUrl="\"moviola.xsl" + "\""):
+  def __init__(self, styleSheetUrl="\"proviola.xsl" + "\""):
     Document.__init__(self)
     self.frameNumber = 0
     self.film = self.createElement("film")
@@ -73,5 +73,3 @@ class FilmDocument(Document):
       result.append(frame.toxml())
     
     return result
- 
-  

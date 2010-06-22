@@ -17,8 +17,6 @@
 # along with Proof Camera.  If not, see <http://www.gnu.org/licenses/>.
 
 
-from FilmDocument import FilmDocument
-
 class Reader:
   def __init__(self):
     self.script = ""
@@ -28,13 +26,6 @@ class Reader:
     if self.line == "":
       self.line = self.getNextLine()
 
-  def appendData(self, pw, data):
-    document = FilmDocument()
-    print "Appending", data
-    self.script += data
-    self.makeFrames(document, pw)
-    return document.toxml()
-    
   def findNewLine(self):
     if self.script == None:
       return -1

@@ -20,6 +20,7 @@
 import re
 import Reader
 import string
+from Frame import Frame
 
 suffix = '.v'
 
@@ -117,10 +118,12 @@ class CoqReader(Reader.Reader):
     command = self.getCommand()
     while command != None and len(command) != 0:
       if self.isComment(command):
-        response = ""
+        response = None
       else:
         response = pw.send(command)
-      document.addFrame(command, response)  
+      
+      id = 0
+      document.addFrame(Frame(id, command, response))
       command = self.getCommand()
     
   def isComment(self, text):

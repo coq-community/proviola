@@ -6,7 +6,7 @@
 # This file is part of the Proof Camera.
 #
 # Proof Camera is free software: you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
+  # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
 #
@@ -23,38 +23,95 @@ import sys
 
 from Movie import Movie
 import Reader
-from ProofWeb import ProofWeb
+import os
+from optparse import OptionParser
 
-"""Main method
-"""
+def setupParser():
+  """ Setup a command line parser """
+  usage = """Usage: %prog [options] foo.v [bar.flm]
+  Creates a movie from foo.v, storing in bar.flm, if provided, or in foo.flm."""
+
+  parser = OptionParser(usage=usage)
+  parser.add_option("-u", "--user", 
+                    action="store", dest="user",
+                    default="nobody",
+                    help="Username for ProofWeb (default: %default)")
+
+  parser.add_option("-g", "--group", 
+                    action="store", dest="group",
+                    default="nogroup",
+                    help="Groupname for ProofWeb user (default: %default)")
+
+  parser.add_option("-p", "--password",
+                    action="store", dest="pswd",
+                    default="anon",
+                    help="Password for user")
+  parser.add_option("--proofweb",
+                    action="store", dest="pwurl",
+                    default="http://hair-dryer.cs.ru.nl/proofweb/index.html",
+                    help="URL for a ProofWeb installation (default: %default).")
+  parser.add_option("--prover",
+                    action="store", dest="prover",
+                    default="coq",
+                    help="Prover to use (default: %default).")
+  parser.add_option("--stylesheet",
+                    action="store", dest="stylesheet",
+                    default="proviola.xsl",
+                    help="URI at which the XSL stylesheet can be found (default: %default)")
+                    
+  return parser
+
 def main(argv = None):
+  """Main method
+  """
+
   if argv is None:
     argv = sys.argv
-  if len(argv) > 1:
-    proofScript = argv[1]
-    print "Processing: %s"%proofScript
-  else:
-    print "Too few arguments"
-    return 2
   
-  sys.setrecursionlimit(2000)
-  make_film(proofScript)
+  parser = setupParser()
+  (options, args) = parser.parse_args(argv)
+  
+  try:
+    proofScript = args[1]
+  except: 
+    parser.print_help()
+    return 0
+  
+  try:
+    filmName = args[2]
+  except:
+    filmName = None
 
-"""Main method of the program/script: This creates a flattened 'film' for
+  print "Processing: %s"%proofScript
+
+  make_film(proofScript, filmName, options=options)
+
+
+def make_film(filename, filmName = None, stylesheet = "proviola.xsl",
+              options = None):
+  """Main method of the program/script: This creates a flattened 'film' for
    the given file filename
-"""
-def make_film(filename, filmName = None):
+  """ 
   reader = Reader.getReader(filename)
   movie = Movie()
-  pw = ProofWeb("http://hair-dryer.cs.ru.nl/proofweb/index.html")
- 
-  reader.makeFrames(movie, pw)
+
+  if options is None:
+    raise Exception("Options is none")
+  else:
+    stylesheet = options.stylesheet
+  
+  reader.makeFrames(movie, options)
 
   if filmName is None:
     basename = reader.basename
     filmName = basename + ".flm" 
-
-  movie.toFile(filmName)
+  
+  directory = os.path.dirname(filmName)
+  
+  if len(directory) > 0 and not os.path.exists(directory):
+    os.makedirs(directory)
+  
+  movie.toFile(filmName, stylesheet)
 
 if __name__ == "__main__":
   sys.exit(main())

@@ -29,17 +29,22 @@ import sys
 from ResultHandler import ResultHandler
 
 class ProofWeb:
-  def __init__(self, url):
+  def __init__(self, url, group = "nogroup", user = "nobody", 
+                          pswd = "anon", prover="coq"):
     self.url = url
     self.session = -1
     self.pos = 0
     self.callnr = 1
+    self.group = group
+    self.user = user
+    self.pswd = pswd
+    self.prover = prover
 
     # Login to ProofWeb, get a session id.
-    loginInfo = urllib.urlencode( \
-      {"login"  : "nogroup/nobody", \
-       "pass"   : "anon", \
-       "prover" : "coq" \
+    loginInfo = urllib.urlencode(
+      {"login"  : "%s/%s"%(self.group, self.user),
+       "pass"   : self.pswd,
+       "prover" : self.prover
       })
 
     handler = ResultHandler()

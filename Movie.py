@@ -59,12 +59,12 @@ class Movie:
   def getFrame(self, i):  
     return self._frames[i]
 
-  def toxml(self):
+  def toxml(self, stylesheet="proviola.xsl"):
     """ Marshall the movie to an XML document. """
     doc = Document()
 
     styleSheetRef = doc.createProcessingInstruction("xml-stylesheet",\
-                              "type=\"text/xsl\" href=\"proviola.xsl\"")
+                              "type=\"text/xsl\" href=\"%s\""%stylesheet)
     doc.appendChild(styleSheetRef)
 
     movie = doc.createElement("movie")
@@ -78,11 +78,11 @@ class Movie:
     
     return doc.toxml()
 
-  def toFile(self, fileName):
+  def toFile(self, fileName, stylesheet = "proviola.xsl"):
     """ Write the file, in XML, to filmName """ 
     filmFile = open(fileName, 'w')
 
-    filmFile.write(self.toxml())
+    filmFile.write(self.toxml(stylesheet))
     filmFile.close()
 
   def openFile(self, fileName):

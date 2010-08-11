@@ -18,15 +18,16 @@
 
 
 import re
-import Reader
+from Reader import Reader
 import string
 from Frame import Frame
-
+from time import sleep
+from ProofWeb import ProofWeb
 suffix = '.v'
 
-class CoqReader(Reader.Reader):
+class CoqReader(Reader):
   def __init__(self, filename = ""):
-    Reader.Reader.__init__(self)
+    Reader.__init__(self)
     self.suffix = ".v"
     if filename != "":
       self.basename = filename[:-len(suffix)]
@@ -114,7 +115,8 @@ class CoqReader(Reader.Reader):
       command = self.getCommand()
     return result
   
-  def makeFrames(self, document, pw, remaining = ""):
+  def makeFrames(self, document, options, remaining = ""):
+    pw = ProofWeb(options.pwurl, options.group)
     command = self.getCommand()
     while command != None and len(command) != 0:
       if self.isComment(command):
@@ -124,6 +126,7 @@ class CoqReader(Reader.Reader):
       
       id = 0
       document.addFrame(Frame(id, command, response))
+      sleep(.5)
       command = self.getCommand()
     
   def isComment(self, text):

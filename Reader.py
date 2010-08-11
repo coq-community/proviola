@@ -65,9 +65,15 @@ class Reader:
     
       
 import CoqReader
+import Isabelle_Reader
+import os
+
 def getReader(filename):
-  coqSuffix = CoqReader.suffix
+  # Setup dictionary of possible readers
+  readers = {} # suffix -> (String -> Reader)
+  readers[CoqReader.suffix] = CoqReader.CoqReader
+  readers[Isabelle_Reader.suffix] = Isabelle_Reader.Isabelle_Reader
   
-  if filename.endswith(coqSuffix):
-    return CoqReader.CoqReader(filename)
+  return readers[os.path.splitext(filename)[1]](filename)
+
 

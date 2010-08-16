@@ -25,6 +25,7 @@ import urllib
 import urllib2
 import string 
 import sys
+import logging
 
 from ResultHandler import ResultHandler
 
@@ -64,6 +65,7 @@ class ProofWeb:
      Returns the empty string if an error was encountered.
   """
   def strip_decoration(self, result):
+    
     if result != "":
       status = result[0]
 
@@ -71,7 +73,7 @@ class ProofWeb:
       if status == '<':
         return status
       if status == '-' or status == "<":
-        print "Error: %s"%result[1:]
+        logging.debug("Error: %s"%result[1:])
         sys.exit()
         return ""
       else:
@@ -87,6 +89,7 @@ class ProofWeb:
   """
 
   def send(self, command):
+
     cmdarg = "%d__PWT__%s__PWT__%d"
     begin = self.pos
     end = self.pos + len(command)
@@ -102,7 +105,7 @@ class ProofWeb:
     try:
       prover = urllib2.urlopen(self.url, commandInfo)
     except urllib2.HTTPError:
-      print "Error sending command to ProofWeb"
+      logging.debug("Error sending command to ProofWeb")
       return ""
 
     

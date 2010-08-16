@@ -24,7 +24,9 @@ import sys
 from Movie import Movie
 import Reader
 import os
+import logging
 from optparse import OptionParser
+
 
 def setupParser():
   """ Setup a command line parser """
@@ -65,12 +67,12 @@ def main(argv = None):
   """Main method
   """
 
-  if argv is None:
-    argv = sys.argv
-  
+  logging.basicConfig(stream=sys.stderr, level=logging.DEBUG)
+
   parser = setupParser()
-  (options, args) = parser.parse_args(argv)
+  (options, args) = parser.parse_args()
   
+
   try:
     proofScript = args[1]
   except: 
@@ -84,21 +86,20 @@ def main(argv = None):
 
   print "Processing: %s"%proofScript
 
-  make_film(proofScript, filmName, options=options)
+  make_film(filename=proofScript, filmName=filmName, options=options)
 
 
-def make_film(filename, filmName = None, stylesheet = "proviola.xsl",
-              options = None):
+def make_film(filename, options=None, filmName = None, 
+              stylesheet = None):
   """Main method of the program/script: This creates a flattened 'film' for
    the given file filename
   """ 
+
+  stylesheet = options.stylesheet
+
   reader = Reader.getReader(filename)
   movie = Movie()
 
-  if options is None:
-    raise Exception("Options is none")
-  else:
-    stylesheet = options.stylesheet
   
   reader.makeFrames(movie, options)
 

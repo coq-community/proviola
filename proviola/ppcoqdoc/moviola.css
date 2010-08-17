@@ -1,0 +1,16 @@
+div.code {
+  width: 50%;
+  float:left;
+}
+div.goal {
+  width: 50%;
+  float: right;
+}
+
+div.doc {
+  clear: both;
+}
+
+span.command:hover {
+  background-color: #ccc;
+}

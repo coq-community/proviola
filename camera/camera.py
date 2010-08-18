@@ -79,7 +79,7 @@ def main(argv = None):
     return 0
   
   try:
-    filmName = args[2]
+    filmName = args[1]
   except:
     filmName = None
 

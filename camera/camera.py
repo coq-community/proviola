@@ -70,11 +70,10 @@ def main(argv = None):
   logging.basicConfig(stream=sys.stderr, level=logging.DEBUG)
 
   parser = setupParser()
-  (options, args) = parser.parse_args()
-  
+  (options, args) = parser.parse_args(argv)
 
   try:
-    proofScript = args[1]
+    proofScript = args[0]
   except: 
     parser.print_help()
     return 0
@@ -84,7 +83,7 @@ def main(argv = None):
   except:
     filmName = None
 
-  print "Processing: %s"%proofScript
+  logging.debug("Processing: %s"%proofScript)
 
   make_film(filename=proofScript, filmName=filmName, options=options)
 
@@ -100,7 +99,6 @@ def make_film(filename, options=None, filmName = None,
   reader = Reader.getReader(filename)
   movie = Movie()
 
-  
   reader.makeFrames(movie, options)
 
   if filmName is None:
@@ -108,7 +106,7 @@ def make_film(filename, options=None, filmName = None,
     filmName = basename + ".flm" 
   
   directory = os.path.dirname(filmName)
-  
+
   if len(directory) > 0 and not os.path.exists(directory):
     os.makedirs(directory)
   

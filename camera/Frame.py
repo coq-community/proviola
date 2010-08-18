@@ -15,6 +15,7 @@
 # 
 # You should have received a copy of the GNU General Public License
 # along with Proof Camera.  If not, see <http://www.gnu.org/licenses/>.
+import logging
 
 TAG_FRAME = "frame"
 TAG_ID = "frameNumber"
@@ -64,7 +65,7 @@ class Frame:
         self._response=  self.getText(element, TAG_RES)
 
     except IndexError as e:
-      print "This frame has no id, name, was: ", element.toprettyxml("  ")
+      logging.debug("This frame has no id, name, was: ", element.toprettyxml("  "))
       raise e
   def toxml(self, doc):
     frameElement = doc.createElement(TAG_FRAME)

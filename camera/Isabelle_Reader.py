@@ -13,7 +13,7 @@ class Isabelle_Reader(Reader):
     (self.basename, unused_ext) = os.path.splitext(self._filename)
     pass
   
-  def makeFrames(self, document, options):
+  def make_frames(self, document, options):
     isabelle_session = Isabelle_Session(options.pwurl, self._filename)
     contents = open(self._filename, 'r').read()
     isabelle_session.add(contents)

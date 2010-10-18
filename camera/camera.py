@@ -88,8 +88,7 @@ def main(argv = None):
   make_film(filename=proofScript, filmName=filmName, options=options)
 
 
-def make_film(filename, options=None, filmName = None, 
-              stylesheet = None):
+def make_film(filename, options=None, filmName = None):
   """Main method of the program/script: This creates a flattened 'film' for
    the given file filename
   """ 
@@ -99,17 +98,18 @@ def make_film(filename, options=None, filmName = None,
   reader = Reader.getReader(filename)
   movie = Movie()
 
-  reader.makeFrames(movie, options)
+
+  reader.make_frames(movie, options)
+  
 
   if filmName is None:
     basename = reader.basename
     filmName = basename + ".flm" 
   
   directory = os.path.dirname(filmName)
-
   if len(directory) > 0 and not os.path.exists(directory):
     os.makedirs(directory)
-  
+
   movie.toFile(filmName, stylesheet)
 
 if __name__ == "__main__":

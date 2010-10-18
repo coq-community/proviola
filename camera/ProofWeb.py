@@ -54,6 +54,7 @@ class ProofWeb:
     
     data = prover.read()
     prover.close()
+    
 
     # Parse the HTML, to get the variable assignments in the JavaScript
     handler.feed(data)

@@ -66,7 +66,7 @@ class CameraServer:
     self.proofWeb = ProofWeb(self.url)
     self.reader.script = script
     
-    self.reader.makeFrames(self.film, self.proofWeb)
+    self.reader.make_frames(self.film, self.proofWeb)
     return self.film.toxml()
 
 if __name__ == '__main__':

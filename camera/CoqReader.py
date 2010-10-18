@@ -22,7 +22,7 @@ from Reader import Reader
 import string
 from Frame import Frame
 from time import sleep
-from ProofWeb import ProofWeb
+from Prover import get_prover
 suffix = '.v'
 
 class CoqReader(Reader):
@@ -115,8 +115,9 @@ class CoqReader(Reader):
       command = self.getCommand()
     return result
   
-  def makeFrames(self, document, options, remaining = ""):
-    pw = ProofWeb(options.pwurl, options.group)
+  def make_frames(self, document, options, remaining = ""):
+    pw = get_prover(options.pwurl, options.group) 
+    #pw = ProofWeb(options.pwurl, options.group)
     command = self.getCommand()
     while command != None and len(command) != 0:
       if self.isComment(command):

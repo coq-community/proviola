@@ -7,61 +7,8 @@
 <xsl:template match="/">
   <html>
   <head>
-    <style type="text/css">
-    body {
-      margin: 0px;
-      padding: 0px;
-    }
+    <link rel="stylesheet" type="text/css" href="proviola_style.css" />
 
-    div.commands {
-      margin: 0px;
-      padding: 0px;
-      width: 50%;
-    /* border-right: 1px solid #777; */
-    }
-
-    span.command:hover {
-      background-color: #ccc;
-    }
-
-    div.goal {
-      position: fixed;
-      left: 50%;
-      bottom: 0px;
-      width: 50%;
-      margin: 0px;
-      padding-top: 100%;
-      border-left: 1px solid #777;
-      background-color: #fff;
-    }
-
-    div.hidden {
-      display: none;
-    }
-
-    pre {
-      padding: 4px 8px 4px 8px;
-      margin: 0px;
-      background-color: #fff;
-    }
-
-    span.label {
-      color: #f00;
-    }
-
-    span.comment {
-      color: #090;
-    }
-
-    span.lemma {
-      color: #00f;
-    }
-
-    span.obligation {
-    /* color: #c40; */
-      color: #a0f;
-    }
-    </style>
   <script type = "text/javascript">
     var responses = new Array();
     

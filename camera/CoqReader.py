@@ -115,8 +115,8 @@ class CoqReader(Reader):
       command = self.getCommand()
     return result
   
-  def make_frames(self, document, options, remaining = ""):
-    pw = get_prover(options.pwurl, options.group) 
+  def make_frames(self, document, server_url, server_group, remaining = ""):
+    pw = get_prover(server_url, server_group) 
     #pw = ProofWeb(options.pwurl, options.group)
     command = self.getCommand()
     while command != None and len(command) != 0:

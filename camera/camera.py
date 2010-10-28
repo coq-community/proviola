@@ -78,39 +78,32 @@ def main(argv = None):
     parser.print_help()
     return 0
   
-  try:
-    filmName = args[1]
-  except:
-    filmName = None
 
   logging.debug("Processing: %s"%proofScript)
 
-  make_film(filename=proofScript, filmName=filmName, options=options)
+  movie = make_film(filename=proofScript, pwurl = options.pwurl, group = options.group)
 
+  try:
+    filmName = args[1]
+  except:
+    filmName = Reader.getReader(proofScript).basename + ".flm" 
 
-def make_film(filename, options=None, filmName = None):
+  directory = os.path.dirname(filmName)
+
+  if len(directory) > 0 and not os.path.exists(directory):
+    os.makedirs(directory)
+
+  movie.toFile(filmName, options.stylesheet)
+
+def make_film(filename, pwurl, group, ):
   """Main method of the program/script: This creates a flattened 'film' for
    the given file filename
   """ 
 
-  stylesheet = options.stylesheet
-
   reader = Reader.getReader(filename)
   movie = Movie()
-
-
-  reader.make_frames(movie, options)
-  
-
-  if filmName is None:
-    basename = reader.basename
-    filmName = basename + ".flm" 
-  
-  directory = os.path.dirname(filmName)
-  if len(directory) > 0 and not os.path.exists(directory):
-    os.makedirs(directory)
-
-  movie.toFile(filmName, stylesheet)
+  reader.make_frames(movie, pwurl, group)
+  return movie
 
 if __name__ == "__main__":
   sys.exit(main())

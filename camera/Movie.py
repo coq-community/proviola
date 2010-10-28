@@ -51,6 +51,9 @@ class Movie:
 
   def removeFrame(self, frame):
     self._frames.remove(frame)
+  
+  def get_frames(self):
+    return self._frames
 
   def getLength(self):
     """ The length of a movie is the number of its frames """
@@ -81,7 +84,7 @@ class Movie:
   def toFile(self, fileName, stylesheet = "proviola.xsl"):
     """ Write the file, in XML, to filmName """ 
     filmFile = open(fileName, 'w')
-
+    
     filmFile.write(self.toxml(stylesheet))
     filmFile.close()
 

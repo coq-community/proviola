@@ -49,17 +49,20 @@ class ProofWeb:
       })
 
     handler = ResultHandler()
-
-    prover = urllib2.urlopen(self.url, loginInfo)
     
-    data = prover.read()
-    prover.close()
+    try:
+      prover = urllib2.urlopen(self.url, loginInfo)
+      data = prover.read()
+      prover.close()
     
+      # Parse the HTML, to get the variable assignments in the JavaScript
+      handler.feed(data)
+    
+      #TODO Breaks if session is not found in the web page
+      self.session = string.strip(handler.assignments['session'], '\"')
+    except urllib2.HTTPError:
+      print "Error sending login information"
 
-    # Parse the HTML, to get the variable assignments in the JavaScript
-    handler.feed(data)
-    #TODO Breaks if session is not found in the web page
-    self.session = string.strip(handler.assignments['session'], '\"')
 
 
   """Strip the ProofWeb decoration from the result, and return the undecorated goal.

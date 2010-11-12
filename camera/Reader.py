@@ -62,7 +62,10 @@ class Reader:
       return self.line[0]
     else:
       return ' '
-    
+  
+  def add_code(self, code):
+    self.script += code
+
       
 import CoqReader
 import Isabelle_Reader

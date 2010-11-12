@@ -20,7 +20,7 @@
 
 
 import sys
-
+import time
 from Movie import Movie
 import Reader
 import os
@@ -80,6 +80,8 @@ def main(argv = None):
   
 
   logging.debug("Processing: %s"%proofScript)
+  print "Pw: %s"%options.pwurl 
+  print "Group: %s"%options.group
 
   movie = make_film(filename=proofScript, pwurl = options.pwurl, group = options.group)
 
@@ -95,14 +97,19 @@ def main(argv = None):
 
   movie.toFile(filmName, options.stylesheet)
 
-def make_film(filename, pwurl, group, ):
+def make_film(filename, pwurl, group):
   """Main method of the program/script: This creates a flattened 'film' for
    the given file filename
   """ 
 
   reader = Reader.getReader(filename)
   movie = Movie()
-  reader.make_frames(movie, pwurl, group)
+  try:
+    reader.make_frames(movie, pwurl, group)
+  except e:
+    print "Exception: %s"%`e`
+    return None
+    
   return movie
 
 if __name__ == "__main__":

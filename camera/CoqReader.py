@@ -29,6 +29,7 @@ class CoqReader(Reader):
   def __init__(self, filename = ""):
     Reader.__init__(self)
     self.suffix = ".v"
+    self.unfinished = None
     if filename != "":
       self.basename = filename[:-len(suffix)]
       self.read(filename)
@@ -89,6 +90,7 @@ class CoqReader(Reader):
     return acc
       
   def getCommand(self, acc = ""):
+
     char = self.readChar()
     while char != None:
       acc += char
@@ -107,12 +109,24 @@ class CoqReader(Reader):
     return acc
 
   def parse(self, buffer):
-    self.script = buffer
-    command = self.getCommand()
+    self.add_code(buffer)
+    
+    if self.unfinished:
+      acc = self.unfinished
+    else:
+      acc = ""
+
+    command = self.getCommand(acc = acc)
     result = []
     while (len(command) != 0):
+      if not (self.isCommand(command) or self.isComment(command)):
+        self.unfinished = command
+      else:
+        self.unfinished = ""
+
       result.append(command)
       command = self.getCommand()
+
     return result
   
   def make_frames(self, document, server_url, server_group, remaining = ""):

@@ -21,7 +21,7 @@ from Frame import TAG_FRAME, Frame
 
 TAG_FILM = "film"
 
-class Movie:
+class Movie(object):
   """ A data class for movies """
   
   def __init__(self):

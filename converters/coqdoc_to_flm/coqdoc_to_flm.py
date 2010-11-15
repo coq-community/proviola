@@ -34,4 +34,5 @@ if __name__ == '__main__':
   parser = create_arg_parser()
   args = parser.parse_args()
   narrated_movie = convert_coqdoc(args.coqdoc_file)
+  narrated_movie.toxml()
 #TODO: Write narrated_movie to args.movie-file

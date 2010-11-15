@@ -17,3 +17,11 @@ class Coqdoc_Movie(Movie):
 
   def add_to_title(self, title):
     self._title += title
+
+  def toxml(self):
+    frame_doc = Movie.toxml(self)
+    #TODO: Add scenes.
+    print("Document: {doc}".format(doc = frame_doc))
+    return frame_doc
+    
+    

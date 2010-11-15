@@ -44,6 +44,7 @@ class Coqdoc_Parser(object):
               outside the body.
     """
     if self._open_divs > 0:
+      
       self._current_coqdoc += "<{name}".format(name = name)
       for attr in attrs:
         self._current_coqdoc += ' {attr}="{value}"'.\
@@ -57,8 +58,7 @@ class Coqdoc_Parser(object):
       self._handle_div(attrs)
     elif name == "title":
       self._handling = name
-    else:
-      self._handle_other(name, attrs)
+
 
   def _is_hidden(self, attrs):
     """ Test if the attributes contains a display: none style. """
@@ -69,11 +69,6 @@ class Coqdoc_Parser(object):
     except KeyError:
       return False
 
-  def _handle_other(self, name, attrs):
-    """ Handle others, move them into the current pretty command.
-    """
-    if self._open_divs > 0:
-      self._current_coqdoc += "<{name}>".format(name = name)
 
   def _handle_span(self, attrs):
     """ If the span contains the style="display:none" attribute, 
@@ -102,11 +97,13 @@ class Coqdoc_Parser(object):
       - other divs: copied verbatim. 
     """
     self._open_divs += 1
-
+    
     if self._is_code_div(attrs): 
       self._handling = "code"
       self._code_depth = self._open_divs
       self._current_scene = Scene()
+      self._movie.add_scene(self._current_scene)
+      
     if self._is_doc_div(attrs):
       self._handling = "doc"
       self._doc_depth = self._open_divs
@@ -115,24 +112,31 @@ class Coqdoc_Parser(object):
 
 
   def _end_handler(self, name):
+    if self._open_divs > 0:
+      self._current_coqdoc += "</{name}>".format(name = name)
+
     if name == "title" and self._handling == "title":
       self._handling = None
 
-    elif name == "div":
+    elif name == "div": 
+
       if self._handling == "code" and self._open_divs == self._code_depth:
-        # We have closed the code div
+        self._code_depth = -1
         self._handling = None
+        
       elif self._handling == "doc" and self._open_divs == self._doc_depth:
-        print("Doc: Current coqdoc: {pretty}".format(pretty = self._current_coqdoc))
+        frame = Coqdoc_Frame(command = self._current_coqdoc, 
+                             response = None, command_cd = self._current_coqdoc)
+        self._movie.addFrame(frame)
+        s = Scene()
+        s.add_frame(frame)
+        self._movie.add_scene(s)
         
         self._current_coqdoc = ""
         self._handling = None
 
       self._open_divs -= 1
-    else:
-      if self._open_divs > 0:
-        self._current_coqdoc += "</{name}>".format(name = name)
-
+    
   def _char_data(self, data):
     """ Character data is:
         - Copied over to the Coqdoc nodes if it occurs under a div. 
@@ -149,13 +153,12 @@ class Coqdoc_Parser(object):
       commands = self._reader.parse(data)
       if len(commands) == 1 and self._reader.isCommand(commands[0]):
         response = self._prover.send(commands[0])
-        print("\n\nOne command: %s"%commands[0])
-        print("Response: %s"%response)
-        print("Current-coqdoc: {pretty}".format(pretty = self._current_coqdoc))
+        
         frame = Coqdoc_Frame(command = commands[0], response = response, 
                              command_cd = self._current_coqdoc)
         self._current_scene.add_frame(frame)
         self._movie.addFrame(frame)
+        
         self._current_coqdoc = ""
 
       elif len(commands) > 1:

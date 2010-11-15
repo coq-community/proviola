@@ -67,6 +67,7 @@ class Frame:
     except IndexError as e:
       logging.debug("This frame has no id, name, was: ", element.toprettyxml("  "))
       raise e
+    
   def toxml(self, doc):
     frameElement = doc.createElement(TAG_FRAME)
     frameElement.setAttribute(TAG_ID, "%s"%self.getId())

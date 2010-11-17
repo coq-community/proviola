@@ -23,8 +23,7 @@ TAG_CMD = "command"
 TAG_RES = "response"
 
 class Frame:
-
-  """ A data class for frames """
+  """ A class for frames """
 
   def __init__(self, id = 0, command = None, response = None):
     """ A frame always has an id and a command, but optionally a response 
@@ -85,3 +84,10 @@ class Frame:
     text = doc.createTextNode(contents)
     element.appendChild(text)
     return element 
+
+  def get_reference(self,document):
+    """ A Frame is referred to by its identifier. """
+    
+    ref = document.createElement("frame-reference")
+    ref.setAttribute("frame", self._id)
+    return ref

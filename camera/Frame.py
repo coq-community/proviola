@@ -89,5 +89,5 @@ class Frame:
     """ A Frame is referred to by its identifier. """
     
     ref = document.createElement("frame-reference")
-    ref.setAttribute("frame", self._id)
+    ref.setAttribute(TAG_ID, str(self.getId()))
     return ref

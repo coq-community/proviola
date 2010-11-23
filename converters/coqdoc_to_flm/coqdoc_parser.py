@@ -1,169 +1,203 @@
 """ A parser for Coqdoc's HTML. """
-import xml.parsers.expat
+from xml.dom.minidom import parseString, Node, parse
 
 import CoqReader
 import coqdoc_movie
 from Prover import get_prover
-from scene import Scene
+
 from coqdoc_frame import Coqdoc_Frame
+from scene import Scene
 
 class Coqdoc_Parser(object):
   def __init__(self):
-    """ Initialize the parser-wrapper. """
-    self._in_code = False
+    self._movie = None
+    self._tree = None
     self._reader = CoqReader.CoqReader()
-    self._prover = get_prover(
-                    "http://hair-dryer.cs.ru.nl/proofweb/index.html",
-                    group = "nogroup")
+    self._prover = get_prover("http://hair-dryer.cs.ru.nl/proofweb/index.html",
+                              "nogroup")
     
-    self._parser = self._setup_parser()
-    self._movie = coqdoc_movie.Coqdoc_Movie()
-
-    self._handling = None
+  def _is_element(self, node):
+    """ Recognizer for elements. """
+    return node.nodeType == Node.ELEMENT_NODE
+  
+  def _is_head(self, node):
+    """ Recognizer for head elements. """
+    return node.tagName == "head"
+  
+  def _is_body(self, node):
+    """ Recognizer for body elements. """
+    return node.tagName == "body"
+  
+  
+  def _is_div(self, node):
+    """ Recognizer for div elements. """
+    return self._is_element(node) and node.tagName == "div"
+  
+  def _extract_title(self, head):
+    """ Extract the contents of the title child of the given head element.
     
-    self._open_divs = 0
-    self._code_depth = -1
-    self._doc_depth = -1
-    self._current_scene = None
-    self._current_coqdoc = ""
-
-  def _setup_parser(self):
-    """ Setup an Expat parser for this class. """
-    parser = xml.parsers.expat.ParserCreate()
-    parser.StartElementHandler = self._start_handler
-    parser.EndElementHandler = self._end_handler
-    parser.CharacterDataHandler = self._char_data
-    return parser
-
-  def _start_handler(self, name, attrs):
-    """ We are interested in:
-      - divs: to determine a new scene.
-      - title: to be able to set movie's title.
-      - spans: because they tell us if particular frames should be hidden.
-      - body: we are not interested in anything (except the title) 
-              outside the body.
-    """
-    if self._open_divs > 0:
+      Arguments:
+      - head: The head element containing the title.
       
-      self._current_coqdoc += "<{name}".format(name = name)
-      for attr in attrs:
-        self._current_coqdoc += ' {attr}="{value}"'.\
-                format(attr = attr, value = attrs[attr])
-
-      self._current_coqdoc += ">"
-
-    if name == "span":
-      self._handle_span(attrs)
-    elif name == "div":
-      self._handle_div(attrs)
-    elif name == "title":
-      self._handling = name
-
-
-  def _is_hidden(self, attrs):
-    """ Test if the attributes contains a display: none style. """
-    try:
-      fstyle = attrs["style"]
-      return style.find("display: none") != -1
-
-    except KeyError:
-      return False
-
-
-  def _handle_span(self, attrs):
-    """ If the span contains the style="display:none" attribute, 
-        mark this for the rest.
-        We also keep track of how many spans are open.
+      Returns:
+      - title: The text inside the (unique) title element inside the head. 
+    """    
+    return head.getElementsByTagName("title")[0].firstChild.data
+  
+  def _is_code_div(self, div):
+    """ Recognizer for divs with class "code" 
     """
-    pass 
-
-  def _is_code_div(self, attrs):
-    """ Return if the div being inspected is a code div. """
-    try:
-      return attrs["class"] == "code"
-    except KeyError:
-      return False
-
-  def _is_doc_div(self, attrs):
-    """ Return if the div being inspected is a code div. """
-    try:
-      return attrs["class"] == "doc"
-    except KeyError:
-      return False
-
-  def _handle_div(self, attrs):
-    """ Handle different types of divs:
-      - divs of the code class: send the code to coq, partition into frames.
-      - other divs: copied verbatim. 
-    """
-    self._open_divs += 1
+    return self._is_div(div) and div.getAttribute("class") == "code"
+  
+  def _is_text(self, node):
+    """ Recognizer for text nodes. """
+    return node.nodeType == Node.TEXT_NODE
+  
+  def _get_text(self, node):
+    """ Get the text grandchildren of given node. """
+    if self._is_text(node):
+      return node.data
     
-    if self._is_code_div(attrs): 
-      self._handling = "code"
-      self._code_depth = self._open_divs
-      self._current_scene = Scene()
-      self._movie.add_scene(self._current_scene)
+    else:
+      txt = ""
+      for child in node.childNodes:
+        txt += self._get_text(child)
+        
+      return txt
+    
+  def _hidden_span(self, div):
+    """ Recognizer for spans with the "display: none" style. """
+    return self._is_element(div) and div.tagName == "span" and\
+           div.getAttribute("style").find("display: none") >= 0
+           
+  def _process_code(self, code_div):
+    """ Process a code div. 
+        A code div corresponds to a single scene, refering to zero or more
+        frames.
+    """
+    
+    frames = []
+    
+    scene = Scene()
+    scene.set_type("code")
+    
+    code_tree = ""
+    plain_code = ""
+    for child in code_div.childNodes:
+      if self._hidden_span(child):
+          (hidden_frames, hidden_scenes) = self._process_code(child)
+          hidden_scenes[0].set_type("hidden")
+          scene.add_scene(hidden_scenes[0])
+          frames += hidden_frames
+      else:
+        code_tree += child.toxml()
+        commands = self._reader.parse(self._get_text(child))
+        
+        if len(commands) == 1 and self._reader.isCommand(commands[0]):
+          
+          frame = Coqdoc_Frame(command = commands[0], command_cd = code_tree,
+                               response = self._prover.send(commands[0]))
+          
+          scene.add_scene(frame)
+          frames.append(frame)
+          
+          code_tree = ""
+          plain_code = ""
+          
+        elif len(commands) > 1:       
+          print "More commands: ", `commands`
+          print "Code tree: ", code_tree
+    
+    return (frames, [scene])
+    
+    
+         
+  def _process_div(self, div):
+    """ Process a div, translated to a scene. """
+
+    
+    if self._is_code_div(div):
+      return self._process_code(div)
       
-    if self._is_doc_div(attrs):
-      self._handling = "doc"
-      self._doc_depth = self._open_divs
-      self._current_scene = Scene()
-
-
-
-  def _end_handler(self, name):
-    if self._open_divs > 0:
-      self._current_coqdoc += "</{name}>".format(name = name)
-
-    if name == "title" and self._handling == "title":
-      self._handling = None
-
-    elif name == "div": 
-
-      if self._handling == "code" and self._open_divs == self._code_depth:
-        self._code_depth = -1
-        self._handling = None
+    else:
+      # TODO: Process.
+      scene = Scene()
+      scene.set_type("doc")
+      scene.set_attributes(div.attributes)
+      frames = []
+      
+      for child in div.childNodes:
+        if self._is_div(child):
+          (div_frames, div_scenes) = self._process_div(child)
         
-      elif self._handling == "doc" and self._open_divs == self._doc_depth:
-        frame = Coqdoc_Frame(command = self._current_coqdoc, 
-                             response = None, command_cd = self._current_coqdoc)
-        self._movie.addFrame(frame)
-        s = Scene()
-        s.add_frame(frame)
-        self._movie.add_scene(s)
+          frames += div_frames
+          for div_scene in div_scenes:
+            scene.add_scene(div_scene)
+        else: 
+          # TODO: Better to specify an actual invert for CoqDoc comments. 
+          frame = Coqdoc_Frame(command = "(*" + self._get_text(child) + "*)",
+                               command_cd = child.toxml(), response = None)
+          frames.append(frame)  
+          scene.add_scene(frame)
         
-        self._current_coqdoc = ""
-        self._handling = None
-
-      self._open_divs -= 1
+      
+      return (frames, [scene])
     
-  def _char_data(self, data):
-    """ Character data is:
-        - Copied over to the Coqdoc nodes if it occurs under a div. 
-          - If it occurs under a code div, it is also sent to the prover.
-        - If it occurs under a 
+    
+  
+  def _process_body(self, body):
+    """ Extract scenes and frames from the body element given.
+        
+        Arguments:
+        - body: The body element of a Coqdoc-generated HTML file.
+        
+        Returns:
+        - (frames, scenes): A list of frames and a list of scenes, such that the 
+              Coqdoc file can be (morally) reconstructed by following the 
+              references in each of the scenes.
     """
-    if self._open_divs > 0:
-      self._current_coqdoc += data
-
-    if self._handling == "title":
-      self._movie.add_to_title(data)
-
-    elif self._handling == "code":
-      commands = self._reader.parse(data)
-      if len(commands) == 1 and self._reader.isCommand(commands[0]):
-        response = self._prover.send(commands[0])
+    frames = []
+    scenes = []
+    
+    for child in [c for c in body.childNodes if self._is_element(c)]:
+      if self._is_div(child):
+        (div_frames, div_scenes) = self._process_div(child) 
+        frames += div_frames
+        scenes += div_scenes
+      
+    return (frames, scenes)
+  
+  def _tree_to_movie(self, tree):
+    """ Transform the Coqdoc-generated HTML tree into a Coqdoc-enhanced movie.
+    
+      Arguments:
+      - tree: The HTML tree used as data source. (default: the Tree stored in 
+              the parser)
+      Returns:
+        m = coqdoc_movie.Coqdoc_movie s.t. it is possible to extract the tree 
+                                           from m.
+    """
+    movie = coqdoc_movie.Coqdoc_Movie()
+    
+    # First, normalize the tree
+    tree.normalize()
+    
+    
+    for child in [c for c in tree.documentElement.childNodes\
+                    if self._is_element(c)]:
+      if self._is_head(child):
+        movie.add_to_title(self._extract_title(child))
+               
+      elif self._is_body(child):
+        (frames, scenes) = self._process_body(child)  
         
-        frame = Coqdoc_Frame(command = commands[0], response = response, 
-                             command_cd = self._current_coqdoc)
-        self._current_scene.add_frame(frame)
-        self._movie.addFrame(frame)
-        
-        self._current_coqdoc = ""
-
-      elif len(commands) > 1:
-        print("Commands: {cmds}".format(cmds = `commands`))
-
+        for scene in scenes:
+          movie.add_scene(scene)
+        for frame in frames:
+          movie.addFrame(frame)
+    
+    return movie
+    
   def feed(self, data):
     """ 
     Feed data to the parser
@@ -173,7 +207,9 @@ class Coqdoc_Parser(object):
     
     Effect: self._coqdoc_movie is updated with the contents of data. 
     """
-    self._parser.Parse(data)
-
+    data = unicode(data, 'latin-1')
+    self._tree = parseString(data.encode('ascii', 'xmlcharrefreplace'))
+    self._movie = self._tree_to_movie(self._tree)
+    
   def get_coqdoc_movie(self):
     return self._movie

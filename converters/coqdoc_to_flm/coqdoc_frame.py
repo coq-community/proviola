@@ -1,5 +1,5 @@
 from Frame import Frame
-from xml.dom.minidom import parseString
+from BeautifulSoup import Tag
 TAG_COQDOC = "command-coqdoc"
 
 class Coqdoc_Frame(Frame):
@@ -17,7 +17,12 @@ class Coqdoc_Frame(Frame):
   def toxml(self, doc):
     """ Convert this frame to XML. """
     frame_xml = Frame.toxml(self, doc)
-    frame_xml.appendChild(parseString("<command-coqdoc>" + self._command_coqdoc.encode('ascii', 'xmlcharrefreplace') + "</command-coqdoc  >").documentElement)
+    tag = Tag(doc, "command-coqdoc")
+    
+    for child in self._command_coqdoc:
+      tag.append(child)
+      
+    frame_xml.append(tag)
     
     return frame_xml
   
@@ -30,6 +35,3 @@ Frame(id       = {id},
                                        command = self._command,
                                        command_cd = self._command_coqdoc,
                                        response = self._response)
-  def _create_html_element(self, doc, name, contents):
-    """ Create an element whose children can be HTML markup. """
-    return element 

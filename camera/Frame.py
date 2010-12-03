@@ -16,6 +16,7 @@
 # You should have received a copy of the GNU General Public License
 # along with Proof Camera.  If not, see <http://www.gnu.org/licenses/>.
 import logging
+from BeautifulSoup import Tag
 
 TAG_FRAME = "frame"
 TAG_ID = "frameNumber"
@@ -68,26 +69,27 @@ class Frame:
       raise e
     
   def toxml(self, doc):
-    frameElement = doc.createElement(TAG_FRAME)
-    frameElement.setAttribute(TAG_ID, "%s"%self.getId())
-    frameElement.appendChild(self.createTextElement(doc, TAG_CMD,
+    frameElement =Tag(doc, "temp_name")
+    frameElement.name = TAG_FRAME
+    frameElement[TAG_ID] = self.getId()
+    frameElement.append(self.createTextElement(doc, TAG_CMD,
                                             self.getCommand()))
 
     if self.hasResponse():
-        frameElement.appendChild(self.createTextElement(doc, TAG_RES, 
+      frameElement.append(self.createTextElement(doc, TAG_RES, 
                                                         self.getResponse()))
+    
     return frameElement 
 
   def createTextElement(self, doc, elementName, contents):
     """ Convenience method for creating text-containing nodes in doc """
-    element = doc.createElement(elementName)
-    text = doc.createTextNode(contents)
-    element.appendChild(text)
+    element = Tag(doc, elementName)
+    element.append(contents)
     return element 
 
   def get_reference(self,document):
     """ A Frame is referred to by its identifier. """
     
-    ref = document.createElement("frame-reference")
-    ref.setAttribute(TAG_ID, str(self.getId()))
+    ref = Tag(document, "frame-reference")
+    ref[TAG_ID] = self.getId()
     return ref

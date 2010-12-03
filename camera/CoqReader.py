@@ -61,8 +61,7 @@ class CoqReader(Reader):
     return acc
 
   def terminator(self, char, open):
-    if char == ".":
-      return self.peekChar() in string.whitespace and open == 0
+    return  char == "." and self.peekChar() in string.whitespace and open == 0
 
   def getWord(self, acc, open = 0):
     char = self.readChar()
@@ -115,17 +114,19 @@ class CoqReader(Reader):
       acc = self.unfinished
     else:
       acc = ""
-
+    
     command = self.getCommand(acc = acc)
     result = []
     while (len(command) != 0):
       if not (self.isCommand(command) or self.isComment(command)):
         self.unfinished = command
+        command = ""
       else:
+        
         self.unfinished = ""
+        result.append(command)
+        command = self.getCommand()
 
-      result.append(command)
-      command = self.getCommand()
 
     return result
   
@@ -149,4 +150,6 @@ class CoqReader(Reader):
            text.split()[0].startswith("(*") and text.endswith("*)")
   
   def isCommand(self, text):
-    return self.terminator(text[len(text) - 1], 0)
+    text = text.rstrip()
+    if text:
+      return self.terminator(text.rstrip()[len(text) - 1], 0)

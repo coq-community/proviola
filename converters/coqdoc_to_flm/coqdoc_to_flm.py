@@ -36,11 +36,10 @@ def replace_links(tree, from_link, to_link):
       Result
        tree  = tree[href="from_link" := href="to_link"]
   """
-  
-  for link in tree.getElementsByTagName("a"):
-    href = link.getAttribute("href")
+  for link in tree.findChildren(name = "a"):
+    href = str(link.get("href"))
     if href.find(from_link) >= 0:
-      link.setAttribute("href", href.replace(from_link, to_link, 1))
+      link["href"] =  href.replace(from_link, to_link, 1)
 
 def convert_coqdoc(coqdoc_file): 
   """ Convert coqdoc_file into a movie, keeping the layout of coqdoc_file
@@ -64,4 +63,4 @@ if __name__ == '__main__':
   replace_links(narrated_movie, basename(args.coqdoc_file.name), 
                                 basename(get_outfile(args).name))
   
-  get_outfile(args).write(narrated_movie.toxml().encode('ascii', 'xmlcharrefreplace'))
+  get_outfile(args).write(str(narrated_movie))

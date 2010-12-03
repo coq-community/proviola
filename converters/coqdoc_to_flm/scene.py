@@ -1,8 +1,10 @@
+from BeautifulSoup import Tag
+
 class Scene(object):
   def __init__(self, no = 0):
     self._no = no
     self._subscenes = []
-    self._attributes = None
+    self._attributes = []
     self._type = None
   
   def set_attributes(self, attrs):
@@ -41,18 +43,17 @@ class Scene(object):
   def toxml(self, document):
     """ Create an XML subtree out of this scene, as generated in document.
     """
-    element = document.createElement("scene")
+    element = Tag(document, "scene")
         
-    if self._attributes:
-      for index in range(self._attributes.length):
-        attr = self._attributes.item(index)
-        element.setAttribute(attr.name, attr.value)
+    for key, value in self._attributes:
+      element[key] = value
         
-    element.setAttribute("sceneNumber", str(self._no))
-    element.setAttribute("class", self._type)
-        
+
+    element["sceneNumber"] = self._no
+    element["class"] = self._type
+
     for sub in self._subscenes:
-      element.appendChild(sub.get_reference(document))
+      element.append(sub.get_reference(document))
     
     return element
   

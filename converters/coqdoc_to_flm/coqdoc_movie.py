@@ -1,5 +1,5 @@
 from xml.dom.minidom import parseString
-
+from BeautifulSoup import Tag, Declaration
 from Movie import Movie
 
 from coqdoc_frame import Coqdoc_Frame
@@ -22,13 +22,15 @@ class Coqdoc_Movie(Movie):
     self._title += title
 
   def toxml(self):
-    frame_doc = parseString(Movie.toxml(self).encode("ascii", "xmlcharrefreplace"))
+    frame_doc = Movie.toxml(self)
     
-    doc_root = frame_doc.documentElement
-    scene_tree = frame_doc.createElement("scenes")
-    doc_root.appendChild(scene_tree)
+    frame_doc.insert(1, Declaration('DOCTYPE movie [<!ENTITY nbsp "&#160;">]'))
+    doc_root = frame_doc.movie
+    
+    scene_tree = Tag(frame_doc, "scenes")
+    doc_root.append(scene_tree)
     
     for scene in self._scenes:
-      scene_tree.appendChild(scene.toxml(frame_doc))
+      scene_tree.append(scene.toxml(frame_doc))
 
     return frame_doc

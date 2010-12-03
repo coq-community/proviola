@@ -78,6 +78,7 @@
       <xsl:attribute name="onmouseover">
       mouseover(<xsl:value-of select="@frameNumber"/>, '<xsl:value-of select="$sceneRef"/>');
       </xsl:attribute>
+
       <xsl:copy-of select = "command-coqdoc/node()"/>
     </span>
   </xsl:otherwise>

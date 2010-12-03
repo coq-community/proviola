@@ -16,7 +16,7 @@
 # You should have received a copy of the GNU General Public License
 # along with Proof Camera.  If not, see <http://www.gnu.org/licenses/>.
 
-from xml.dom.minidom import Document, parse
+from BeautifulSoup import BeautifulSoup, ProcessingInstruction, Tag
 from Frame import TAG_FRAME, Frame
 
 TAG_FILM = "film"
@@ -64,22 +64,23 @@ class Movie(object):
 
   def toxml(self, stylesheet="proviola.xsl"):
     """ Marshall the movie to an XML document. """
-    doc = Document()
+    doc = BeautifulSoup()
 
-    styleSheetRef = doc.createProcessingInstruction("xml-stylesheet",\
-                              "type=\"text/xsl\" href=\"%s\""%stylesheet)
-    doc.appendChild(styleSheetRef)
+    styleSheetRef = ProcessingInstruction(
+                'xml-stylesheet  type="text/xsl" href="%s"'%stylesheet)
+    
+    doc.append(styleSheetRef)
 
-    movie = doc.createElement("movie")
-    doc.appendChild(movie)
+    movie = Tag(doc, "movie")
+    doc.append(movie)
 
-    film = doc.createElement(TAG_FILM)
-    movie.appendChild(film)
+    film = Tag(doc, TAG_FILM)
+    movie.append(film)
     
     for frame in self._frames:
-      film.appendChild(frame.toxml(doc))
+      film.append(frame.toxml(doc))
     
-    return doc.toxml()
+    return doc
 
   def toFile(self, fileName, stylesheet = "proviola.xsl"):
     """ Write the file, in XML, to filmName """ 

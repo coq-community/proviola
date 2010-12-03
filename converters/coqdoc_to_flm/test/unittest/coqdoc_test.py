@@ -1,5 +1,5 @@
 import unittest
-
+import re
 import sys
 sys.path.append("../../")
 import coqdoc_parser
@@ -41,10 +41,20 @@ class Coqdoc_Test(unittest.TestCase):
     
     if movie.findAll(attrs={"id": "page"}):
       return
-    
-    
     self.fail("No id attribute")
   
+  def test_spaces(self):
+    """ Nbsps should not produce an error. """
+    file_contents = open("data/spaces/spaces.html", 'r').read()
+    self._parser.feed(file_contents)
+    movie = self._parser.get_coqdoc_movie().toxml()
+            
+    if movie.findAll(text = re.compile("error")):
+      print "Found"  
+      self.fail("Spaces produced an error.")
+    else:
+      print movie
+      
   def test_nested_html(self):
     """ HTML in doc should get copied correctly. """
     file_contents = open("data/nested/nested_html.html", 'r').read()

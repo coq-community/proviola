@@ -21,6 +21,8 @@ class Coqdoc_Parser(object):
     
   def _get_text(self, node):
     try:
+      if "&nbsp;" in node.text:
+        print "Space"
       return node.text
     except:
       return node

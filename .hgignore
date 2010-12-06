@@ -1,3 +1,12 @@
 syntax: glob
-
+.project
+.pydevproject
+*.swp
 *.pyc
+
+converters/coqdoc_to_flm/test/basic/*
+converters/coqdoc_to_flm/test/unittest/data/*/*.xml
+converters/coqdoc_to_flm/test/unittest/data/*.xml
+converters/coqdoc_to_flm/test/unittest/data/*/index.html
+converters/coqdoc_to_flm/test/unittest/data/*proviola.xsl
+converters/coqdoc_to_flm/test/unittest/data/*/proviola.xsl

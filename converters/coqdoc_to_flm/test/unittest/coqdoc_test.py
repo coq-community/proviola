@@ -1,8 +1,10 @@
 import unittest
 import re
 import sys
+
 sys.path.append("../../")
 import coqdoc_parser
+from BeautifulSoup import BeautifulSoup
 
 class Coqdoc_Test(unittest.TestCase):
   
@@ -43,17 +45,15 @@ class Coqdoc_Test(unittest.TestCase):
       return
     self.fail("No id attribute")
   
-  def test_spaces(self):
-    """ Nbsps should not produce an error. """
-    file_contents = open("data/spaces/spaces.html", 'r').read()
+  def test_entities(self):
+    """ HTML entities should not produce an error. """
+    file_contents = open("data/ents/ents.html", 'r').read()
     self._parser.feed(file_contents)
-    movie = self._parser.get_coqdoc_movie().toxml()
-            
-    if movie.findAll(text = re.compile("error")):
-      print "Found"  
-      self.fail("Spaces produced an error.")
-    else:
-      print movie
+    movie = self._parser.get_coqdoc_movie()
+    movie = movie.toxml()
+    
+    self.assertFalse(movie.findAll(text = re.compile(".*[Ee]rror.*")),
+                     "Error while sending text with HTML  entities")
       
   def test_nested_html(self):
     """ HTML in doc should get copied correctly. """

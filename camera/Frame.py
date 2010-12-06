@@ -39,9 +39,7 @@ class Frame:
   def setId(self, id):
     self._id = id
 
-  def hasResponse(self):
-    return self._response != None
-    
+
   def getResponse(self):
     return self._response
 
@@ -55,30 +53,17 @@ class Frame:
     else:
       return child.data
 
-  def fromxml(self, element):
-    """ Populate this element from the given XML frame element. """
-    try:
-      self._id = element.getAttribute(TAG_ID)
-      self._command = self.getText(element, TAG_CMD)
-      
-      if len(element.getElementsByTagName(TAG_RES)) > 0:
-        self._response=  self.getText(element, TAG_RES)
-
-    except IndexError as e:
-      logging.debug("This frame has no id, name, was: ", element.toprettyxml("  "))
-      raise e
-    
   def toxml(self, doc):
-    frameElement =Tag(doc, "temp_name")
+    frameElement = Tag(doc, "temp_name")
     frameElement.name = TAG_FRAME
     frameElement[TAG_ID] = self.getId()
     frameElement.append(self.createTextElement(doc, TAG_CMD,
                                             self.getCommand()))
 
-    if self.hasResponse():
+    if self._response:
       frameElement.append(self.createTextElement(doc, TAG_RES, 
                                                         self.getResponse()))
-    
+      
     return frameElement 
 
   def createTextElement(self, doc, elementName, contents):

@@ -19,14 +19,29 @@ class Coqdoc_Parser(object):
     self._prover = get_prover("http://hair-dryer.cs.ru.nl/proofweb/index.html",
                               "nogroup")
     
-  def _get_text(self, node):
-    try:
-      if "&nbsp;" in node.text:
-        print "Space"
-      return node.text
-    except:
-      return node
+  def _clean_html(self, text):
+    """ Replace HTML entities by their ASCII equivalents. 
+    """
+    replacements = {
+          "&nbsp;": " ",
+          "&gt;"  : ">",
+          "&lt;"  : "<"}
+    for key in replacements:
+      text = text.replace(key, replacements[key])
+      
+    return text
   
+  def _get_text(self, node):
+    """ Get the text portion out of an HTML node. Special characters are still
+        encoded as HTML entitites.
+    """   
+    try:
+      text =  node.text
+    except:
+      text = node
+    finally:
+      return text
+    
   def _hidden_span(self, div):
     # TODO: Make the hidden span an actual class...
     """ Recognizer for spans with the "display: none" style. """
@@ -40,12 +55,11 @@ class Coqdoc_Parser(object):
         A code div corresponds to a single scene, refering to zero or more
         frames.
     """
-    
     frames = []
     
     scene = Scene()
     scene.set_type("code")
-    
+
     code_tree = []
     for child in code_div:
       if self._hidden_span(child):
@@ -60,11 +74,15 @@ class Coqdoc_Parser(object):
 
         if len(commands) == 1:
           if self._reader.isCommand(commands[0]):
-            response = self._prover.send(commands[0])
+            cmd = self._clean_html(commands[0])
+            response = self._prover.send(cmd)
+            print "Got response ", response
           else:
             response = None
+          
             
-          frame = Coqdoc_Frame(command = commands[0], command_cd = code_tree,
+          frame = Coqdoc_Frame(command = commands[0], 
+                               command_cd = code_tree,
                                response = response)
           
           scene.add_scene(frame)

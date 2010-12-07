@@ -26,6 +26,7 @@ class Coqdoc_Parser(object):
           "&nbsp;": " ",
           "&gt;"  : ">",
           "&lt;"  : "<"}
+    
     for key in replacements:
       text = text.replace(key, replacements[key])
       
@@ -36,11 +37,9 @@ class Coqdoc_Parser(object):
         encoded as HTML entitites.
     """   
     try:
-      text =  node.text
+      return node.text
     except:
-      text = node
-    finally:
-      return text
+      return node
     
   def _hidden_span(self, div):
     # TODO: Make the hidden span an actual class...
@@ -59,8 +58,8 @@ class Coqdoc_Parser(object):
     
     scene = Scene()
     scene.set_type("code")
-
     code_tree = []
+    
     for child in code_div:
       if self._hidden_span(child):
           (hidden_frames, hidden_scenes) = self._process_code(child)
@@ -71,17 +70,23 @@ class Coqdoc_Parser(object):
       else:
         code_tree.append(child)
         commands = self._reader.parse(self._get_text(child))
-
+        
+        for c in commands:
+          if self._reader.isCommand(c) or self._reader.isComment(c):
+            print "Is comm[ea]n[dt]", c
+        commands = [c for c in commands if self._reader.isCommand(c) or
+                                           self._reader.isComment(c)]
+        
         if len(commands) == 1:
-          if self._reader.isCommand(commands[0]):
-            cmd = self._clean_html(commands[0])
-            response = self._prover.send(cmd)
-            print "Got response ", response
+          cmd = commands[0]
+          cmd_clean = self._clean_html(cmd)
+          if self._reader.isCommand(cmd_clean):
+            response = self._prover.send(cmd_clean)
           else:
             response = None
           
-            
-          frame = Coqdoc_Frame(command = commands[0], 
+          
+          frame = Coqdoc_Frame(command = cmd, 
                                command_cd = code_tree,
                                response = response)
           

@@ -46,16 +46,14 @@ class Frame:
   def getId(self):
     return self._id
  
-  def getText(self, element, tagname):
-    child = element.getElementsByTagName(tagname)[0].firstChild
-    if child == None:
-      return ""
-    else:
-      return child.data
+  def fromxml(self, elem):
+    """ Fill frame from given elem. """
+    self._id = elem["framenumber"]
+    self._command = elem.command.text
+    self._response = elem.response.string if elem.response else None
 
   def toxml(self, doc):
-    frameElement = Tag(doc, "temp_name")
-    frameElement.name = TAG_FRAME
+    frameElement = Tag(doc, TAG_FRAME)
     frameElement[TAG_ID] = self.getId()
     frameElement.append(self.createTextElement(doc, TAG_CMD,
                                             self.getCommand()))
@@ -63,7 +61,7 @@ class Frame:
     if self._response:
       frameElement.append(self.createTextElement(doc, TAG_RES, 
                                                         self.getResponse()))
-      
+    
     return frameElement 
 
   def createTextElement(self, doc, elementName, contents):

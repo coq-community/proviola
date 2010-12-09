@@ -37,7 +37,7 @@ class TestMovie(unittest.TestCase):
       
   def testAddToFromXML(self):
     self.movie.addFrame(Frame(command="cmd", response="resp"))
-    self.movie.toFile(TESTFILM_PATH)
+#    self.movie.toFile(TESTFILM_PATH)
     self._storeOpenAndCompareMovie()
   
   def testSemiEmptyExport(self):

@@ -16,7 +16,7 @@
 # You should have received a copy of the GNU General Public License
 # along with Proof Camera.  If not, see <http://www.gnu.org/licenses/>.
 
-from BeautifulSoup import BeautifulSoup, ProcessingInstruction, Tag
+from BeautifulSoup import BeautifulStoneSoup, ProcessingInstruction, Tag
 from Frame import TAG_FRAME, Frame
 
 TAG_FILM = "film"
@@ -36,8 +36,9 @@ class Movie(object):
   def fromxml(self, document):
     """ Load the movie frames from the given xml document """
     
-    film = document.getElementsByTagName(TAG_FILM)[0]
-    frameElements = film.getElementsByTagName(TAG_FRAME)
+    film = document.movie.film
+    frameElements = film.findAll(name = TAG_FRAME)
+    
     
     for element in frameElements:
       frame = Frame()
@@ -64,7 +65,7 @@ class Movie(object):
 
   def toxml(self, stylesheet="proviola.xsl"):
     """ Marshall the movie to an XML document. """
-    doc = BeautifulSoup()
+    doc = BeautifulStoneSoup()
 
     styleSheetRef = ProcessingInstruction(
                 'xml-stylesheet  type="text/xsl" href="%s"'%stylesheet)
@@ -86,12 +87,13 @@ class Movie(object):
     """ Write the file, in XML, to filmName """ 
     filmFile = open(fileName, 'w')
     
-    filmFile.write(self.toxml(stylesheet))
+    filmFile.write(str(self.toxml(stylesheet)))
     filmFile.close()
 
   def openFile(self, fileName):
     """ Open an XML file and load its data in memory. """
-    doc = parse(fileName)
+    doc = BeautifulStoneSoup(open(fileName, 'r').read())
+
     self.fromxml(doc)
 
   def getFrameById(self, id):

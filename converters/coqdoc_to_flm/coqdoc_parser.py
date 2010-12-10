@@ -71,9 +71,6 @@ class Coqdoc_Parser(object):
         code_tree.append(child)
         commands = self._reader.parse(self._get_text(child))
         
-        for c in commands:
-          if self._reader.isCommand(c) or self._reader.isComment(c):
-            print "Is comm[ea]n[dt]", c
         commands = [c for c in commands if self._reader.isCommand(c) or
                                            self._reader.isComment(c)]
         

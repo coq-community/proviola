@@ -49,7 +49,7 @@ class Frame:
   def fromxml(self, elem):
     """ Fill frame from given elem. """
     self._id = elem["framenumber"]
-    self._command = elem.command.text
+    self._command = elem.command.string
     self._response = elem.response.string if elem.response else None
 
   def toxml(self, doc):

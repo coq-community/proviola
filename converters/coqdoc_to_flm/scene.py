@@ -15,7 +15,14 @@ class Scene(object):
         - attrs: The attributes to be added to the Scene.
     """
     self._attributes = attrs
-    
+  
+  def is_scene(self):
+    return True
+  
+  def get_attributes(self):
+    """ Getter for self._attributes. """
+    return self._attributes
+  
   def add_scene(self, scene):
     """ Add a subscene to this scene.    
     Arguments:
@@ -26,6 +33,14 @@ class Scene(object):
     
     scene.set_number(len(self._subscenes))
     self._subscenes.append(scene)
+  
+  def get_subscenes(self):
+    """ Getter for self._subscenes. """
+    return self._subscenes
+  
+  def get_type(self):
+    """ Getter for self._type. """
+    return self._type
   
   def set_number(self, number):
     """ Set this scene's sceneNumber (self._no) """
@@ -57,10 +72,14 @@ class Scene(object):
     
     return element
   
+  def getId(self):
+    """ Getter for number. """
+    return self._no
+    
   def __str__(self):
     result = "Scene(id = {id}".format(id = self._no)
     for scene in self._subscenes:
-      result += ", sub_ref: {sub}".format(sub=scene.get_reference())
+      result += ", sub_ref: {sub}".format(sub=scene.get)
     result += ")"
     return result
   

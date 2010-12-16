@@ -13,7 +13,15 @@ class Coqdoc_Frame(Frame):
   def set_number(self, number):
     """ Frames should not keep a scene-number. """
     pass
-
+  
+  def get_coqdoc_command(self):
+    """ Getter for self._command_coqdoc. """
+    return self._command_coqdoc
+  
+    
+  def is_scene(self):
+    return False
+  
   def toxml(self, doc):
     """ Convert this frame to XML. """
     frame_xml = Frame.toxml(self, doc)

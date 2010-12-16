@@ -41,7 +41,7 @@ def replace_links(tree, from_link, to_link):
     if href.find(from_link) >= 0:
       link["href"] =  href.replace(from_link, to_link, 1)
 
-def convert_coqdoc(coqdoc_file): 
+def convert_coqdoc(coqdoc_data): 
   """ Convert coqdoc_file into a movie, keeping the layout of coqdoc_file
 
     Arguments:
@@ -52,14 +52,15 @@ def convert_coqdoc(coqdoc_file):
       augmented by the prover output.
   """
   p = coqdoc_parser.Coqdoc_Parser()
-  p.feed(coqdoc_file.read())
+  p.feed(coqdoc_data)
+   
   return p.get_coqdoc_movie()
 
 if __name__ == '__main__':
   parser = create_arg_parser()
   args = parser.parse_args()
   print("File: {file}".format(file = args.coqdoc_file.name))
-  narrated_movie = convert_coqdoc(args.coqdoc_file).toxml()
+  narrated_movie = convert_coqdoc(args.coqdoc_file.read()).toxml()
   replace_links(narrated_movie, basename(args.coqdoc_file.name), 
                                 basename(get_outfile(args).name))
   

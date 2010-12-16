@@ -17,7 +17,11 @@ class Coqdoc_Movie(Movie):
   def add_scene(self, scene):
     scene.set_number(len(self._scenes))
     self._scenes.append(scene)
-
+  
+  def get_scenes(self):
+    """ Getter for self._scenes. """
+    return self._scenes
+  
   def add_to_title(self, title):
     self._title += title
 

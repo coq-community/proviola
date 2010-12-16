@@ -190,7 +190,9 @@ class Coqdoc_Parser(object):
     
     Effect: self._coqdoc_movie is updated with the contents of data. 
     """
+    
     self._tree = BeautifulSoup(data)
+    
     self._movie = self._tree_to_movie(self._tree)
     
   def get_coqdoc_movie(self):

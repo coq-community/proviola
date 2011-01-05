@@ -1,0 +1,6 @@
+<!ELEMENT movie(film)>
+<!ELEMENT film(frame*)>
+<!ELEMENT frame(command, response)>
+<!ATTLIST frame type ID #REQUIRED>
+<!ELEMENT command(#PCDATA)>
+<!ELEMENT response(#PCDATA)>

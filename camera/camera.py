@@ -18,7 +18,6 @@
 # You should have received a copy of the GNU General Public License
 # along with Proof Camera.  If not, see <http://www.gnu.org/licenses/>.
 
-
 import sys
 import time
 from Movie import Movie
@@ -30,6 +29,7 @@ from optparse import OptionParser
 
 def setupParser():
   """ Setup a command line parser """
+
   usage = """Usage: %prog [options] foo.v [bar.flm]
   Creates a movie from foo.v, storing in bar.flm, if provided, or in foo.flm."""
 
@@ -64,7 +64,14 @@ def setupParser():
   return parser
 
 def main(argv = None):
-  """Main method
+  """ Main method: 
+      - sets up logging information, 
+      - parses the command line (optionally provided as a list),
+      - creates a film out of the given script.
+      - Writes the film to disk.
+
+      Arguments:
+      - Argv: Arguments passed to the options parser. 
   """
 
   logging.basicConfig(stream=sys.stderr, level=logging.DEBUG)
@@ -80,8 +87,6 @@ def main(argv = None):
   
 
   logging.debug("Processing: %s"%proofScript)
-  print "Pw: %s"%options.pwurl 
-  print "Group: %s"%options.group
 
   movie = make_film(filename=proofScript, pwurl = options.pwurl, group = options.group)
 
@@ -97,9 +102,16 @@ def main(argv = None):
 
   movie.toFile(filmName, options.stylesheet)
 
-def make_film(filename, pwurl, group):
+def make_film(filename, pwurl = None, group = "nogroup"):
   """Main method of the program/script: This creates a flattened 'film' for
-   the given file filename
+   the given file filename.
+
+    Arguments:
+    - filename: The filename of the script to read.
+
+    Keyword arguments:
+    - pwurl: The URL to the server generating proof states.
+    - group: The group used to log in.
   """ 
 
   reader = Reader.getReader(filename)

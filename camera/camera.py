@@ -115,14 +115,12 @@ def make_film(filename, pwurl = None, group = "nogroup"):
   """ 
 
   reader = Reader.getReader(filename)
-  movie = Movie()
   try:
-    reader.make_frames(movie, pwurl, group)
+    return reader.make_frames(pwurl, group)
   except e:
     print "Exception: %s"%`e`
     return None
-    
-  return movie
+
 
 if __name__ == "__main__":
   sys.exit(main())

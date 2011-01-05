@@ -18,11 +18,14 @@
 
 
 import re
-from Reader import Reader
 import string
-from Frame import Frame
 from time import sleep
+
+from Reader import Reader
+from Movie import Movie
+from Frame import Frame
 from Prover import get_prover
+
 suffix = '.v'
 
 class CoqReader(Reader):
@@ -130,9 +133,16 @@ class CoqReader(Reader):
 
     return result
   
-  def make_frames(self, document, server_url, server_group, remaining = ""):
+  def make_frames(self, server_url = None, server_group = None):
+    """ Splits the file stored in self.script into seperate commands, 
+        and pairs these commands to their responses as provided by Proofweb.
+
+        Arguments:
+        - server_url: The URL of the ProofWeb server.
+        - server_group: The group used for logging in to the server.
+    """
+    document = Movie()
     pw = get_prover(server_url, server_group) 
-    #pw = ProofWeb(options.pwurl, options.group)
     command = self.getCommand()
     while command != None and len(command) != 0:
       if self.isComment(command):
@@ -144,7 +154,9 @@ class CoqReader(Reader):
       document.addFrame(Frame(id, command, response))
       sleep(.5)
       command = self.getCommand()
-    
+
+    return document
+
   def isComment(self, text):
     return len(text.split()) <= 0 or\
            text.split()[0].startswith("(*") and text.endswith("*)")

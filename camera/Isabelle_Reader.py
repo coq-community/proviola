@@ -1,9 +1,11 @@
 import os
 import time
 from xml.dom.minidom import parseString, Node
+
 from Reader import Reader
 from Isabelle_Session import Isabelle_Session
 from Frame import Frame
+from Movie import Movie
 
 suffix = '.thy'
 
@@ -11,9 +13,9 @@ class Isabelle_Reader(Reader):
   def __init__(self, filename):
     self._filename = filename
     (self.basename, unused_ext) = os.path.splitext(self._filename)
-    pass
   
-  def make_frames(self, document, options):
+  def make_frames(self, options):
+    document = Movie()
     isabelle_session = Isabelle_Session(options.pwurl, self._filename)
     contents = open(self._filename, 'r').read()
     isabelle_session.add(contents)
@@ -25,6 +27,7 @@ class Isabelle_Reader(Reader):
     for node in tree.documentElement.childNodes:
       if node.nodeType != Node.TEXT_NODE and node.tagName == "state":
         document.addFrame(self.state_to_frame(node))
+    return document
 
   def state_to_frame(self, state):
     id = 0

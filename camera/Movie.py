@@ -66,10 +66,13 @@ class Movie(object):
   def toxml(self, stylesheet="proviola.xsl"):
     """ Marshall the movie to an XML document. """
     doc = BeautifulStoneSoup()
+    docType =  ProcessingInstruction("xml version='1.0' encoding='utf-8'")
+    doc.append(docType)
 
     styleSheetRef = ProcessingInstruction(
-                'xml-stylesheet  type="text/xsl" href="%s"'%stylesheet)
+                'xml-stylesheet type="text/xsl" href="%s"'%stylesheet)
     
+
     doc.append(styleSheetRef)
 
     movie = Tag(doc, "movie")

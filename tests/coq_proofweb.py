@@ -1,5 +1,5 @@
 import unittest
-from xml.dom.minidom import parseString
+from BeautifulSoup import BeautifulStoneSoup
 
 import sys
 sys.path.append("../src")
@@ -16,7 +16,7 @@ class Test_CP(unittest.TestCase):
         pretty printed with spacing two (to increase readability in failed
         results.
     """
-    return parseString(xml).toprettyxml(indent = "  ")
+    return xml.prettify().strip()
   
   def setUp(self):
     """ Setup: create an empty movie for results """
@@ -29,12 +29,12 @@ class Test_CP(unittest.TestCase):
 
   
     expected_url = "exp/empty.flm"
-    expected_xml = self._normalize_xml(open(expected_url, 'r').read())
-
+    expected_xml = self._normalize_xml(BeautifulStoneSoup(open(expected_url, 'r').read()))
+    
     data_url = "data/empty.v"
     reader = Reader.getReader(data_url)
-    reader.make_frames(self.results, self.url, self.group)
-    
+    self.results = reader.make_frames(self.url, self.group)
+
     self.assertEquals(self._normalize_xml(self.results.toxml()), expected_xml)
 
   @classmethod

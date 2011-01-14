@@ -48,10 +48,11 @@ def setupParser():
                     action="store", dest="pswd",
                     default="anon",
                     help="Password for user")
-  parser.add_option("--proofweb",
-                    action="store", dest="pwurl",
+  parser.add_option("--service_url",
+                    action="store", dest="service",
                     default="http://hair-dryer.cs.ru.nl/proofweb/index.html",
-                    help="URL for a ProofWeb installation (default: %default).")
+                    help="""URL for web service to talk to prover
+                          (default: %default)""")
   parser.add_option("--prover",
                     action="store", dest="prover",
                     default="coq",
@@ -88,7 +89,7 @@ def main(argv = None):
 
   logging.debug("Processing: %s"%proofScript)
 
-  movie = make_film(filename=proofScript, pwurl = options.pwurl, group = options.group)
+  movie = make_film(filename=proofScript, pwurl = options.service, group = options.group)
 
   try:
     filmName = args[1]

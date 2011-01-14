@@ -7,7 +7,8 @@ class Isabelle_Session:
 
   def __init__(self, xmlRpcUrl, filename):
     self._isabelle = ServerProxy(xmlRpcUrl).Isabelle
-    self._session_key = self._isabelle.start(TIMEOUT, ARGS, "")
+    self._session_key = self._isabelle.start(TIMEOUT, ARGS, 
+                        "/home/carst/Build/Isabelle2009-2", "")
     self._isabelle.begin_document(filename, self._session_key)
     
   def __del__(self):

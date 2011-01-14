@@ -118,7 +118,7 @@ def make_film(filename, pwurl = None, group = "nogroup"):
   reader = Reader.getReader(filename)
   try:
     return reader.make_frames(pwurl, group)
-  except e:
+  except Exception as e:
     print "Exception: %s"%`e`
     return None
 

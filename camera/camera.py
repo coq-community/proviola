@@ -1,4 +1,4 @@
-#! /usr/bin/python
+#! /usr/local/bin/python
 #
 # Author: Carst Tankink carst 'at' cs 'dot' ru 'dot' nl
 # Copyright: Radboud University Nijmegen
@@ -25,7 +25,7 @@ import Reader
 import os
 import logging
 from optparse import OptionParser
-
+from argparse import ArgumentParser
 
 def setupParser():
   """ Setup a command line parser """
@@ -34,33 +34,40 @@ def setupParser():
   Creates a movie from foo.v, storing in bar.flm, if provided, or in foo.flm."""
 
   parser = OptionParser(usage=usage)
-  parser.add_option("-u", "--user", 
+
+  parser = ArgumentParser(description = usage)
+  parser.add_argument("-u", "--user", 
                     action="store", dest="user",
                     default="nobody",
                     help="Username for ProofWeb (default: %default)")
 
-  parser.add_option("-g", "--group", 
+  parser.add_argument("-g", "--group", 
                     action="store", dest="group",
                     default="nogroup",
                     help="Groupname for ProofWeb user (default: %default)")
 
-  parser.add_option("-p", "--password",
+  parser.add_argument("-p", "--password",
                     action="store", dest="pswd",
                     default="anon",
                     help="Password for user")
-  parser.add_option("--service_url",
+  parser.add_argument("--service_url",
                     action="store", dest="service",
                     default="http://hair-dryer.cs.ru.nl/proofweb/index.html",
                     help="""URL for web service to talk to prover
                           (default: %default)""")
-  parser.add_option("--prover",
+  parser.add_argument("--prover",
                     action="store", dest="prover",
                     default="coq",
                     help="Prover to use (default: %default).")
-  parser.add_option("--stylesheet",
+  parser.add_argument("--stylesheet",
                     action="store", dest="stylesheet",
                     default="proviola.xsl",
                     help="URI at which the XSL stylesheet can be found (default: %default)")
+  
+  parser.add_argument("script", action="store", help="Script from which to make a movie")
+
+  parser.add_argument("movie", action="store", nargs="?", default=None,
+                      help="Movie file in which to store the constructed movie")
                     
   return parser
 
@@ -78,22 +85,18 @@ def main(argv = None):
   logging.basicConfig(stream=sys.stderr, level=logging.DEBUG)
 
   parser = setupParser()
-  (options, args) = parser.parse_args(argv)
+  options = parser.parse_args(argv)
 
-  try:
-    proofScript = args[0]
-  except: 
-    parser.print_help()
-    return 0
+  proofScript = options.script
   
 
   logging.debug("Processing: %s"%proofScript)
 
   movie = make_film(filename=proofScript, pwurl = options.service, group = options.group)
 
-  try:
-    filmName = args[1]
-  except:
+  if parser.movie:
+    filmName = parser.movie
+  else:
     filmName = Reader.getReader(proofScript).basename + ".flm" 
 
   directory = os.path.dirname(filmName)

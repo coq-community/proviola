@@ -1,4 +1,4 @@
-#! /usr/local/bin/python
+#!/usr/bin/env python
 #
 # Author: Carst Tankink carst 'at' cs 'dot' ru 'dot' nl
 # Copyright: Radboud University Nijmegen
@@ -24,27 +24,25 @@ from Movie import Movie
 import Reader
 import os
 import logging
-from optparse import OptionParser
 from argparse import ArgumentParser
 
 def setupParser():
   """ Setup a command line parser """
 
-  usage = """Usage: %prog [options] foo.v [bar.flm]
-  Creates a movie from foo.v, storing in bar.flm, if provided, or in foo.flm."""
+  usage = """ Creates a movie from foo.v, storing in bar.flm, if provided,
+              or in foo.flm."""
 
-  parser = OptionParser(usage=usage)
 
   parser = ArgumentParser(description = usage)
   parser.add_argument("-u", "--user", 
                     action="store", dest="user",
                     default="nobody",
-                    help="Username for ProofWeb (default: %default)")
+                    help="Username for ProofWeb (default: %(default)s)")
 
   parser.add_argument("-g", "--group", 
                     action="store", dest="group",
                     default="nogroup",
-                    help="Groupname for ProofWeb user (default: %default)")
+                    help="Groupname for ProofWeb user (default: %(default)s)")
 
   parser.add_argument("-p", "--password",
                     action="store", dest="pswd",
@@ -54,15 +52,16 @@ def setupParser():
                     action="store", dest="service",
                     default="http://hair-dryer.cs.ru.nl/proofweb/index.html",
                     help="""URL for web service to talk to prover
-                          (default: %default)""")
+                          (default: %(default)s)""")
   parser.add_argument("--prover",
                     action="store", dest="prover",
                     default="coq",
-                    help="Prover to use (default: %default).")
+                    help="Prover to use (default: %(default)s).")
   parser.add_argument("--stylesheet",
                     action="store", dest="stylesheet",
                     default="proviola.xsl",
-                    help="URI at which the XSL stylesheet can be found (default: %default)")
+                    help="URI at which the XSL stylesheet can be found\
+                      (default: %(default)s)")
   
   parser.add_argument("script", action="store", help="Script from which to make a movie")
 

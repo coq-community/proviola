@@ -44,7 +44,16 @@ class TestCamera(unittest.TestCase):
     self.assertEquals(results_long.movie, "movie.xml")
       
     # Requesting help should not fail
-    parser.parse_args(["-h"])
+    try:
+      parser.parse_args(["-h"])
+    except SystemExit as e:
+      self.assertEquals(type(e), type(SystemExit()))
+      self.assertEquals(e.code, 0)
+    except e:
+      self.fail("Unexpected exception %exp".format(exp=e))
+    else:
+      self.fail("SystemExit exception expected.")
+
 
 if __name__ == '__main__':
   suite = unittest.TestLoader().loadTestsFromTestCase(TestCamera)

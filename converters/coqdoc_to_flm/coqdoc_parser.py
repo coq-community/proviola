@@ -134,8 +134,6 @@ class Coqdoc_Parser(object):
             scene.add_scene(frame)
             
         except:
-            if child is None:
-              print "Nullary child in div: ", div
             frame = self._html_to_frame(child)
             frames.append(frame)
             scene.add_scene(frame)
@@ -195,7 +193,6 @@ class Coqdoc_Parser(object):
     """
     
     self._tree = BeautifulSoup(data)
-    
     self._movie = self._tree_to_movie(self._tree)
     
   def get_coqdoc_movie(self):

@@ -59,7 +59,12 @@ if __name__ == '__main__':
   parser = create_arg_parser()
   args = parser.parse_args()
   print("File: {file}".format(file = args.coqdoc_file.name))
-  narrated_movie = BeautifulStoneSoup(convert_coqdoc(args.coqdoc_file.read()))
+  # The selfClosingTags declaration is necessary to fix a nasty bug in which
+  # a <br/> tag would eat the following tags.
+  #TODO: Refactor this to the function call, so it can be tested.
+  narrated_movie = BeautifulStoneSoup(convert_coqdoc(args.coqdoc_file.read()),
+                                      selfClosingTags = ["br"])
+
   replace_links(narrated_movie, basename(args.coqdoc_file.name), 
                                 basename(get_outfile(args).name))
   

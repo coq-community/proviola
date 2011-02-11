@@ -82,11 +82,12 @@ class Coqdoc_Test(unittest.TestCase):
     self.assertTrue("Preface" in self._parser.get_coqdoc_movie()._title)
   
   def test_empty_node(self):
-    """ This test tests that empty nodes get processed properly. """
+    """ Test that empty nodes get processed properly, without exceptions. """ 
     div = BeautifulSoup("<div></div>")
     self._parser._process_div(div)
+  
 
-    
+
   @classmethod
   def get_suite(cls):
     return unittest.TestLoader().loadTestsFromTestCase(cls)

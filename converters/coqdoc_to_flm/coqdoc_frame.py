@@ -21,7 +21,10 @@ class Coqdoc_Frame(Frame):
     
   def is_scene(self):
     return False
-  
+
+  def fromxml(self, element):
+    raise Exception("Not implemented, TODO")
+    
   def toxml(self, doc):
     """ Convert this frame to XML. """
     frame_xml = Frame.toxml(self, doc)

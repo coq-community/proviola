@@ -1,4 +1,3 @@
-from xml.dom.minidom import parseString
 from BeautifulSoup import Tag, Declaration
 from Movie import Movie
 

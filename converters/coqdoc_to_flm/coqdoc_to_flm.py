@@ -4,8 +4,7 @@
 """
     
 import argparse
-import xml.parsers.expat
-from xml.dom.minidom import parse
+from BeautifulSoup import BeautifulStoneSoup
 from os.path import splitext, basename
 
 import coqdoc_parser
@@ -54,13 +53,13 @@ def convert_coqdoc(coqdoc_data):
   p = coqdoc_parser.Coqdoc_Parser()
   p.feed(coqdoc_data)
    
-  return p.get_coqdoc_movie()
+  return str(p.get_coqdoc_movie().toxml())
 
 if __name__ == '__main__':
   parser = create_arg_parser()
   args = parser.parse_args()
   print("File: {file}".format(file = args.coqdoc_file.name))
-  narrated_movie = convert_coqdoc(args.coqdoc_file.read()).toxml()
+  narrated_movie = BeautifulStoneSoup(convert_coqdoc(args.coqdoc_file.read()))
   replace_links(narrated_movie, basename(args.coqdoc_file.name), 
                                 basename(get_outfile(args).name))
   

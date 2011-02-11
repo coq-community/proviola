@@ -39,6 +39,7 @@ class Coqdoc_Parser(object):
     try:
       return node.text
     except:
+      # Node.text is not available.
       return node
     
   def _hidden_span(self, div):
@@ -133,6 +134,8 @@ class Coqdoc_Parser(object):
             scene.add_scene(frame)
             
         except:
+            if child is None:
+              print "Nullary child in div: ", div
             frame = self._html_to_frame(child)
             frames.append(frame)
             scene.add_scene(frame)

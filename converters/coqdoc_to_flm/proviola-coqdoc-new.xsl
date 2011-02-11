@@ -33,7 +33,7 @@
               </xsl:call-template>
             </xsl:variable>
 
-            i = <xsl:value-of select="@frameNumber"/>;
+            i = <xsl:value-of select="@framenumber"/>;
             data = "<xsl:value-of select="$data"/>";
             responses[i]=data;
           </xsl:for-each>
@@ -76,7 +76,7 @@
       mouseout('<xsl:value-of select="$sceneRef"/>');
       </xsl:attribute>
       <xsl:attribute name="onmouseover">
-      mouseover(<xsl:value-of select="@frameNumber"/>, '<xsl:value-of select="$sceneRef"/>');
+      mouseover(<xsl:value-of select="@framenumber"/>, '<xsl:value-of select="$sceneRef"/>');
       </xsl:attribute>
 
       <xsl:copy-of select = "command-coqdoc/node()"/>
@@ -89,9 +89,9 @@
   <xsl:param name="sceneRef">-1</xsl:param>
   <xsl:param name="scene-type">doc</xsl:param>
   <xsl:variable name = "ref">
-    <xsl:value-of select="@frameNumber" />
+    <xsl:value-of select="@framenumber" />
   </xsl:variable>
-  <xsl:apply-templates select="/movie/film/frame[@frameNumber = $ref]">
+  <xsl:apply-templates select="/movie/film/frame[@framenumber = $ref]">
     <xsl:with-param name="sceneRef" select="$sceneRef"/>
     <xsl:with-param name="scene-type" select="$scene-type"/>
   </xsl:apply-templates>
@@ -111,11 +111,11 @@
       <xsl:with-param name="sceneRef">
         <xsl:choose>
         <xsl:when test="$sceneRef &lt; 0">
-          <xsl:value-of select="@sceneNumber" />
+          <xsl:value-of select="@scenenumber" />
         </xsl:when>
 
         <xsl:otherwise>
-          <xsl:value-of select="$sceneRef"/>_<xsl:value-of select="@sceneNumber" />
+          <xsl:value-of select="$sceneRef"/>_<xsl:value-of select="@scenenumber" />
         </xsl:otherwise> 
         </xsl:choose>
        </xsl:with-param>
@@ -129,11 +129,11 @@
     <xsl:variable name="goalId">
       <xsl:choose>
         <xsl:when test="$sceneRef &lt; 0">
-          <xsl:value-of select="@sceneNumber" />
+          <xsl:value-of select="@scenenumber" />
         </xsl:when>
     
         <xsl:otherwise>
-          <xsl:value-of select="$sceneRef"/>_<xsl:value-of select="@sceneNumber" />
+          <xsl:value-of select="$sceneRef"/>_<xsl:value-of select="@scenenumber" />
         </xsl:otherwise>
 
       </xsl:choose>

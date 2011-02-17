@@ -64,7 +64,16 @@ class Coqdoc_Test(unittest.TestCase):
       return 
   
     self.fail("No h1 element")
-    
+
+  def test_lt(self):
+    """ The < character in code should be escaped to &lt; """
+    data = """<html><head><title>foo</title></head>
+              <body><div class="code">Goal forall x, x &lt;= x.</div>
+              </body>"""
+    self._parser.feed(data)
+    movie = self._parser.get_coqdoc_movie().toxml()
+    self.assertTrue("<" not in movie.film.text)
+
   def test_multiple(self):
     """ Multiple commands on one line are parsed properly. 
     """

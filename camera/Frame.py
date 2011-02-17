@@ -33,7 +33,12 @@ class Frame:
     self._command = command
     self._response = response
 
+  def _escape_lt(self, text):
+    """ Escapes the < sign into an &lt; entity. """
+    return text.replace("<", "&lt;")
+
   def getCommand(self):
+    """ Getter for the command field. """
     return self._command
 
   def setId(self, id):
@@ -67,7 +72,7 @@ class Frame:
   def createTextElement(self, doc, elementName, contents):
     """ Convenience method for creating text-containing nodes in doc """
     element = Tag(doc, elementName)
-    element.append(contents)
+    element.append(self._escape_lt(contents))
     return element 
 
   def get_reference(self,document):

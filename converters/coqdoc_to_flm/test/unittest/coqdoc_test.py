@@ -99,7 +99,7 @@ class Coqdoc_Test(unittest.TestCase):
   
 
   def test_nested_elems(self):
-    """ Nested spans, scnes should get carried over properly. """
+    """ Nested spans, scenes should get carried over properly. """
     spans = """<html><head><title>Spam</title></head>
               <body>
               <div>

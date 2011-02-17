@@ -65,6 +65,9 @@ def create_movie(file, source, target):
   BeautifulStoneSoup.NESTABLE_TAGS["scene"] = []
   BeautifulStoneSoup.NESTABLE_TAGS["span"] = []
 
+  # The selfClosingTags declaration is necessary to fix a nasty bug in which
+  # a <br/> tag would eat the following tags.
+
   narrated_movie = BeautifulStoneSoup(convert_coqdoc(file), 
                                       selfClosingTags = ["br"])
   replace_links(narrated_movie, source, target)
@@ -74,16 +77,8 @@ if __name__ == '__main__':
   parser = create_arg_parser()
   args = parser.parse_args()
   print("File: {file}".format(file = args.coqdoc_file.name))
-  # The selfClosingTags declaration is necessary to fix a nasty bug in which
-  # a <br/> tag would eat the following tags.
   narrated_movie = create_movie(args.coqdoc_file.read(), 
                                 basename(args.coqdoc_file.name),
                                 basename(get_outfile(args).name))
-
-#  narrated_movie = BeautifulStoneSoup(convert_coqdoc(args.coqdoc_file.read()),
-#                                      selfClosingTags = ["br"])
-#
-#  replace_links(narrated_movie, basename(args.coqdoc_file.name), 
-#                                basename(get_outfile(args).name))
-  
+ 
   get_outfile(args).write(str(narrated_movie))

@@ -4,6 +4,8 @@ import sys
 
 sys.path.append("../../")
 import coqdoc_parser
+import coqdoc_to_flm
+
 from BeautifulSoup import BeautifulSoup
 
 class Coqdoc_Test(unittest.TestCase):
@@ -91,12 +93,39 @@ class Coqdoc_Test(unittest.TestCase):
     self.assertTrue("Preface" in self._parser.get_coqdoc_movie()._title)
   
   def test_empty_node(self):
-    """ Test that empty nodes get processed properly, without exceptions. """ 
+    """ Test that empty nodes get processed properly, without exceptions. """
     div = BeautifulSoup("<div></div>")
     self._parser._process_div(div)
   
 
+  def test_nested_elems(self):
+    """ Nested spans, scnes should get carried over properly. """
+    spans = """<html><head><title>Spam</title></head>
+              <body>
+              <div>
+                <div>
+                  <span class="inlinecode">
+                   <span class="id" type="var">
+                    Spam
+                   </span>
+                   (
+                   <span class="id" type="var">
+                    Eggs
+                   </span>
+                   )
+                  </span>
+                </div>
+              </div>
+            </body></html>"""
+    movie = coqdoc_to_flm.create_movie(spans, "ni", "formerly ni")
 
+    # Scenes (= translated divs) should nest, so there should be one scene at
+    # the top level.
+    self.assertEquals(len(movie.scenes.findAll(recursive = False)), 1)
+
+    # The first span (in the third frame in the film) should have a child span.
+    self.assertTrue(movie.film.contents[2].span.span)
+    
   @classmethod
   def get_suite(cls):
     return unittest.TestLoader().loadTestsFromTestCase(cls)

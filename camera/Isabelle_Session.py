@@ -19,3 +19,6 @@ class Isabelle_Session:
 
   def document_as_xml(self):
     return self._isabelle.document_as_xml(self._session_key)
+
+  def is_correct(self):
+    return self._isabelle.is_correct(self._session_key)

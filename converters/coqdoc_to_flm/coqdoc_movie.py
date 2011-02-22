@@ -22,7 +22,9 @@ class Coqdoc_Movie(Movie):
     return self._scenes
   
   def add_to_title(self, title):
-    self._title += title
+    """ Add the argument to the title. """
+    if title:
+      self._title += title
 
   def toxml(self):
     frame_doc = Movie.toxml(self)

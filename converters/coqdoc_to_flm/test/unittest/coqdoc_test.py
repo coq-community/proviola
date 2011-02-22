@@ -67,6 +67,24 @@ class Coqdoc_Test(unittest.TestCase):
   
     self.fail("No h1 element")
 
+  def test_no_title(self):
+    """ Test resilience for empty title. """
+    html = """
+      <html>
+        <head>
+          <title></title>
+        </head>
+        <body/>
+      </html>"""
+    try:
+      self._parser.feed(html)
+      self._parser.get_coqdoc_movie().toxml()
+    except TypeError as ex:
+      self.fail("Error thrown when parsing an empty title.\n{error}".format(
+                error=ex))
+
+
+
   def test_lt(self):
     """ The < character in code should be escaped to &lt; """
     data = """<html><head><title>foo</title></head>

@@ -19,7 +19,7 @@ import logging
 from BeautifulSoup import Tag
 
 TAG_FRAME = "frame"
-TAG_ID = "frameNumber"
+TAG_ID = "framenumber"
 TAG_CMD = "command"
 TAG_RES = "response"
 

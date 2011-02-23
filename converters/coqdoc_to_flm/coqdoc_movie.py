@@ -39,3 +39,7 @@ class Coqdoc_Movie(Movie):
       scene_tree.append(scene.toxml(frame_doc))
 
     return frame_doc
+
+  def fromxml(self, xml):
+    """ Unmarshall the given xml tree into a Coqdoc_movie. """
+

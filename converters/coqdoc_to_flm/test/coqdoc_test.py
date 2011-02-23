@@ -5,6 +5,7 @@ import sys
 sys.path.append("../../")
 import coqdoc_parser
 import coqdoc_to_flm
+from coqdoc_movie import Coqdoc_Movie
 
 from BeautifulSoup import BeautifulSoup
 
@@ -143,7 +144,35 @@ class Coqdoc_Test(unittest.TestCase):
 
     # The first span (in the third frame in the film) should have a child span.
     self.assertTrue(movie.film.contents[2].span.span)
-    
+   
+  def test_to_from_xml(self):
+    """ Exporting making a roundtrip through xml should produce the same XML
+        tree. """
+
+    spans = """<html><head><title>Spam</title></head>
+              <body>
+              <div>
+                <div>
+                  <span class="inlinecode">
+                   <span class="id" type="var">
+                    Spam
+                   </span>
+                   (
+                   <span class="id" type="var">
+                    Eggs
+                   </span>
+                   )
+                  </span>
+                </div>
+              </div>
+            </body></html>"""
+
+    movie = coqdoc_to_flm.create_movie(spans, "ni", "formerly ni")
+    new_movie = Coqdoc_Movie()
+    new_movie.fromxml(movie.toxml())
+
+    self.assertEquals(movie.toxml(), new_movie.toxml())
+
   @classmethod
   def get_suite(cls):
     return unittest.TestLoader().loadTestsFromTestCase(cls)

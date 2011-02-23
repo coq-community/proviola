@@ -169,9 +169,11 @@ class Coqdoc_Test(unittest.TestCase):
 
     movie = coqdoc_to_flm.create_movie(spans, "ni", "formerly ni")
     new_movie = Coqdoc_Movie()
-    new_movie.fromxml(movie.toxml())
+    new_movie.fromxml(movie)
 
-    self.assertEquals(movie.toxml(), new_movie.toxml())
+    print "Orig: \n",movie.scenes.prettify()
+    print "New: \n",new_movie.toxml().scenes.prettify()
+    self.assertEquals(str(movie), str(new_movie.toxml()))
 
   @classmethod
   def get_suite(cls):

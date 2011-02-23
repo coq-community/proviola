@@ -2,6 +2,7 @@ from BeautifulSoup import Tag, Declaration
 from Movie import Movie
 
 from coqdoc_frame import Coqdoc_Frame
+from scene import Scene
 
 class Coqdoc_Movie(Movie):
   """ A coqdoc movie is a movie enhanced with scenes. """
@@ -42,4 +43,12 @@ class Coqdoc_Movie(Movie):
 
   def fromxml(self, xml):
     """ Unmarshall the given xml tree into a Coqdoc_movie. """
+    for frame_xml in xml.film:
+      frame = Coqdoc_Frame()
+      frame.fromxml(frame_xml)
+      self.addFrame(frame)
 
+    for scene_xml in xml.scenes:
+      scene = Scene()
+      scene.fromxml(scene_xml)
+      self.add_scene(scene)

@@ -2,6 +2,7 @@ from Frame import Frame
 from BeautifulSoup import Tag
 TAG_COQDOC = "command-coqdoc"
 
+
 class Coqdoc_Frame(Frame):
   """ A coqdoc_frame is a frame with an added command-coqdoc section. """
   def __init__(self, id = 0, command = None, 
@@ -23,12 +24,15 @@ class Coqdoc_Frame(Frame):
     return False
 
   def fromxml(self, element):
-    raise Exception("Not implemented, TODO")
-    
+    """ Instantiate the data using the given element.
+    """ 
+    Frame.fromxml(self, element)
+    self._command_coqdoc = element.find(TAG_COQDOC)
+      
   def toxml(self, doc):
     """ Convert this frame to XML. """
     frame_xml = Frame.toxml(self, doc)
-    tag = Tag(doc, "command-coqdoc")
+    tag = Tag(doc, TAG_COQDOC)
     
     for child in self._command_coqdoc:
       tag.append(child)

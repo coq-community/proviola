@@ -1,4 +1,5 @@
 from BeautifulSoup import Tag
+from coqdoc_frame import Coqdoc_Frame
 
 class Scene(object):
   def __init__(self, no = 0):
@@ -43,7 +44,7 @@ class Scene(object):
     return self._type
   
   def set_number(self, number):
-    """ Set this scene's sceneNumber (self._no) """
+    """ Set this scene's scenenumber (self._no) """
     self._no = number
     
   def set_type(self, type):
@@ -52,7 +53,6 @@ class Scene(object):
     Arguments:
      - type: A string, one of doc or code.
     """
-    
     self._type = type
   
   def toxml(self, document):
@@ -64,13 +64,29 @@ class Scene(object):
       element[key] = value
         
 
-    element["sceneNumber"] = self._no
+    element["scenenumber"] = self._no
     element["class"] = self._type
 
     for sub in self._subscenes:
       element.append(sub.get_reference(document))
     
     return element
+ 
+  def fromxml(self, element):
+    """ Unmarshall the scene from the given element.
+    """
+    self.set_attributes(element.attrs)
+    self.set_type(element['class'])
+    self.set_number(['scenenumber'])
+
+    for child in element:
+      if child.name == "scene":
+        sub_scene = Scene()
+        sub_scene.fromxml(child)
+      elif child.name == "frame-reference":
+        sub_scene = Coqdoc_Frame(id = child["framenumber"])
+
+      self.add_scene(sub_scene)
   
   def getId(self):
     """ Getter for number. """

@@ -1,6 +1,7 @@
 import unittest
 import re
 import sys
+from os.path import join, dirname, abspath
 
 sys.path.append("../../")
 import coqdoc_parser
@@ -10,7 +11,12 @@ from coqdoc_movie import Coqdoc_Movie
 from BeautifulSoup import BeautifulSoup, BeautifulStoneSoup
 
 class Coqdoc_Test(unittest.TestCase):
-  
+
+  def normalize(self, path):
+    """ Normalize the path to the absolute path of the directory of __file__ """
+    return join(dirname(abspath(__file__)), path)
+
+
   def setUp(self):
     self._parser = coqdoc_parser.Coqdoc_Parser()
     
@@ -18,7 +24,7 @@ class Coqdoc_Test(unittest.TestCase):
     """ Comments are exported properly. """
     
     # Preface.html (from the SF course notes) contains a "Version" comment. 
-    file_contents = open("data/Preface.html", 'r').read()
+    file_contents = open(self.normalize("data/Preface.html"), 'r').read()
     
     self._parser.feed(file_contents)
     movie = self._parser.get_coqdoc_movie().toxml()
@@ -32,7 +38,7 @@ class Coqdoc_Test(unittest.TestCase):
      
   def test_nested(self):
     """ Nested divs should produce nested scenes. """
-    file_contents = open("data/nested/nested.html", 'r').read()
+    file_contents = open(self.normalize("data/nested/nested.html"), 'r').read()
     self._parser.feed(file_contents)
     movie = self._parser.get_coqdoc_movie()
     
@@ -40,7 +46,7 @@ class Coqdoc_Test(unittest.TestCase):
     
   def test_attributes(self):
     """ Attributes should carry over. """
-    file_contents = open("data/Preface.html", 'r').read()
+    file_contents = open(self.normalize("data/Preface.html"), 'r').read()
     self._parser.feed(file_contents)
     movie = self._parser.get_coqdoc_movie().toxml()
     
@@ -50,7 +56,7 @@ class Coqdoc_Test(unittest.TestCase):
   
   def test_entities(self):
     """ HTML entities should not produce an error. """
-    file_contents = open("data/ents/ents.html", 'r').read()
+    file_contents = open(self.normalize("data/ents/ents.html"), 'r').read()
     self._parser.feed(file_contents)
     movie = self._parser.get_coqdoc_movie()
     movie = movie.toxml()
@@ -60,7 +66,8 @@ class Coqdoc_Test(unittest.TestCase):
       
   def test_nested_html(self):
     """ HTML in doc should get copied correctly. """
-    file_contents = open("data/nested/nested_html.html", 'r').read()
+    file_contents = open(self.normalize("data/nested/nested_html.html"), 
+                         'r').read()
     self._parser.feed(file_contents)
     movie = self._parser.get_coqdoc_movie().toxml()
     if movie.findAll(name="h1"):
@@ -98,7 +105,7 @@ class Coqdoc_Test(unittest.TestCase):
   def test_multiple(self):
     """ Multiple commands on one line are parsed properly. 
     """
-    commands = open("data/multiple/Basics.html", "r").read()
+    commands = open(self.normalize("data/multiple/Basics.html"), "r").read()
     self._parser.feed(commands)
     movie = self._parser.get_coqdoc_movie()
     
@@ -106,7 +113,7 @@ class Coqdoc_Test(unittest.TestCase):
    
   def test_title(self):
     """ Test if title is set properly. """
-    file_content = open("data/Preface.html", 'r').read()
+    file_content = open(self.normalize("data/Preface.html"), 'r').read()
     self._parser.feed(file_content)
     
     self.assertTrue("Preface" in self._parser.get_coqdoc_movie()._title)

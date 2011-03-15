@@ -2,6 +2,9 @@ Proviola, a tool for proof reanimation.
 
 - Description: TODO
 
-- Dependencies: requires a stable installation of the BeautifulSoup library (the 3.2 branch), as can be found at http://pypi.python.org/pypi/BeautifulSoup/3.2.0 . 
+- Dependencies: 
+== Beatiful soup ==
+  - This tool (in particular: the coqdoc_to_flm extension) requires a stable installation of the BeautifulSoup library (the 3.2 branch), as can be found at http://pypi.python.org/pypi/BeautifulSoup/3.2.0 . 
+  - Apply the patch in workarounds/beatifulstonesoup.stylesheet.patch to the installed BeautifulSoup.py: this fixes a bug where the <? xml-stylesheet ...> PI gets replaced by the <? xml ...> PI.
 
 Do *not* use the 3.1 branch provided in aptitude, as this branch is buggy and won't work with the Proviola.

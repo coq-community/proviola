@@ -1,0 +1,9 @@
+1384c1384
+<         if text[:3] == "xml":
+---
+>         if text[:4] == "xml ":
+1385a1386,1389
+> 
+>         if text.endswith('?'):
+>           text = text.rstrip('?')
+> 

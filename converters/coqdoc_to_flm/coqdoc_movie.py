@@ -27,8 +27,8 @@ class Coqdoc_Movie(Movie):
     if title:
       self._title += title
 
-  def toxml(self):
-    frame_doc = Movie.toxml(self)
+  def toxml(self, stylesheet="proviola.xsl"):
+    frame_doc = Movie.toxml(self, stylesheet)
     
     frame_doc.insert(1, Declaration('DOCTYPE movie [<!ENTITY nbsp "&#160;">]'))
     doc_root = frame_doc.movie
@@ -43,12 +43,22 @@ class Coqdoc_Movie(Movie):
 
   def fromxml(self, xml):
     """ Unmarshall the given xml tree into a Coqdoc_movie. """
-    for frame_xml in xml.film:
+    
+    for frame_xml in xml.film.findAll(name="frame"):
       frame = Coqdoc_Frame()
       frame.fromxml(frame_xml)
       self.addFrame(frame)
 
-    for scene_xml in xml.scenes:
+    for scene_xml in xml.scenes.findAll(name="scene", recursive = False):
       scene = Scene()
       scene.fromxml(scene_xml)
+      self._replace_frames(scene)
       self.add_scene(scene)
+
+  def _replace_frames(self, scene):
+    """ Replace the frames in scene by the actual frames in the movie. """
+    for sub in scene.get_subscenes():
+      if sub.is_scene():
+        self._replace_frames(sub)
+      else:
+        scene.replace_frame(sub, self.getFrameById(sub.getId()))

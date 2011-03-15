@@ -26,7 +26,7 @@ TAG_RES = "response"
 class Frame:
   """ A class for frames """
 
-  def __init__(self, id = 0, command = None, response = None):
+  def __init__(self, id = -1, command = None, response = None):
     """ A frame always has an id and a command, but optionally a response 
     """
     self._id = id

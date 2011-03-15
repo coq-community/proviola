@@ -35,12 +35,7 @@ class Movie(object):
   
   def fromxml(self, document):
     """ Load the movie frames from the given xml document """
-    
-    film = document.movie.film
-    frameElements = film.findAll(name = TAG_FRAME)
-    
-    
-    for element in frameElements:
+    for element in document.movie.film:
       frame = Frame()
       frame.fromxml(element)
       self.addFrame(frame)
@@ -101,4 +96,4 @@ class Movie(object):
 
   def getFrameById(self, id):
     """ Return the frame identified by the given id. """
-    return self.getFrame(self._frameIds[id])
+    return self.getFrame(self._frameIds[int(id)])

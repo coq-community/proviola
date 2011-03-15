@@ -7,7 +7,7 @@ import coqdoc_parser
 import coqdoc_to_flm
 from coqdoc_movie import Coqdoc_Movie
 
-from BeautifulSoup import BeautifulSoup
+from BeautifulSoup import BeautifulSoup, BeautifulStoneSoup
 
 class Coqdoc_Test(unittest.TestCase):
   
@@ -171,9 +171,52 @@ class Coqdoc_Test(unittest.TestCase):
     new_movie = Coqdoc_Movie()
     new_movie.fromxml(movie)
 
-    print "Orig: \n",movie.scenes.prettify()
-    print "New: \n",new_movie.toxml().scenes.prettify()
     self.assertEquals(str(movie), str(new_movie.toxml()))
+
+  def test_from_xml_nested(self):
+    """ From xml should respect nested scenes/frame references. """
+    BeautifulStoneSoup.NESTABLE_TAGS["scene"] = []
+    tree = BeautifulStoneSoup(
+              """<movie>
+                  <film>
+                    <frame framenumber="0">
+                      <command>Blah</command>
+                      <command-coqdoc>Blah</command-coqdoc>
+                      <response> Gamma |- Goal</response>
+                    </frame>
+                    <frame framenumber="1">
+                      <command>Blah2</command>
+                      <command-coqdoc>Blah2</command-coqdoc>
+                      <response> Gamma2 |- Goal2</response>
+                    </frame>
+                  </film>
+                  <scenes>
+                    <scene scenenumber="1" class="test">
+                      <scene scenenumber="2" class="test">
+                        <frame-reference framenumber="0"/>
+                      </scene>
+                      <frame-reference framenumber="1"/>
+                      <scene scenenumber="3" class="test">
+                      </scene>
+                    </scene>
+                  </scenes>
+                </movie>""")
+
+    movie = Coqdoc_Movie()
+    movie.fromxml(tree)
+    for scene in movie.get_scenes():
+      for sub in scene.get_subscenes():
+        if sub.is_scene():
+          for grandchild in sub.get_subscenes():
+            self.assertTrue(grandchild.getCommand())
+            self.assertTrue(grandchild.get_coqdoc_command())
+            self.assertTrue(grandchild.getResponse())
+        else:
+          self.assertTrue(sub.getCommand())
+          self.assertTrue(sub.get_coqdoc_command())
+          self.assertTrue(sub.getResponse())
+
+
 
   @classmethod
   def get_suite(cls):

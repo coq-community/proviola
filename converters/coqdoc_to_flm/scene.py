@@ -31,10 +31,13 @@ class Scene(object):
     Result: 
       - self.subscenes = self.subscenes' + [scene] 
     """
-    
     scene.set_number(len(self._subscenes))
     self._subscenes.append(scene)
-  
+
+  def replace_frame(self, old_frame, new_frame):
+    """ Replace old_frame with new_frame. """
+    self._subscenes[self._subscenes.index(old_frame)] = new_frame
+
   def get_subscenes(self):
     """ Getter for self._subscenes. """
     return self._subscenes
@@ -76,10 +79,17 @@ class Scene(object):
     """ Unmarshall the scene from the given element.
     """
     self.set_attributes(element.attrs)
-    self.set_type(element['class'])
+
+    try:
+      self.set_type(element['class'])
+    except KeyError:
+      print "Class does not exist in element {el}, setting to doc.".\
+          format(el = element)
+      self.set_type("doc")
+
     self.set_number(['scenenumber'])
 
-    for child in element:
+    for child in element.findAll(recursive = False):
       if child.name == "scene":
         sub_scene = Scene()
         sub_scene.fromxml(child)
@@ -95,7 +105,7 @@ class Scene(object):
   def __str__(self):
     result = "Scene(id = {id}".format(id = self._no)
     for scene in self._subscenes:
-      result += ", sub_ref: {sub}".format(sub=scene.get)
+      result += ", sub_ref: {sub}".format(sub=scene)
     result += ")"
     return result
   

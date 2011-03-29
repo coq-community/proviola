@@ -1,3 +1,7 @@
+""" A reader for Coq script files. 
+    The parsing algorithm is rather naive: dot followed by whitespace 
+    equals command. """
+
 # Author: Carst Tankink carst 'at' cs 'dot' ru 'dot' nl
 # Copyright: Radboud University Nijmegen
 #
@@ -15,7 +19,6 @@
 # 
 # You should have received a copy of the GNU General Public License
 # along with Proof Camera.  If not, see <http://www.gnu.org/licenses/>.
-
 
 import re
 import string
@@ -125,12 +128,13 @@ class CoqReader(Reader):
         self.unfinished = command
         command = ""
       else:
-        
         self.unfinished = ""
         result.append(command)
         command = self.getCommand()
-
-
+    
+    if self.unfinished:
+      result.append(self.unfinished)
+      
     return result
   
   def make_frames(self, server_url = None, server_group = None):

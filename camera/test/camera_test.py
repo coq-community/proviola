@@ -5,7 +5,7 @@ class TestCamera(unittest.TestCase):
   """ Test cases for the camera script and utilities. """
 
   def testParser(self):
-    """ Test that the parser is set up correctly. """
+    """ Test that the command line parser is set up correctly. """
     parser = camera.setupParser()
     
     self.assertTrue(parser.description)

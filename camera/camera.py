@@ -88,7 +88,6 @@ def main(argv = None):
 
   proofScript = options.script
   
-
   logging.debug("Processing: %s"%proofScript)
 
   movie = make_film(filename=proofScript, pwurl = options.service, group = options.group)

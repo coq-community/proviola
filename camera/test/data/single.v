@@ -1,0 +1,1 @@
+Goal forall x, x->x.

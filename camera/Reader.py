@@ -18,26 +18,25 @@
 
 class Reader:
   def __init__(self):
+    """ Constructs an empty reader. """
     self.script = ""
     self.line = ""
 
   def getLine(self):
+    """ Sets the line field to the next line in the script. 
+        Returns the line. """
     if self.line == "":
       self.line = self.getNextLine()
-
+    
   def findNewLine(self):
     if self.script == None:
       return -1
     
     return self.script.find("\n")
 
-
-  def set_data(self, data):
-    self.script = data
-
   def read_file(self, filename):
     file = open(filename, 'r')
-    self.set_data(file.read())
+    self.add_code(file.read())
     file.close()
     
   def getNextLine(self):  

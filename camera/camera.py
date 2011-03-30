@@ -122,7 +122,7 @@ def make_film(filename, pwurl = None, group = "nogroup"):
 
   extension = splitext(filename)[1] 
   reader = Reader.getReader(extension = extension)
-  reader.set_data(open(filename, 'r').read())
+  reader.add_code(open(filename, 'r').read())
   
   try:
     return reader.make_frames(pwurl, group)

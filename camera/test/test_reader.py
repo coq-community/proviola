@@ -1,4 +1,4 @@
-from Reader import getReader
+from Reader import Reader, getReader
 from CoqReader import CoqReader
 from Isabelle_Reader import Isabelle_Reader
 import unittest
@@ -12,4 +12,12 @@ class Test_Reader(unittest.TestCase):
                                CoqReader))
     self.assertTrue(isinstance(getReader(extension = ".thy"), 
                                Isabelle_Reader))
+  def test_add_code(self):
+    """ Test setting data. """
+    data = "Test data"
+    reader = Reader()
+    reader.add_code(data)
+    self.assertEquals(data, reader.script)
     
+  def test_reader_newline(self):
+    """ Test that getting a new line yields the desired result. """ 

@@ -24,13 +24,13 @@ class Test_Coq_Proofweb(unittest.TestCase):
     
   def test_empty_v(self):
     """ Empty file should return empty film. """
-    self.reader.set_data("")
+    self.reader.add_code("")
     result = self.reader.make_frames(self.pw_url, self.group)
     self.assertEquals(result.getLength(), 0)
   
   def test_single(self):
     """ Single commands should return a goal. """
-    self.reader.set_data("Goal forall x, x->x.")
+    self.reader.add_code("Goal forall x, x->x.")
     movie = self.reader.make_frames(self.pw_url, self.group)
     self.assertEquals(movie.getLength(), 1)
     

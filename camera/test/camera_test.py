@@ -1,5 +1,5 @@
 import unittest 
-import camera
+from camera import camera
 
 class TestCamera(unittest.TestCase):
   """ Test cases for the camera script and utilities. """

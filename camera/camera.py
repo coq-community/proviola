@@ -18,11 +18,12 @@
 # You should have received a copy of the GNU General Public License
 # along with Proof Camera.  If not, see <http://www.gnu.org/licenses/>.
 
-import sys
-import time
-from Movie import Movie
+
 import Reader
+
+import sys
 import os
+from os.path import splitext
 import logging
 from argparse import ArgumentParser
 
@@ -53,17 +54,20 @@ def setupParser():
                     default="http://hair-dryer.cs.ru.nl/proofweb/index.html",
                     help="""URL for web service to talk to prover
                           (default: %(default)s)""")
+  
   parser.add_argument("--prover",
                     action="store", dest="prover",
                     default="coq",
                     help="Prover to use (default: %(default)s).")
+  
   parser.add_argument("--stylesheet",
                     action="store", dest="stylesheet",
                     default="proviola.xsl",
                     help="URI at which the XSL stylesheet can be found\
                       (default: %(default)s)")
   
-  parser.add_argument("script", action="store", help="Script from which to make a movie")
+  parser.add_argument("script", action="store", 
+                      help="Script from which to make a movie")
 
   parser.add_argument("movie", action="store", nargs="?", default=None,
                       help="Movie file in which to store the constructed movie")
@@ -92,10 +96,10 @@ def main(argv = None):
 
   movie = make_film(filename=proofScript, pwurl = options.service, group = options.group)
 
-  if parser.movie:
+  if options.movie:
     filmName = parser.movie
   else:
-    filmName = Reader.getReader(proofScript).basename + ".flm" 
+    filmName = splitext(proofScript)[0] + ".flm" 
 
   directory = os.path.dirname(filmName)
 
@@ -116,7 +120,10 @@ def make_film(filename, pwurl = None, group = "nogroup"):
     - group: The group used to log in.
   """ 
 
-  reader = Reader.getReader(filename)
+  extension = splitext(filename)[1] 
+  reader = Reader.getReader(extension = extension)
+  reader.set_data(open(filename, 'r').read())
+  
   try:
     return reader.make_frames(pwurl, group)
   except Exception as e:

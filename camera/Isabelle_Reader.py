@@ -10,15 +10,12 @@ from Movie import Movie
 suffix = '.thy'
 
 class Isabelle_Reader(Reader):
-  def __init__(self, filename):
-    self._filename = filename
-    (self.basename, unused_ext) = os.path.splitext(self._filename)
-  
   def make_frames(self, service_uri = "http://localhost:8080/xmlrpc/xmlrpc",
+                        filename = "",
                         *args):
     document = Movie()
-    isabelle_session = Isabelle_Session(service_uri, self._filename)
-    contents = open(self._filename, 'r').read()
+    isabelle_session = Isabelle_Session(service_uri, filename)
+    contents = self.script
     isabelle_session.add(contents)
     #TODO: Poll for change (or comet-push on change?)
     time.sleep(10)
@@ -71,7 +68,6 @@ class Isabelle_Reader(Reader):
   def filter_non_spans(self, node):
     """ Recursively filter out the non-spans below the current node.
     """
-    spans_and_text = []
     for child in node.childNodes:
       if child.nodeType != Node.TEXT_NODE and child.tagName == "data":
         data = child

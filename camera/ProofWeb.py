@@ -112,7 +112,6 @@ class ProofWeb:
       logging.debug("Error sending command to ProofWeb")
       return ""
 
-    
     goal = self.strip_decoration(prover.read())
     if goal == '<':
       return self.send(command)

@@ -23,6 +23,7 @@
 import re
 import string
 from time import sleep
+from os.path import splitext
 
 from Reader import Reader
 from Movie import Movie
@@ -32,21 +33,10 @@ from Prover import get_prover
 suffix = '.v'
 
 class CoqReader(Reader):
-  def __init__(self, filename = ""):
+  def __init__(self):
     Reader.__init__(self)
-    self.suffix = ".v"
     self.unfinished = None
-    if filename != "":
-      self.basename = filename[:-len(suffix)]
-      self.read(filename)
 
-  def coqUndot(self, scriptText):
-    result = scriptText.replace("Undo.Undo", "Undo. ndo")
-    result = result.replace("...", "__.") 
-    result = result.replace("..", "__")
-    result = re.sub(r'\.[a-zA-Z1-9_]', "AA", result)
-    return result
-  
   def getComment(self, acc, open = 1):
     char = self.readChar() 
     while char != None and open > 0:

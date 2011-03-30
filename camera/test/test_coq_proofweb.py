@@ -1,9 +1,10 @@
 import unittest
 from BeautifulSoup import BeautifulStoneSoup
 from os.path import join, dirname, abspath
-from StringIO import StringIO
+
 import Reader
 
+#TODO: This does not exercise the ProofWeb code, but the reader.
 
 class Test_Coq_Proofweb(unittest.TestCase):
   """ Test cases for Coq using ProofWeb """
@@ -19,20 +20,18 @@ class Test_Coq_Proofweb(unittest.TestCase):
     """ Setup Proofweb settings. """
     self.pw_url = "http://hair-dryer.cs.ru.nl/proofweb/index.html"
     self.group = "nogroup"
-    self.dir = dirname(abspath(__file__))
+    self.reader = Reader.getReader(extension = ".v")
     
   def test_empty_v(self):
     """ Empty file should return empty film. """
-    data_url = join(self.dir, "data/empty.v")
-    reader = Reader.getReader(data_url)
-    result = reader.make_frames(self.pw_url, self.group)
+    self.reader.set_data("")
+    result = self.reader.make_frames(self.pw_url, self.group)
     self.assertEquals(result.getLength(), 0)
   
   def test_single(self):
     """ Single commands should return a goal. """
-    data_url = join(self.dir, "data/single.v")
-    reader = Reader.getReader(data_url)
-    movie = reader.make_frames(self.pw_url, self.group)
+    self.reader.set_data("Goal forall x, x->x.")
+    movie = self.reader.make_frames(self.pw_url, self.group)
     self.assertEquals(movie.getLength(), 1)
     
     frame = movie.getFrame(0)
@@ -42,6 +41,8 @@ class Test_Coq_Proofweb(unittest.TestCase):
   ============================
    forall x : Type, x -> x
 """)
+  
+  
                     
 
   @classmethod

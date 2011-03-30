@@ -16,7 +16,6 @@
 # You should have received a copy of the GNU General Public License
 # along with Proof Camera.  If not, see <http://www.gnu.org/licenses/>.
 
-
 class Reader:
   def __init__(self):
     self.script = ""
@@ -32,9 +31,13 @@ class Reader:
     
     return self.script.find("\n")
 
-  def read(self, filename):
+
+  def set_data(self, data):
+    self.script = data
+
+  def read_file(self, filename):
     file = open(filename, 'r')
-    self.script = file.read()
+    self.set_data(file.read())
     file.close()
     
   def getNextLine(self):  
@@ -71,12 +74,12 @@ import CoqReader
 import Isabelle_Reader
 import os
 
-def getReader(filename):
+def getReader(extension = None):
   # Setup dictionary of possible readers
   readers = {} # suffix -> (String -> Reader)
   readers[CoqReader.suffix] = CoqReader.CoqReader
   readers[Isabelle_Reader.suffix] = Isabelle_Reader.Isabelle_Reader
   
-  return readers[os.path.splitext(filename)[1]](filename)
+  return readers[extension]()
 
 

@@ -27,22 +27,15 @@ class Reader:
         Returns the line. """
     if self.line == "":
       self.line = self.getNextLine()
-    
-  def findNewLine(self):
-    if self.script == None:
-      return -1
-    
-    return self.script.find("\n")
-
-  def read_file(self, filename):
-    file = open(filename, 'r')
-    self.add_code(file.read())
-    file.close()
-    
+      
+    return self.line
+  
   def getNextLine(self):  
-    if self.findNewLine() >= 0:
-      result = self.script[0:self.findNewLine() + 1]
-      self.script =  self.script[self.findNewLine() + 1 :]
+    """ Get the next line in the script. """
+    newLine = self.script.find("\n") if self.script else -1
+    if newLine >= 0:
+      result = self.script[0:newLine + 1]
+      self.script =  self.script[newLine + 1 :]
       
     else:
       result = self.script
@@ -50,22 +43,25 @@ class Reader:
     return result  
     
   def readChar(self):
-    self.getLine()
-    if len(self.line) == 0:
+    """ Read the next character in the script, updating the position. """
+    line = self.getLine()
+    if len(line) == 0:
       return None
     
-    char = self.line[0]
+    char = line[0]
     self.line = self.line[1:]
     return char
   
   def peekChar(self):
-    self.getLine()
-    if len(self.line) > 0:
-      return self.line[0]
+    """ Read the next character in the script, not updating the position. """
+    line = self.getLine()
+    if len(line) > 0:
+      return line[0]
     else:
       return ' '
   
   def add_code(self, code):
+    """ Add the given code to the managed script. """
     self.script += code
 
       

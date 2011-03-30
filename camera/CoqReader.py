@@ -20,10 +20,8 @@
 # You should have received a copy of the GNU General Public License
 # along with Proof Camera.  If not, see <http://www.gnu.org/licenses/>.
 
-import re
 import string
 from time import sleep
-from os.path import splitext
 
 from Reader import Reader
 from Movie import Movie

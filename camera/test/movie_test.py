@@ -1,17 +1,17 @@
 import unittest
 from Movie import Movie
 from Frame import Frame
-from camera import setupParser
+from camera.camera import setupParser
 
 TESTFILM_PATH = "/tmp/testFilm.flm"
-class TestMovie(unittest.TestCase):
+class Test_Movie(unittest.TestCase):
   """ A set of test cases for movies. """
 
   def setUp(self):
     """ Setup: just construct a movie """
     self.movie = Movie()
  
-  def testAddFrame(self):
+  def test_AddFrame(self):
     """ Addition of a frame in order should yield correct IDs """
     frame1 = Frame(command = "command1", response = "response1")    
     self.movie.addFrame(frame1)

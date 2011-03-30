@@ -90,7 +90,7 @@ class Movie(object):
 
   def openFile(self, fileName):
     """ Open an XML file and load its data in memory. """
-    doc = BeautifulStoneSoup(open(fileName, 'r').read_file())
+    doc = BeautifulStoneSoup(open(fileName, 'r').read())
 
     self.fromxml(doc)
 

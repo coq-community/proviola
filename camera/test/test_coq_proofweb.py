@@ -8,14 +8,6 @@ import Reader
 
 class Test_Coq_Proofweb(unittest.TestCase):
   """ Test cases for Coq using ProofWeb """
-  
-  def _normalize_xml(self, xml):
-    """ Return a normalized XML file: one parsed by xml.dom.minidom and 
-        pretty printed with spacing two (to increase readability in failed
-        results.
-    """
-    return xml.prettify().strip()
-  
   def setUp(self):
     """ Setup Proofweb settings. """
     self.pw_url = "http://hair-dryer.cs.ru.nl/proofweb/index.html"
@@ -40,10 +32,7 @@ class Test_Coq_Proofweb(unittest.TestCase):
   
   ============================
    forall x : Type, x -> x
-""")
-  
-  
-                    
+""")                    
 
   @classmethod
   def get_suite(cls):

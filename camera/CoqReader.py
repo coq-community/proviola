@@ -124,6 +124,17 @@ class CoqReader(Reader):
       result.append(self.unfinished)
       
     return result
+
+  def isComment(self, text):
+    """ Return whether the given text is a comment. """
+    return len(text.split()) <= 0 or\
+           text.split()[0].startswith("(*") and text.endswith("*)")
+  
+  def isCommand(self, text):
+    """ Return whether the given text is a Coq comment. """
+    text = text.rstrip()
+    if text:
+      return self.terminator(text.rstrip()[len(text) - 1], 0)
   
   def make_frames(self, server_url = None, server_group = None):
     """ Splits the file stored in self.script into seperate commands, 
@@ -149,11 +160,3 @@ class CoqReader(Reader):
 
     return document
 
-  def isComment(self, text):
-    return len(text.split()) <= 0 or\
-           text.split()[0].startswith("(*") and text.endswith("*)")
-  
-  def isCommand(self, text):
-    text = text.rstrip()
-    if text:
-      return self.terminator(text.rstrip()[len(text) - 1], 0)

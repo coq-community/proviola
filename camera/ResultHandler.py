@@ -21,7 +21,6 @@
 import re
 from HTMLParser import HTMLParser
 
-
 """ Handle the HTML coming from ProofWeb.
 """
 class ResultHandler(HTMLParser):

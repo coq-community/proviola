@@ -29,7 +29,7 @@ import logging
 
 from ResultHandler import ResultHandler
 
-class ProofWeb:
+class ProofWeb(object):
   def __init__(self, url, group = "nogroup", user = "nobody", 
                           pswd = "anon", prover="coq"):
     self.url = url
@@ -91,7 +91,6 @@ class ProofWeb:
 
   """Send the given command to the prover, and give the goal returned by ProofWeb.
   """
-
   def send(self, command):
 
     cmdarg = "%d__PWT__%s__PWT__%d"

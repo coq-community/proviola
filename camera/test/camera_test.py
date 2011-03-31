@@ -3,15 +3,29 @@ from camera import camera
 
 class TestCamera(unittest.TestCase):
   """ Test cases for the camera script and utilities. """
-
-  def testParser(self):
-    """ Test that the command line parser is set up correctly. """
-    parser = camera.setupParser()
+  
+  def setUp(self):
+    """ Create a parser. """
+    self._parser = camera.setupParser()
+  
+  def test_parser_default(self):
+    """ Default arguments. """
+    result = self._parser.parse_args(["script.v"])
     
-    self.assertTrue(parser.description)
+    self.assertEquals(result.coq_path, "/usr/bin/coqtop")
+    self.assertEquals(result.service, 
+                      "http://hair-dryer.cs.ru.nl/proofweb/index.html")
+  def test_parser_local(self):
+    """ Test asking for a local Coq. """
+    result = self._parser.parse_args(["--coqtop=foo", "script.v"])
+    self.assertEquals(result.coq_path, "foo")
+    
+  def test_parser_short(self):
+    """ Test that the command line parser is set up correctly. """
+    self.assertTrue(self._parser.description)
     
     # Test short arguments 
-    results_short = parser.parse_args(
+    results_short = self._parser.parse_args(
         ["-ucarst", 
          "-gmathwiki",
          "-phackzor",
@@ -24,8 +38,10 @@ class TestCamera(unittest.TestCase):
     self.assertEquals(results_short.script,   "script.v")
     self.assertFalse(results_short.movie)
 
+  def test_parser_long(self):
+    """ Test for long arguments. """
     #Test long arguments.
-    results_long = parser.parse_args(
+    results_long = self._parser.parse_args(
         ["--user=carst",
          "--group=mathwiki",
          "--password=hackzor",
@@ -43,9 +59,10 @@ class TestCamera(unittest.TestCase):
     self.assertEquals(results_long.stylesheet, "new.xsl")
     self.assertEquals(results_long.movie, "movie.xml")
       
-    # Requesting help should not fail
+  def test_parse_help(self):
+    """ Test requesting help. """
     try:
-      parser.parse_args(["-h"])
+      self._parser.parse_args(["-h"])
     except SystemExit as e:
       self.assertEquals(type(e), type(SystemExit()))
       self.assertEquals(e.code, 0)
@@ -54,7 +71,7 @@ class TestCamera(unittest.TestCase):
     else:
       self.fail("SystemExit exception expected.")
 
-
+  
 if __name__ == '__main__':
   suite = unittest.TestLoader().loadTestsFromTestCase(TestCamera)
   unittest.TextTestRunner(verbosity=2).run(suite)

@@ -1,20 +1,16 @@
-import unittest 
+import unittest
+from tempfile import NamedTemporaryFile
+from mock import Mock, patch 
 from camera import camera
 
+_mock_get_prover = Mock()
 class TestCamera(unittest.TestCase):
   """ Test cases for the camera script and utilities. """
   
   def setUp(self):
     """ Create a parser. """
     self._parser = camera.setupParser()
-  
-  def test_parser_default(self):
-    """ Default arguments. """
-    result = self._parser.parse_args(["script.v"])
-    
-    self.assertEquals(result.coq_path, "/usr/bin/coqtop")
-    self.assertEquals(result.service, 
-                      "http://hair-dryer.cs.ru.nl/proofweb/index.html")
+
   def test_parser_local(self):
     """ Test asking for a local Coq. """
     result = self._parser.parse_args(["--coqtop=foo", "script.v"])
@@ -71,7 +67,28 @@ class TestCamera(unittest.TestCase):
     else:
       self.fail("SystemExit exception expected.")
 
+  @patch('camera.camera.get_prover', _mock_get_prover)
+  def test_use_specified_coqtop(self):
+    """ Use the prover (Coqtop) specified in make_film. """
+    f = NamedTemporaryFile(suffix = ".v")
+    camera.make_film(f.name, coqtop = "/usr/bin/coqtop")
+    f.close()
+    
+    self.assertTrue("/usr/bin/coqtop" in _mock_get_prover.call_args[1].values(),
+                    "Specified path not used.")
+  @patch('camera.camera.get_prover', _mock_get_prover)  
+  def test_use_specified_proofweb(self):
+    """ Use the prover (ProofWeb) specified in make_film. """
+    f = NamedTemporaryFile(suffix = ".v")
+    camera.make_film(f.name, 
+                     pwurl = "http://prover.example.com")
+    f.close()
+    
+    self.assertTrue("http://prover.example.com" in
+                     _mock_get_prover.call_args[1].values(),
+                    "Specified path not used.")
   
+        
 if __name__ == '__main__':
   suite = unittest.TestLoader().loadTestsFromTestCase(TestCamera)
   unittest.TextTestRunner(verbosity=2).run(suite)

@@ -50,16 +50,16 @@ def setupParser():
                     action="store", dest="pswd",
                     default="anon",
                     help="Password for user")
+  
   parser.add_argument("--coqtop", 
                       action = "store", dest = "coq_path",
-                      default="/usr/bin/coqtop"
+                      default=None
                       )
   
   parser.add_argument("--service_url",
                     action="store", dest="service",
-                    default="http://hair-dryer.cs.ru.nl/proofweb/index.html",
-                    help="""URL for web service to talk to prover
-                          (default: %(default)s)""")
+                    default=None,
+                    help="URL for web service to talk to prover")
   
   parser.add_argument("--prover",
                     action="store", dest="prover",
@@ -114,7 +114,8 @@ def main(argv = None):
 
   movie.toFile(filmName, options.stylesheet)
 
-def make_film(filename, pwurl = None, group = "nogroup"):
+def make_film(filename, pwurl = None, group = "nogroup",
+                        coqtop = None):
   """Main method of the program/script: This creates a flattened 'film' for
    the given file filename.
 
@@ -131,7 +132,8 @@ def make_film(filename, pwurl = None, group = "nogroup"):
   reader.add_code(open(filename, 'r').read())
   
   try:
-    prover = get_prover(pwurl, group)
+    prover = get_prover(path = coqtop, url = pwurl, group = group)
+
     return reader.make_frames(prover = prover)
   except Exception as e:
     print "Exception: %s"%`e`

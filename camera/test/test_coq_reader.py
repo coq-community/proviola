@@ -1,9 +1,6 @@
 import unittest
 import CoqReader
-
 from mock import Mock
-
-#TODO: This does not exercise the ProofWeb code, but the reader.
 
 class Test_Coq_Reader(unittest.TestCase):
   """ Test cases for Coq using ProofWeb """

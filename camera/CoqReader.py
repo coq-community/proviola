@@ -136,22 +136,22 @@ class CoqReader(Reader):
     if text:
       return self.terminator(text.rstrip()[len(text) - 1], 0)
   
-  def make_frames(self, server_url = None, server_group = None):
+  def make_frames(self, prover = None):
     """ Splits the file stored in self.script into seperate commands, 
-        and pairs these commands to their responses as provided by Proofweb.
+        and pairs these commands to their responses as provided by prover.
 
         Arguments:
-        - server_url: The URL of the ProofWeb server.
-        - server_group: The group used for logging in to the server.
+        - prover: The prover to send commands to.
     """
+    
     document = Movie()
-    pw = get_prover(server_url, server_group) 
     command = self.getCommand()
+    
     while command != None and len(command) != 0:
       if self.isComment(command):
         response = None
       else:
-        response = pw.send(command)
+        response = prover.send(command)
       
       id = 0
       document.addFrame(Frame(id, command, response))

@@ -26,6 +26,7 @@ import os
 from os.path import splitext
 import logging
 from argparse import ArgumentParser
+from Prover import get_prover
 
 def setupParser():
   """ Setup a command line parser """
@@ -49,6 +50,11 @@ def setupParser():
                     action="store", dest="pswd",
                     default="anon",
                     help="Password for user")
+  parser.add_argument("--coqtop", 
+                      action = "store", dest = "coq_path",
+                      default="/usr/bin/coqtop"
+                      )
+  
   parser.add_argument("--service_url",
                     action="store", dest="service",
                     default="http://hair-dryer.cs.ru.nl/proofweb/index.html",
@@ -125,11 +131,11 @@ def make_film(filename, pwurl = None, group = "nogroup"):
   reader.add_code(open(filename, 'r').read())
   
   try:
-    return reader.make_frames(pwurl, group)
+    prover = get_prover(pwurl, group)
+    return reader.make_frames(prover = prover)
   except Exception as e:
     print "Exception: %s"%`e`
     return None
-
 
 if __name__ == "__main__":
   sys.exit(main())

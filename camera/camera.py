@@ -52,11 +52,15 @@ def setupParser():
                     help="Password for user")
   
   parser.add_argument("--coqtop", 
-                      action = "store", dest = "coq_path",
+                      action = "store", dest = "coqtop",
                       default=None
                       )
   
-  parser.add_argument("--service_url",
+  parser.add_argument("--timeout", "-t",
+                      action = "store", dest = "timeout",
+                      type = int, default = 1)
+    
+  parser.add_argument("--service-url",
                     action="store", dest="service",
                     default=None,
                     help="URL for web service to talk to prover")
@@ -100,7 +104,11 @@ def main(argv = None):
   
   logging.debug("Processing: %s"%proofScript)
 
-  movie = make_film(filename=proofScript, pwurl = options.service, group = options.group)
+  movie = make_film(filename=proofScript, 
+                    coqtop = options.coqtop,
+                    timeout = options.timeout,
+                    pwurl = options.service, 
+                    group = options.group)
 
   if options.movie:
     filmName = parser.movie
@@ -115,7 +123,7 @@ def main(argv = None):
   movie.toFile(filmName, options.stylesheet)
 
 def make_film(filename, pwurl = None, group = "nogroup",
-                        coqtop = None):
+                        coqtop = None, timeout = 1):
   """Main method of the program/script: This creates a flattened 'film' for
    the given file filename.
 
@@ -132,7 +140,8 @@ def make_film(filename, pwurl = None, group = "nogroup",
   reader.add_code(open(filename, 'r').read())
   
   try:
-    prover = get_prover(path = coqtop, url = pwurl, group = group)
+    prover = get_prover(path = coqtop, timeout = timeout,
+                        url = pwurl, group = group)
 
     return reader.make_frames(prover = prover)
   except Exception as e:

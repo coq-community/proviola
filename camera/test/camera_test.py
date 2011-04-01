@@ -4,6 +4,7 @@ from mock import Mock, patch
 from camera import camera
 
 _mock_get_prover = Mock()
+ 
 class TestCamera(unittest.TestCase):
   """ Test cases for the camera script and utilities. """
   
@@ -13,8 +14,10 @@ class TestCamera(unittest.TestCase):
 
   def test_parser_local(self):
     """ Test asking for a local Coq. """
-    result = self._parser.parse_args(["--coqtop=foo", "script.v"])
-    self.assertEquals(result.coq_path, "foo")
+    result = self._parser.parse_args(["--coqtop=foo", "--timeout=5", 
+                                      "script.v"])
+    self.assertEquals(result.coqtop, "foo")
+    self.assertEquals(result.timeout, 5)
     
   def test_parser_short(self):
     """ Test that the command line parser is set up correctly. """
@@ -22,13 +25,15 @@ class TestCamera(unittest.TestCase):
     
     # Test short arguments 
     results_short = self._parser.parse_args(
-        ["-ucarst", 
+        ["-ucarst",
+         "-t5",
          "-gmathwiki",
          "-phackzor",
          "script.v"
         ])
 
     self.assertEquals(results_short.user,     "carst")
+    self.assertEquals(results_short.timeout,  5)
     self.assertEquals(results_short.group,    "mathwiki")
     self.assertEquals(results_short.pswd,     "hackzor")
     self.assertEquals(results_short.script,   "script.v")
@@ -41,7 +46,7 @@ class TestCamera(unittest.TestCase):
         ["--user=carst",
          "--group=mathwiki",
          "--password=hackzor",
-         "--service_url=http://proofweb.cs.ru.nl",
+         "--service-url=http://proofweb.cs.ru.nl",
          "--prover=isabelle",
          "--stylesheet=new.xsl", 
          "script.v",
@@ -87,8 +92,7 @@ class TestCamera(unittest.TestCase):
     self.assertTrue("http://prover.example.com" in
                      _mock_get_prover.call_args[1].values(),
                     "Specified path not used.")
-  
-        
+    
 if __name__ == '__main__':
   suite = unittest.TestLoader().loadTestsFromTestCase(TestCamera)
   unittest.TextTestRunner(verbosity=2).run(suite)

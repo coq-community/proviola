@@ -22,16 +22,17 @@ class Test_Movie(unittest.TestCase):
     frame3 = Frame(command = "command3", response = "response3")    
     self.movie.addFrame(frame3)
     
-    self.assertTrue(self.movie.getLength() == 3)
-    self.assertTrue(frame1.getId() == 0)
-    self.assertTrue(frame2.getId() == 1)
-    self.assertTrue(frame3.getId() == 2)
+    self.assertEquals(self.movie.getLength(), 3)
+    self.assertEquals(frame1.getId(), 0)
+    self.assertEquals(frame2.getId(), 1)
+    self.assertEquals(frame3.getId(), 2)
 
   def _storeOpenAndCompareMovie(self):
     self.movie.toFile(TESTFILM_PATH)
     importMov = Movie()
     importMov.openFile(TESTFILM_PATH)
-    self.assertTrue(self.movie.toxml() == importMov.toxml())
+    
+    self.assertEquals(str(self.movie.toxml()), str(importMov.toxml()))
 
   def testToFromXML(self):
     """ Writing and loading an empty Movie should give the same document """
@@ -39,7 +40,6 @@ class Test_Movie(unittest.TestCase):
       
   def testAddToFromXML(self):
     self.movie.addFrame(Frame(command="cmd", response="resp"))
-#    self.movie.toFile(TESTFILM_PATH)
     self._storeOpenAndCompareMovie()
   
   def testSemiEmptyExport(self):

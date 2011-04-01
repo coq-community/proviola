@@ -16,7 +16,8 @@
 # You should have received a copy of the GNU General Public License
 # along with Proof Camera.  If not, see <http://www.gnu.org/licenses/>.
 
-from BeautifulSoup import BeautifulStoneSoup, ProcessingInstruction, Tag
+from external.BeautifulSoup import BeautifulStoneSoup, ProcessingInstruction 
+from external.BeautifulSoup import Tag
 from Frame import TAG_FRAME, Frame
 
 TAG_FILM = "film"

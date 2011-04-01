@@ -5,7 +5,7 @@ class Prover(object):
 
 from ProofWeb import ProofWeb
 from coq_local import Coq_Local
-import which
+from external import which
 
 def local_which(program):
   """ Implementation of "which" for Python. """

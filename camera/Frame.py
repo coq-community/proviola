@@ -16,7 +16,7 @@
 # You should have received a copy of the GNU General Public License
 # along with Proof Camera.  If not, see <http://www.gnu.org/licenses/>.
 import logging
-from BeautifulSoup import Tag
+from external.BeautifulSoup import Tag
 
 TAG_FRAME = "frame"
 TAG_ID = "framenumber"

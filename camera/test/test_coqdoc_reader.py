@@ -1,6 +1,8 @@
 import unittest
 from coqdoc_reader import Coqdoc_Reader
+
 from mock import Mock
+from Prover import get_prover
 
 class Test_Coqdoc_Reader(unittest.TestCase):
   """ Test cases exercising a Coqdoc reader. """
@@ -65,8 +67,35 @@ class Test_Coqdoc_Reader(unittest.TestCase):
         
     result = self.reader.make_frames(prover = self.mock_prover)
     self.assertEquals(result.getFrame(0).getCommand(), "Code.")
+    self.assertEquals(result.getFrame(0).get_coqdoc_command(), "Code.")
     self.assertEquals(result.getFrame(0).getResponse(), "Result")
+  
+  def test_html_marked_code(self):
+    """ Code divs can (will) be marked up. """
+    span = '<span class="id" type="keyword">Goal</span> <span class="id" type="keyword">forall</span> <span class="id" type="var">x</span>, <span class="id" type="var">x</span>-&gt;<span class="id" type="var">x</span>.' 
+    markup = '<div class="code">' + span + '<br /></div>'
+    self.reader.add_code(self.template.format(body = markup))
     
+    result = self.reader.make_frames(prover = self.mock_prover)
+    
+    self.assertEquals(result.getFrame(0).getCommand(), "Goal forall x, x->x.")
+    self.assertEquals(result.getFrame(0).getResponse(), "Result")
+    self.assertEquals(str(result.getFrame(0).get_coqdoc_command()), span)
+    self.assertEquals(str(result.getFrame(1).get_coqdoc_command()), "<br />")
+
+  def test_html_marked_code_real(self):
+    """ Extracted code should be readable by the PA. """
+    markup = '<div class="code"><span class="id" type="keyword">Goal</span> <span class="id" type="keyword">forall</span> <span class="id" type="var">x</span>, <span class="id" type="var">x</span>-&gt;<span class="id" type="var">x</span>.</div>' 
+    self.reader.add_code(self.template.format(body = markup))
+    result = self.reader.make_frames(prover = get_prover())
+    
+    self.assertEquals(result.getFrame(0).getResponse(), """1 subgoal
+  
+  ============================
+   forall x : Type, x -> x
+""")
+    
+
   def test_attributes(self):
     """ A div should keep the attributes when converted to scenes. """
     self.reader.add_code(self.template.format(body = """

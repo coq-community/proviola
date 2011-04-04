@@ -101,7 +101,6 @@ class CoqReader(Reader):
 
   def parse(self, buffer):
     self.script += buffer
-    
     if self.unfinished:
       acc = self.unfinished
     else:

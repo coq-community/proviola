@@ -35,26 +35,53 @@ class Coqdoc_Reader(CoqReader):
       
     return self.parse(text)
   
+  def _replace_html(self, text):
+    """ Replace HTML entitities by ASCII equivalents. """
+    replacements = {
+          "&nbsp;": " ",
+          "&gt;"  : ">",
+          "&lt;"  : "<"}
+    
+    for key in replacements:
+      text = text.replace(key, replacements[key])
+      
+    return text
+  
   def _process_code(self, div):
+    """ Process a code div, returning a scene and the frames referenced.
+    """
     frames = []
   
     scene = Scene()
     scene.set_type("code")
     
+    coqdoc = ""
     for child in div:
-      command = self._find_commands(child)[0]
-      response = self._prover.send(command)
-      frame = Coqdoc_Frame(command = command, command_cd = div,
+      coqdoc += str(child)
+      commands = self._find_commands(child)
+      if commands and self.isCommand(commands[0]): 
+        command = self._replace_html(commands[0])
+        response = self._prover.send(command)
+        frame = Coqdoc_Frame(command = command, command_cd = coqdoc,
                            response = response)
-      frames.append(frame)
-      scene.add_scene(frame)
-      
+        frames.append(frame)
+        scene.add_scene(frame)
+        
+        coqdoc = ""
+    
+    trailing_frame = Coqdoc_Frame(command = coqdoc, 
+                                  command_cd = coqdoc,
+                                  response = None)
+    frames.append(trailing_frame)
+    scene.add_scene(trailing_frame)
+    
     return frames, scene
   
   def _process_doc(self, div):
     frames = []
     scene = Scene()
     scene.set_attributes(div.attrs)
+    
     for child in div:
       try: 
         if child.name == "div":

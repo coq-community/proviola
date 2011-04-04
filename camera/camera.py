@@ -19,7 +19,7 @@
 # along with Proof Camera.  If not, see <http://www.gnu.org/licenses/>.
 
 
-import Reader
+from Reader_Factory import get_reader
 
 import sys
 import os
@@ -53,12 +53,16 @@ def setupParser():
   
   parser.add_argument("--coqtop", 
                       action = "store", dest = "coqtop",
-                      default=None
+                      default=None,
+                      help = "Location of coqtop executable."
                       )
   
   parser.add_argument("--timeout", "-t",
                       action = "store", dest = "timeout",
-                      type = int, default = 1)
+                      type = float, default = 1,
+                      help = """How long to wait for responses by coqtop. 
+                      (In seconds, floating point).
+                      """)
     
   parser.add_argument("--service-url",
                     action="store", dest="service",
@@ -136,7 +140,7 @@ def make_film(filename, pwurl = None, group = "nogroup",
   """ 
 
   extension = splitext(filename)[1] 
-  reader = Reader.getReader(extension = extension)
+  reader = get_reader(extension = extension)
   reader.add_code(open(filename, 'r').read())
   
   try:

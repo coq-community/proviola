@@ -26,6 +26,7 @@ import urllib2
 import string 
 import sys
 import logging
+from time import sleep
 
 from ResultHandler import ResultHandler
 
@@ -89,9 +90,12 @@ class ProofWeb(object):
     else:
       return ""
 
-  """Send the given command to the prover, and give the goal returned by ProofWeb.
-  """
+  
   def send(self, command):
+    """ Send the given command to the prover, and give the goal returned by 
+        ProofWeb.
+    """  
+    sleep(.5)
 
     cmdarg = "%d__PWT__%s__PWT__%d"
     begin = self.pos

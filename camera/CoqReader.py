@@ -21,12 +21,10 @@
 # along with Proof Camera.  If not, see <http://www.gnu.org/licenses/>.
 
 import string
-from time import sleep
 
 from Reader import Reader
 from Movie import Movie
 from Frame import Frame
-from Prover import get_prover
 
 suffix = '.v'
 
@@ -83,7 +81,7 @@ class CoqReader(Reader):
     return acc
       
   def getCommand(self, acc = ""):
-
+    
     char = self.readChar()
     while char != None:
       acc += char
@@ -102,7 +100,7 @@ class CoqReader(Reader):
     return acc
 
   def parse(self, buffer):
-    self.add_code(buffer)
+    self.script += buffer
     
     if self.unfinished:
       acc = self.unfinished
@@ -110,6 +108,7 @@ class CoqReader(Reader):
       acc = ""
     
     command = self.getCommand(acc = acc)
+    
     result = []
     while (len(command) != 0):
       if not (self.isCommand(command) or self.isComment(command)):
@@ -155,7 +154,6 @@ class CoqReader(Reader):
       
       id = 0
       document.addFrame(Frame(id, command, response))
-      sleep(.5)
       command = self.getCommand()
 
     return document

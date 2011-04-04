@@ -22,6 +22,7 @@ class Scene(object):
   
   def get_attributes(self):
     """ Getter for self._attributes. """
+    
     result_dict ={}
     for key, value in self._attributes:
       result_dict[key] = value

@@ -4,7 +4,7 @@
 """
     
 import argparse
-from BeautifulSoup import BeautifulStoneSoup
+from external.BeautifulSoup import BeautifulStoneSoup
 
 from os.path import splitext, basename
 
@@ -15,6 +15,20 @@ def create_arg_parser():
   """ Create an argument parser. """
 
   parser = argparse.ArgumentParser(description = __doc__)
+  parser.add_argument("--coqtop", 
+                      action="store", dest = "coqtop",
+                      help = "Location of coqtop executable",
+                      default = None)
+  parser.add_argument("-t", "--timeout",
+                      action ="store", dest = "timeout", type = float,
+                      default = 1,
+                      help = """How long to wait for responses by coqtop. 
+                      (In seconds, floating point).""")
+  parser.add_argument("--service-url", 
+                      action = "store", dest = "service", 
+                      default="http://hair-dryer.cs.ru.nl/proofweb/index.html",
+                      help= "URL for web service hosting prover."
+                      )
   parser.add_argument('coqdoc_file', type=argparse.FileType('r'))
   parser.add_argument('movie_file', type=argparse.FileType('w'), nargs="?")
   return parser
@@ -44,7 +58,9 @@ def replace_links(tree, from_link, to_link):
     if href.find(from_link) >= 0:
       link["href"] =  href.replace(from_link, to_link, 1)
 
-def convert_coqdoc(coqdoc_data): 
+def convert_coqdoc(coqdoc_data,
+                   coqtop = None, timeout = 1, 
+                   url="http://hair-dryer.cs.ru.nl/proofweb/index.html"): 
   """ Convert coqdoc_file into a movie, keeping the layout of coqdoc_file
 
     Arguments:
@@ -55,11 +71,12 @@ def convert_coqdoc(coqdoc_data):
       augmented by the prover output.
   """
 
-  p = coqdoc_parser.Coqdoc_Parser()
+  p = coqdoc_parser.Coqdoc_Parser(coqtop, timeout, url)
   p.feed(coqdoc_data)
   return str(p.get_coqdoc_movie().toxml())
 
-def create_movie(file, source, target):
+def create_movie(file, source, target, coqtop = None, timeout = 1,
+                 url="http://hair-dryer.cs.ru.nl/proofweb/index.html"):
   """ Create movie from the given HTML file, replacing links with links
       replaced to refer to the target file.
   """
@@ -70,7 +87,9 @@ def create_movie(file, source, target):
 
   # The selfClosingTags declaration is necessary to fix a nasty bug in which
   # a <br/> tag would eat the following tags.
-  narrated_movie = BeautifulStoneSoup(convert_coqdoc(file), 
+  narrated_movie = BeautifulStoneSoup(convert_coqdoc(file,
+                                          coqtop = coqtop, timeout = timeout,
+                                          url = url), 
                                       selfClosingTags = ["br"])
   replace_links(narrated_movie, source, target)
   return narrated_movie
@@ -81,6 +100,9 @@ if __name__ == '__main__':
   print("File: {file}".format(file = args.coqdoc_file.name))
   narrated_movie = create_movie(args.coqdoc_file.read(), 
                                 basename(args.coqdoc_file.name),
-                                basename(get_outfile(args).name))
+                                basename(get_outfile(args).name),
+                                coqtop = args.coqtop,
+                                timeout = args.timeout,
+                                url = args.service)
  
   get_outfile(args).write(str(narrated_movie))

@@ -18,7 +18,6 @@ class Coqdoc_Frame(Frame):
   def get_coqdoc_command(self):
     """ Getter for self._command_coqdoc. """
     return self._command_coqdoc
-  
     
   def is_scene(self):
     return False

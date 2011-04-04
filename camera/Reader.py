@@ -27,7 +27,7 @@ class Reader:
         Returns the line. """
     if self.line == "":
       self.line = self.getNextLine()
-      
+
     return self.line
   
   def getNextLine(self):  
@@ -65,16 +65,5 @@ class Reader:
     self.script += code
 
       
-import CoqReader
-import Isabelle_Reader
-import os
-
-def getReader(extension = None):
-  # Setup dictionary of possible readers
-  readers = {} # suffix -> (String -> Reader)
-  readers[CoqReader.suffix] = CoqReader.CoqReader
-  readers[Isabelle_Reader.suffix] = Isabelle_Reader.Isabelle_Reader
-  
-  return readers[extension]()
 
 

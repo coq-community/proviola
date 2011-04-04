@@ -1,7 +1,7 @@
 """ A parser for Coqdoc's HTML. """
 from xml.dom.minidom import parseString, Node, parse
 
-from BeautifulSoup import BeautifulSoup
+from external.BeautifulSoup import BeautifulSoup
 
 import CoqReader
 import coqdoc_movie
@@ -12,12 +12,13 @@ from scene import Scene
 
 
 class Coqdoc_Parser(object):
-  def __init__(self):
+  def __init__(self, coqtop = None, timeout = 1, 
+               url = "http://hair-dryer.cs.ru.nl/proofweb/index.html"):
     self._movie = None
     self._tree = None
     self._reader = CoqReader.CoqReader()
-    self._prover = get_prover("http://hair-dryer.cs.ru.nl/proofweb/index.html",
-                              "nogroup")
+    self._prover = get_prover(path = coqtop, timeout = timeout,
+                              url =url, group = "nogroup")
     
   def _clean_html(self, text):
     """ Replace HTML entities by their ASCII equivalents. 

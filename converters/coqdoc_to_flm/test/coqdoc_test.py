@@ -8,7 +8,7 @@ import coqdoc_parser
 import coqdoc_to_flm
 from coqdoc_movie import Coqdoc_Movie
 
-from BeautifulSoup import BeautifulSoup, BeautifulStoneSoup
+from external.BeautifulSoup import BeautifulSoup, BeautifulStoneSoup
 
 class Coqdoc_Test(unittest.TestCase):
 
@@ -27,8 +27,10 @@ class Coqdoc_Test(unittest.TestCase):
     file_contents = open(self.normalize("data/Preface.html"), 'r').read()
     
     self._parser.feed(file_contents)
-    movie = self._parser.get_coqdoc_movie().toxml()
+    movie = self._parser.get_coqdoc_movie()
     
+    self.assertTrue(isinstance(movie, Coqdoc_Movie))
+    movie = movie.toxml()
     for child in movie.findAll(name = "span", recursive=True):
       if child.get("class") == "comment":
         return
@@ -43,7 +45,7 @@ class Coqdoc_Test(unittest.TestCase):
     movie = self._parser.get_coqdoc_movie()
     
     self.assertEquals(movie.getLength(), 9)
-    
+  
   def test_attributes(self):
     """ Attributes should carry over. """
     file_contents = open(self.normalize("data/Preface.html"), 'r').read()
@@ -52,6 +54,7 @@ class Coqdoc_Test(unittest.TestCase):
     
     if movie.findAll(attrs={"id": "page"}):
       return
+    
     self.fail("No id attribute")
   
   def test_entities(self):

@@ -1,17 +1,21 @@
-from Reader import Reader, getReader
+from Reader_Factory import get_reader
+from Reader import Reader
 from CoqReader import CoqReader
 from Isabelle_Reader import Isabelle_Reader
+from coqdoc_reader import Coqdoc_Reader 
 import unittest
 
 class Test_Reader(unittest.TestCase):
   """ Test case for generic reader functionality. """
   
-  def test_getReader_extension(self):
+  def test_get_reader_extension(self):
     """ Getting a reader by extension should provide the correct reader. """
-    self.assertTrue(isinstance(getReader(extension = ".v"), 
+    self.assertTrue(isinstance(get_reader(extension = ".v"), 
                                CoqReader))
-    self.assertTrue(isinstance(getReader(extension = ".thy"), 
+    self.assertTrue(isinstance(get_reader(extension = ".thy"), 
                                Isabelle_Reader))
+    self.assertTrue(isinstance(get_reader(extension = ".html"), 
+                               Coqdoc_Reader))
   def setUp(self):
     self.data = "Test data \n new line"
     self.reader = Reader()

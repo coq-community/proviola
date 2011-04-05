@@ -32,7 +32,7 @@ class Coqdoc_Reader(CoqReader):
       text = div.text
     except:
       text = div
-      
+    
     return self.parse(text)
   
   def _replace_html(self, text):
@@ -55,21 +55,22 @@ class Coqdoc_Reader(CoqReader):
     scene = Scene()
     scene.set_type("code")
     
-    coqdoc = ""
+    coqdoc = []
     for child in div:
-      coqdoc += str(child)
+      coqdoc.append(child)
       commands = self._find_commands(child)
-      if commands and self.isCommand(commands[0]): 
+      if commands and self.isCommand(commands[0]):
         command = self._replace_html(commands[0])
         response = self._prover.send(command)
+        
         frame = Coqdoc_Frame(command = command, command_cd = coqdoc,
                            response = response)
         frames.append(frame)
         scene.add_scene(frame)
         
-        coqdoc = ""
+        coqdoc = []
     
-    trailing_frame = Coqdoc_Frame(command = coqdoc, 
+    trailing_frame = Coqdoc_Frame(command = ''.join([str(el) for el in coqdoc]), 
                                   command_cd = coqdoc,
                                   response = None)
     frames.append(trailing_frame)
@@ -88,11 +89,11 @@ class Coqdoc_Reader(CoqReader):
         if child.name == "div": 
           child_frames, child_scene = self._process_div(child)
         else:
-          child_scene = Coqdoc_Frame(command = child.text, command_cd = child,
+          child_scene = Coqdoc_Frame(command = child.text, command_cd = [child],
                                response = None)
           child_frames = [child_scene]
       except AttributeError:
-        child_scene = Coqdoc_Frame(command = child, command_cd = child,
+        child_scene = Coqdoc_Frame(command = child, command_cd = [child],
                              response = None)
         child_frames = [child_scene]
       finally: 

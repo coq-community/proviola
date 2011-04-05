@@ -83,7 +83,7 @@ class Movie(object):
     return doc
 
   def toFile(self, fileName, stylesheet = "proviola.xsl"):
-    """ Write the file, in XML, to filmName """ 
+    """ Write the file, in XML, to filmName """
     filmFile = open(fileName, 'w')
     
     filmFile.write(str(self.toxml(stylesheet)))

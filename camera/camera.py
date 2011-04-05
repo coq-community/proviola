@@ -123,7 +123,7 @@ def main(argv = None):
 
   if len(directory) > 0 and not os.path.exists(directory):
     os.makedirs(directory)
-
+  
   movie.toFile(filmName, options.stylesheet)
 
 def make_film(filename, pwurl = None, group = "nogroup",

@@ -59,6 +59,25 @@ class Coqdoc_Movie(Movie):
       self._replace_frames(scene)
       self.add_scene(scene)
 
+  def _is_local(self, link):
+    """ Test if a given link element is local or remote. """
+    target = link.get("href") 
+    return target and (not target.startswith("http://"))
+  
+  def toFile(self, file_name, stylesheet = "proviola.xsl"):
+    """ Write the instance to file_name, replacing any internal links with 
+        references to the written file. """
+    xml = self.toxml(stylesheet) 
+    links = xml.findAll(name = "a")
+    
+    for link in links:
+      if self._is_local(link):
+        url, hash, anchor = link["href"].partition("#")
+        print "Replacing {old} with {new}".format(old = url, new = file_name)
+        link["href"] = file_name + hash + anchor
+    
+    open(file_name, 'w').write(str(xml))
+    
   def _replace_frames(self, scene):
     """ Replace the frames in scene by the actual frames in the movie. """
     for sub in scene.get_subscenes():

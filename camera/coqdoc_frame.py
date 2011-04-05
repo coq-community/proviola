@@ -17,7 +17,10 @@ class Coqdoc_Frame(Frame):
   
   def get_coqdoc_command(self):
     """ Getter for self._command_coqdoc. """
-    return self._command_coqdoc
+    result = ""
+    for part in self._command_coqdoc:
+      result += str(part)
+    return result
     
   def is_scene(self):
     return False
@@ -26,14 +29,19 @@ class Coqdoc_Frame(Frame):
     """ Instantiate the data using the given element.
     """ 
     Frame.fromxml(self, element)
-    self._command_coqdoc = element.find(TAG_COQDOC)
+    self._command_coqdoc = [element.find(TAG_COQDOC)]
       
   def toxml(self, doc):
     """ Convert this frame to XML. """
+    
     frame_xml = Frame.toxml(self, doc)
     tag = Tag(doc, TAG_COQDOC)
     
-    tag.append(self._command_coqdoc)
+    for part in self._command_coqdoc:
+      print "Appending: ", part
+      tag.append(part)
+      
+    print "Tag: ", tag
     frame_xml.append(tag)
     
     return frame_xml

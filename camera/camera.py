@@ -115,7 +115,7 @@ def main(argv = None):
                     group = options.group)
 
   if options.movie:
-    filmName = parser.movie
+    filmName = options.movie
   else:
     filmName = splitext(proofScript)[0] + ".flm" 
 

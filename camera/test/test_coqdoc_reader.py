@@ -38,10 +38,20 @@ class Test_Coqdoc_Reader(unittest.TestCase):
     
     self.assertEquals(len(result.get_scenes()), 1)
     self.assertEquals(len(result.get_frames()), 1)
+    self.assertEquals(result.get_scenes()[0].get_type(), "doc")
     self.assertEquals(result.getFrame(0).get_coqdoc_command(), 
                       "This is a non-code fragment.")
     self.assertFalse(result.getFrame(0).getResponse())
   
+  def test_html_marked_doc(self):
+    """ Marked up HTML should carry over. """
+    self.reader.add_code(self.template.format(
+                                      body = "<div><p>A paragraph</p></div>"))
+    result = self.reader.make_frames(prover = self.mock_prover)
+    
+    self.assertEquals("<p>A paragraph</p>", 
+                      str(result.getFrame(0).get_coqdoc_command()))
+    
   def test_html_nested_doc(self):
     """ HTML can contained divs nested in other divs. """
     self.reader.add_code(self.template.format(body = 
@@ -95,7 +105,19 @@ class Test_Coqdoc_Reader(unittest.TestCase):
    forall x : Type, x -> x
 """)
     
-
+  
+  def test_title(self):
+    """ Set a title if provided. """  
+    self.reader.add_code("<html><head><title>Foo</title></head></html>")
+    result = self.reader.make_frames(prover = self.mock_prover)
+    self.assertEquals(result.get_title(), "Foo")
+    
+  def test_title_empty(self):
+    """ Set an empty title if provided. """  
+    self.reader.add_code("<html><head><title></title></head></html>")
+    result = self.reader.make_frames(prover = self.mock_prover)
+    self.assertEquals(result.get_title(), "")
+  
   def test_attributes(self):
     """ A div should keep the attributes when converted to scenes. """
     self.reader.add_code(self.template.format(body = """

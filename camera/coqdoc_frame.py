@@ -33,9 +33,7 @@ class Coqdoc_Frame(Frame):
     frame_xml = Frame.toxml(self, doc)
     tag = Tag(doc, TAG_COQDOC)
     
-    for child in self._command_coqdoc:
-      tag.append(child)
-      
+    tag.append(self._command_coqdoc)
     frame_xml.append(tag)
     
     return frame_xml

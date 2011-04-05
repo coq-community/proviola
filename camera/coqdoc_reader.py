@@ -80,19 +80,25 @@ class Coqdoc_Reader(CoqReader):
   def _process_doc(self, div):
     frames = []
     scene = Scene()
+    scene.set_type("doc")
     scene.set_attributes(div.attrs)
     
     for child in div:
-      try: 
-        if child.name == "div":
+      try:
+        if child.name == "div": 
           child_frames, child_scene = self._process_div(child)
-          frames += child_frames
-          scene.add_scene(child_scene)
-      except:  
-        frame = Coqdoc_Frame(command=child, command_cd=child)
-        frames.append(frame)
-        scene.add_scene(frame)
-    
+        else:
+          child_scene = Coqdoc_Frame(command = child.text, command_cd = child,
+                               response = None)
+          child_frames = [child_scene]
+      except AttributeError:
+        child_scene = Coqdoc_Frame(command = child, command_cd = child,
+                             response = None)
+        child_frames = [child_scene]
+      finally: 
+        frames += child_frames
+        scene.add_scene(child_scene)
+          
     return frames, scene
 
   def _process_div(self, div):
@@ -113,14 +119,21 @@ class Coqdoc_Reader(CoqReader):
     """
     self._prover = prover
     
+    try:
+      self._movie.add_to_title(self._coqdoc_tree.head.title.text)
+    except AttributeError:
+      self._movie.add_to_title("")
+    
+    
     body = self._coqdoc_tree.body
     
-    for div in body.findChildren(name = "div", recursive = False):
-      (frames, scene) = self._process_div(div)
+    if body:
+      for div in body.findChildren(name = "div", recursive = False):
+        (frames, scene) = self._process_div(div)
+          
+        for frame in frames:
+          self._movie.addFrame(frame)
+          
+        self._movie.add_scene(scene)
         
-      for frame in frames:
-        self._movie.addFrame(frame)
-        
-      self._movie.add_scene(scene)
-      
     return self._movie

@@ -23,20 +23,22 @@ class Coq_Local(object):
     data = self._read_coq()
     if not data:
       print "Could not manage coq."
-    else:
-      print "Data:", data
-    
+
   def _read_coq(self):
     """ Read data from Coqtop. Read stdout after the  """
     error = ""
     while not error:
       try:
         error = self._coqtop.stderr.read()
-      except:
+      except IOError:
         time.sleep(.1)
-    
-    return self._coqtop.stdout.read()
         
+    try:
+      output = self._coqtop.stdout.read()
+    except IOError:
+      output = ""
+    
+    return output
     
   def __del__(self):
     """ Clean up: stop Coq process. """
@@ -44,7 +46,6 @@ class Coq_Local(object):
     
   def send(self, command):
     """ Send data to Coqtop, returning the result. """
-    print "Sending: ", command
     self._coqtop.stdin.write(command + "\n")
     self._coqtop.stdin.flush()
     return self._read_coq()

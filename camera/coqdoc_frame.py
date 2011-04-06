@@ -38,10 +38,8 @@ class Coqdoc_Frame(Frame):
     tag = Tag(doc, TAG_COQDOC)
     
     for part in self._command_coqdoc:
-      print "Appending: ", part
       tag.append(part)
       
-    print "Tag: ", tag
     frame_xml.append(tag)
     
     return frame_xml

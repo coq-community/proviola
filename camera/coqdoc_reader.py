@@ -19,6 +19,7 @@ class Coqdoc_Reader(CoqReader):
     CoqReader.__init__(self)
     self._movie = Coqdoc_Movie()
     self._prover = None
+    self._coqdoc_tree = None
     
   def add_code(self, code):
     """ Override of the corresponding method in Reader: makes a 
@@ -61,7 +62,8 @@ class Coqdoc_Reader(CoqReader):
       commands = self._find_commands(child)
       if commands and self.isCommand(commands[0]):
         command = self._replace_html(commands[0])
-        response = self._prover.send(command)
+        response = self._prover.send(
+                             command.encode(self._coqdoc_tree.originalEncoding))
         
         frame = Coqdoc_Frame(command = command, command_cd = coqdoc,
                            response = response)
@@ -86,19 +88,20 @@ class Coqdoc_Reader(CoqReader):
     
     for child in div:
       try:
-        if child.name == "div": 
-          child_frames, child_scene = self._process_div(child)
-        else:
-          child_scene = Coqdoc_Frame(command = child.text, command_cd = [child],
-                               response = None)
-          child_frames = [child_scene]
+        child_name = child.name
       except AttributeError:
-        child_scene = Coqdoc_Frame(command = child, command_cd = [child],
-                             response = None)
+        child_name = "text"
+        child.text = str(child)
+        
+      if child_name == "div": 
+        child_frames, child_scene = self._process_div(child)
+      else:
+        child_scene = Coqdoc_Frame(command = child.text, command_cd = [child],
+                               response = None)
         child_frames = [child_scene]
-      finally: 
-        frames += child_frames
-        scene.add_scene(child_scene)
+
+      frames += child_frames
+      scene.add_scene(child_scene)
           
     return frames, scene
 

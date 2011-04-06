@@ -2,45 +2,50 @@
 """
 
 import subprocess
-import select
+import time
 # The solutions here are *Nix-specific.
 import fcntl, os 
 
 class Coq_Local(object):
-  def __init__(self, coqtop = "/usr/bin/coqtop", timeout = 1):
+  def __init__(self, coqtop = "/usr/bin/coqtop"):
     """ Open a Coq process. 
       - coqtop: Location of coqtop executable.
       - timeout: How long to wait for coqtop to print to stdout. 
-    """
-    
-    self._timeout = timeout
-    self._coqtop = subprocess.Popen(coqtop,
+    """    
+    self._coqtop = subprocess.Popen([coqtop],
                                     stdin  = subprocess.PIPE,
                                     stdout = subprocess.PIPE,
                                     stderr = subprocess.PIPE)
-
     fcntl.fcntl(self._coqtop.stdout, fcntl.F_SETFL, os.O_NONBLOCK) 
+    fcntl.fcntl(self._coqtop.stderr, fcntl.F_SETFL, os.O_NONBLOCK)
     
     # Clear Coq greeting.
-    select.select([self._coqtop.stdout], [], [], self._timeout)
-    try:
-      self._coqtop.stdout.readline()
-    except:
+    data = self._read_coq()
+    if not data:
       print "Could not manage coq."
+    else:
+      print "Data:", data
     
+  def _read_coq(self):
+    """ Read data from Coqtop. Read stdout after the  """
+    error = ""
+    while not error:
+      try:
+        error = self._coqtop.stderr.read()
+      except:
+        time.sleep(.1)
     
-  
+    return self._coqtop.stdout.read()
+        
+    
   def __del__(self):
     """ Clean up: stop Coq process. """
     self._coqtop.terminate()
     
   def send(self, command):
+    """ Send data to Coqtop, returning the result. """
+    print "Sending: ", command
     self._coqtop.stdin.write(command + "\n")
     self._coqtop.stdin.flush()
-    select.select([self._coqtop.stdout], [], [], self._timeout)
+    return self._read_coq()
     
-    
-    try:
-      return self._coqtop.stdout.read()
-    except:
-      return ""

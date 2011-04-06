@@ -110,7 +110,6 @@ def main(argv = None):
 
   movie = make_film(filename=proofScript, 
                     coqtop = options.coqtop,
-                    timeout = options.timeout,
                     pwurl = options.service, 
                     group = options.group)
 
@@ -127,7 +126,7 @@ def main(argv = None):
   movie.toFile(filmName, options.stylesheet)
 
 def make_film(filename, pwurl = None, group = "nogroup",
-                        coqtop = None, timeout = 1):
+                        coqtop = None):
   """Main method of the program/script: This creates a flattened 'film' for
    the given file filename.
 
@@ -143,14 +142,11 @@ def make_film(filename, pwurl = None, group = "nogroup",
   reader = get_reader(extension = extension)
   reader.add_code(open(filename, 'r').read())
   
-  try:
-    prover = get_prover(path = coqtop, timeout = timeout,
-                        url = pwurl, group = group)
+  
+  prover = get_prover(path = coqtop, url = pwurl, group = group)
 
-    return reader.make_frames(prover = prover)
-  except Exception as e:
-    print "Exception: %s"%`e`
-    return None
+  return reader.make_frames(prover = prover)
+  
 
 if __name__ == "__main__":
   sys.exit(main())

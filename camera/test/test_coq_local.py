@@ -1,3 +1,4 @@
+# coding=utf-8
 import unittest
 from coq_local import Coq_Local
 from mock import Mock, patch
@@ -9,7 +10,7 @@ class Test_Coq_Local(unittest.TestCase):
   
   def setUp(self):
     """ Setup local Coq session. """
-    self._coq = Coq_Local(coqtop = "/usr/bin/coqtop", timeout = 2)
+    self._coq = Coq_Local(coqtop = "/usr/local/bin/coqtop")
     
   def test_send(self):
     """ Sending correct data to Coqtop should work. """
@@ -19,23 +20,13 @@ class Test_Coq_Local(unittest.TestCase):
   ============================
    forall x : Type, x -> x
 """)
-  
+
+  def test_send_utf8(self):
+    """ Sending utf-8 should just work. """
+    self._coq.send("Lemma foo : ∀ (x y z : nat), x + y + z = y + x + z.")
+    
   def test_send_incorrect(self):
     """ Sending incorrect data should give an error report. """
     self.assertEquals(self._coq.send("Bogus."),
                       "Error: Unknown command of the non proof-editing mode.\n")
   
-  @patch("select.select", _mock_select)
-  def test_timeout(self):
-    """ Test that a specified timeout is used. """
-    Coq_Local(timeout = 10)
-    self.assertTrue(10 in _mock_select.call_args[0])
-    
-
-  @patch("select.select", _mock_select)
-  def test_timeout_send(self):
-    """ Test that send uses specified timeout. """
-    self._coq.send("Goal forall x, x->x.")
-    self.assertTrue(2 in _mock_select.call_args[0])
-    
-    

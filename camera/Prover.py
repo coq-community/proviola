@@ -16,14 +16,14 @@ def local_which(program):
     return None
   
 def get_prover(url = None, group = None, 
-               path = None, timeout = 1):
+               path = None):
   """ Factory that determines what prover to serve. 
   """
   if path:
-    return Coq_Local(path, timeout = timeout) 
+    return Coq_Local(path) 
   elif (url and group):
     return ProofWeb(url, group)
   elif local_which("coqtop"):
-    return Coq_Local(local_which("coqtop"), timeout = timeout)
+    return Coq_Local(local_which("coqtop"))
   else:
     return Prover()

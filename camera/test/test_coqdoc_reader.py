@@ -1,3 +1,4 @@
+# coding=utf-8
 import unittest
 from coqdoc_reader import Coqdoc_Reader
 
@@ -104,8 +105,15 @@ class Test_Coqdoc_Reader(unittest.TestCase):
   ============================
    forall x : Type, x -> x
 """)
-    
   
+  def test_html_unicode(self):
+    """ Unicode HTML should not give errors. """
+    markup = '<div class="code">' +\
+             'Lemma foo : ∀ (x y z : nat), x + y + z = y + x + z.</div>'
+    self.reader.add_code(self.template.format(body = markup))
+    self.reader.make_frames(prover = self.mock_prover)
+        
+        
   def test_title(self):
     """ Set a title if provided. """  
     self.reader.add_code("<html><head><title>Foo</title></head></html>")
@@ -130,3 +138,5 @@ class Test_Coqdoc_Reader(unittest.TestCase):
     
     self.assertTrue("class" in attrs.keys())
     self.assertEquals("doc", attrs["class"])
+  
+  

@@ -6,7 +6,7 @@ from ProofWeb import ProofWeb
 from coq_local import Coq_Local
 
 _mock_which_none = Mock(return_value = None)
-_mock_which_some = Mock(return_value = "/bin/echo")
+_mock_which_some = Mock(return_value = "/usr/bin/coqtop")
 
 class Test_Prover(unittest.TestCase):
   """ TestCase exercising the prover module. """

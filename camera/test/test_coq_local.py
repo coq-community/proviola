@@ -21,6 +21,8 @@ class Test_Coq_Local(unittest.TestCase):
    forall x : Type, x -> x
 """)
 
+    self.assertEquals(self._coq.send("Proof."), "")
+
   def test_send_utf8(self):
     """ Sending utf-8 should just work. """
     self._coq.send("Lemma foo : ∀ (x y z : nat), x + y + z = y + x + z.")

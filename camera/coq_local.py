@@ -11,8 +11,8 @@ class Coq_Local(object):
     """ Open a Coq process. 
       - coqtop: Location of coqtop executable.
       - timeout: How long to wait for coqtop to print to stdout. 
-    """    
-    self._coqtop = subprocess.Popen([coqtop],
+    """
+    self._coqtop = subprocess.Popen(coqtop.split(),
                                     stdin  = subprocess.PIPE,
                                     stdout = subprocess.PIPE,
                                     stderr = subprocess.PIPE)

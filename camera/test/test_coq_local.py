@@ -31,4 +31,9 @@ class Test_Coq_Local(unittest.TestCase):
     """ Sending incorrect data should give an error report. """
     self.assertEquals(self._coq.send("Bogus."),
                       "Error: Unknown command of the non proof-editing mode.\n")
-  
+ 
+  def test_arguments(self):
+    """ Passing arguments in the coqtop string should work. """
+    coq = Coq_Local(coqtop = "/usr/local/bin/coqtop -emacs")
+    result = coq.send("Goal forall x, x->x.")
+    self.assertTrue(chr(253) in result)

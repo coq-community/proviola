@@ -29,7 +29,7 @@ class Test_Reader(unittest.TestCase):
     self.assertEquals(actual, expected)
   
   def test_parse_two(self):
-    """ More than one command should creat a list of more than one command. 
+    """ More than one command should create a list of more than one command. 
     """
     command = "Goal forall x, x->x. Proof. intros."
     actual = self.reader.parse(command)

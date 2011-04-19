@@ -1,5 +1,6 @@
 import unittest
 import CoqReader
+from coq_local import Coq_Local
 from mock import Mock
 
 class Test_Coq_Reader(unittest.TestCase):
@@ -33,6 +34,19 @@ class Test_Coq_Reader(unittest.TestCase):
   ============================
    forall x : Type, x -> x
 """)                    
+    
+  def test_slow(self):
+    """ Test that a slow script gets processed correctly. """
+    prover = Coq_Local("/usr/local/bin/coqtop")
+    self._reader.add_code("""Require Import Arith.
+Lemma loop x y : x + y = y + x.
+intros.
+Fail Timeout 2 repeat rewrite plus_comm.
+apply plus_comm.
+Qed. 
+    """)
+    movie = self._reader.make_frames(prover = prover)
+    self.assertTrue(movie.getFrame(3).getResponse())
     
   @classmethod
   def get_suite(cls):

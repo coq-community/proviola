@@ -20,7 +20,6 @@ class Test_Coq_Local(unittest.TestCase):
   ============================
    forall x : Type, x -> x
 """)
-
     self.assertEquals(self._coq.send("Proof."), "")
 
   def test_send_utf8(self):
@@ -34,21 +33,14 @@ class Test_Coq_Local(unittest.TestCase):
     
   def test_slow(self):
     """ Slow results should still be partitioned. """
-    self._coq.send("""Require Import Arith.
-Lemma loop x y : x + y = y + x.
-intros.
-Fail Timeout 2 repeat rewrite plus_comm.
-""")
+    self._coq.send("Require Import Arith.")
+    self._coq.send("Lemma loop x y : x + y = y + x.")
+    self._coq.send("intros.")
+    self._coq.send("Fail Timeout 2 repeat rewrite plus_comm.")
     self.assertFalse(self._coq.send("apply plus_comm.").startswith(
                                                "The command has indeed failed"),
                      "Started with output of previous command.") 
  
-    #self.assertEquals(
-    #              "The command has indeed failed with message:\n=> Timeout!\n",  
-    #              self._coq.send("Fail Timeout 2 repeat rewrite plus_comm."))
-      
   def test_arguments(self):
     """ Passing arguments in the coqtop string should work. """
-    coq = Coq_Local(coqtop = "/usr/local/bin/coqtop -emacs")
-    result = coq.send("Goal forall x, x->x.")
-    self.assertTrue(chr(253) in result)
+    Coq_Local(coqtop = '/usr/local/bin/coqtop -R /path ""')

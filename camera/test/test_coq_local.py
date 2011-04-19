@@ -31,7 +31,22 @@ class Test_Coq_Local(unittest.TestCase):
     """ Sending incorrect data should give an error report. """
     self.assertEquals(self._coq.send("Bogus."),
                       "Error: Unknown command of the non proof-editing mode.\n")
+    
+  def test_slow(self):
+    """ Slow results should still be partitioned. """
+    self._coq.send("""Require Import Arith.
+Lemma loop x y : x + y = y + x.
+intros.
+Fail Timeout 2 repeat rewrite plus_comm.
+""")
+    self.assertFalse(self._coq.send("apply plus_comm.").startswith(
+                                               "The command has indeed failed"),
+                     "Started with output of previous command.") 
  
+    #self.assertEquals(
+    #              "The command has indeed failed with message:\n=> Timeout!\n",  
+    #              self._coq.send("Fail Timeout 2 repeat rewrite plus_comm."))
+      
   def test_arguments(self):
     """ Passing arguments in the coqtop string should work. """
     coq = Coq_Local(coqtop = "/usr/local/bin/coqtop -emacs")

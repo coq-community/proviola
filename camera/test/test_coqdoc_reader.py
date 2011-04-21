@@ -69,8 +69,17 @@ class Test_Coqdoc_Reader(unittest.TestCase):
     self.assertEquals(result.getFrame(1).getCommand(), "Nested")    
     self.assertEquals(result.getFrame(2).getCommand(), "Trail")
     
-    
   
+  def test_html_notation(self):  
+    """ Test that Notation commands get extracted properly: there was a space
+        missing somewhere. """
+    self.reader.add_code(self.template.format(body =
+       """<div class="code">
+          <span>Notation </span><span>foo</span> := <span>nat</span>.</div>"""))
+    
+    result = self.reader.make_frames(prover = self.mock_prover)
+    self.assertEquals("Notation foo := nat.", result.getFrame(0).getCommand())
+    
   def test_html_single_code(self):
     """ Code divs should be picked up. """
     self.reader.add_code(self.template.format(body = 

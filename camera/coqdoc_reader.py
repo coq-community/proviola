@@ -28,10 +28,10 @@ class Coqdoc_Reader(CoqReader):
     self._coqdoc_tree = BeautifulSoup(code)
   
   def _find_commands(self, div):
-    """ Find the commands. This is a wrapper around parent's parse. """
+    """ Find the commands. This is a wrapper around parent's parse. """ 
     try:
-      text = div.text
-    except:
+      text = ''.join(div.fetchText(text = True))
+    except AttributeError:
       text = div
     
     return self.parse(text)

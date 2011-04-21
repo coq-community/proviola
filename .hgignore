@@ -14,3 +14,6 @@ converters/coqdoc_to_flm/test/unittest/data/no_text/Test.html
 converters/coqdoc_to_flm/test/unittest/data/proviola.css
 
 coqdoc.css
+
+experiments/*
+.settings/*

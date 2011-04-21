@@ -73,8 +73,9 @@ class Coqdoc_Movie(Movie):
     for link in links:
       if self._is_local(link):
         url, hash, anchor = link["href"].partition("#")
-        print "Replacing {old} with {new}".format(old = url, new = file_name)
-        link["href"] = file_name + hash + anchor
+        location, dot, extension = url.rpartition(".")
+        _, dot, new_extension = file_name.rpartition(".")
+        link["href"] = location + dot + new_extension + hash + anchor
     
     open(file_name, 'w').write(str(xml))
     

@@ -1,7 +1,7 @@
 """ Implements protocol for talking to local Coq installation.
 """
 
-import subprocess
+import subprocess, shlex
 import time
 # The solutions here are *Nix-specific.
 import fcntl, os 
@@ -12,7 +12,7 @@ class Coq_Local(object):
       - coqtop: Location of coqtop executable.
       - timeout: How long to wait for coqtop to print to stdout. 
     """
-    self._coqtop = subprocess.Popen(coqtop.split() + ["-emacs"],
+    self._coqtop = subprocess.Popen(shlex.split(coqtop) + ["-emacs"],
                                     stdin  = subprocess.PIPE,
                                     stdout = subprocess.PIPE,
                                     stderr = subprocess.PIPE)
@@ -29,8 +29,7 @@ class Coq_Local(object):
     error = False
     while not error:
       try:
-        error = chr(249) in self._coqtop.stderr.read()
-        
+        error = self._coqtop.stderr.read()
       except IOError:
         time.sleep(.1)
    

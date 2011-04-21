@@ -19,6 +19,7 @@ class Test_Coqdoc_Movie(unittest.TestCase):
     
     self._coqdoc_movie = Coqdoc_Movie()
     self._coqdoc_movie.addFrame(self._frame)
+
   def test_html_links_internal(self):
     """ Internal links in the input should be replaced by links to the current 
         document. """    
@@ -29,7 +30,7 @@ class Test_Coqdoc_Movie(unittest.TestCase):
     
     doc = BeautifulStoneSoup(self._target.read())
     new_a = doc.findAll(name = "a")[0]
-    self.assertEquals(self._target.name, new_a.get("href"))
+    self.assertTrue(new_a.get("href").endswith(".xml"))
     remove(self._target.name)
 
   def test_html_links_external(self):
@@ -51,5 +52,5 @@ class Test_Coqdoc_Movie(unittest.TestCase):
     
     doc = BeautifulStoneSoup(self._target.read())
     new_a = doc.findAll(name = "a")[0]
-    self.assertEquals(self._target.name + "#foo", new_a.get("href"))
+    self.assertTrue(new_a.get("href").endswith(".xml#foo"))
     remove(self._target.name)   

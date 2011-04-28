@@ -16,7 +16,7 @@
 # You should have received a copy of the GNU General Public License
 # along with Proof Camera.  If not, see <http://www.gnu.org/licenses/>.
 
-from xml.sax.saxutils import escape, unescape
+from xml.sax.saxutils import escape
 from external.BeautifulSoup import Tag
 
 
@@ -35,9 +35,6 @@ class Frame:
     self._command = command
     self._response = response
 
-  def _escape_lt(self, text):
-    """ Escapes the < sign into an &lt; entity. """
-    return escape(unescape(text))
 
   def getCommand(self):
     """ Getter for the command field. """
@@ -71,10 +68,11 @@ class Frame:
     
     return frameElement 
 
+  
   def createTextElement(self, doc, elementName, contents):
     """ Convenience method for creating text-containing nodes in doc """
     element = Tag(doc, elementName)
-    element.append(self._escape_lt(contents))
+    element.append(escape(contents))
     return element 
 
   def get_reference(self,document):

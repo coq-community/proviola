@@ -2,9 +2,11 @@ div.code {
   width: 50%;
   float:left;
 }
+
 div.goal {
   width: 50%;
   float: right;
+  overflow: scroll;
 }
 
 div.doc {

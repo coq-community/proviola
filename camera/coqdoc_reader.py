@@ -1,4 +1,5 @@
 """ Implements a Reader class for Coqdoc documents. """
+from xml.sax.saxutils import unescape
 
 from CoqReader import CoqReader
 from coqdoc_movie import Coqdoc_Movie
@@ -38,14 +39,8 @@ class Coqdoc_Reader(CoqReader):
   
   def _replace_html(self, text):
     """ Replace HTML entitities by ASCII equivalents. """
-    replacements = {
-          "&nbsp;": " ",
-          "&gt;"  : ">",
-          "&lt;"  : "<"}
-    
-    for key in replacements:
-      text = text.replace(key, replacements[key])
-      
+    replacements = {"&nbsp;": " "}
+    text = unescape(text, replacements)
     return text
   
   def _process_code(self, div):

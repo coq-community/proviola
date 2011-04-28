@@ -15,7 +15,7 @@ class Test_Prover(unittest.TestCase):
     """ Test that the factory returns the appropriate PA. """
     self.assertTrue(isinstance(get_prover(path = "/usr/bin/coqtop"), Coq_Local))
     self.assertTrue(isinstance(
-              get_prover(url = "http://hair-dryer.cs.ru.nl/proofweb/index.html", 
+              get_prover(url = "http://prover.cs.ru.nl/index.html", 
                          group = "nogroup"), 
               ProofWeb))
     

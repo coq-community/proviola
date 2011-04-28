@@ -10,7 +10,8 @@ class Test_Movie(unittest.TestCase):
   def setUp(self):
     """ Setup: just construct a movie """
     self.movie = Movie()
- 
+  
+   
   def test_AddFrame(self):
     """ Addition of a frame in order should yield correct IDs """
     frame1 = Frame(command = "command1", response = "response1")    

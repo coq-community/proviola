@@ -15,8 +15,10 @@
 # 
 # You should have received a copy of the GNU General Public License
 # along with Proof Camera.  If not, see <http://www.gnu.org/licenses/>.
-import logging
+
+from xml.sax.saxutils import escape, unescape
 from external.BeautifulSoup import Tag
+
 
 TAG_FRAME = "frame"
 TAG_ID = "framenumber"
@@ -35,7 +37,7 @@ class Frame:
 
   def _escape_lt(self, text):
     """ Escapes the < sign into an &lt; entity. """
-    return text.replace("<", "&lt;")
+    return escape(unescape(text))
 
   def getCommand(self):
     """ Getter for the command field. """

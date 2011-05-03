@@ -5,6 +5,15 @@ from coqdoc_frame import Coqdoc_Frame
 class Test_Coqdoc_Frame(unittest.TestCase):
   """ Tests of the coqdoc frame. """
   
+
+  def test_none(self):
+    """ Frames with empty (None) commands/responses should still export. """
+    frame = Coqdoc_Frame(command = None, command_cd = None, response = None)
+    xml = frame.toxml(doc = BeautifulStoneSoup())
+    self.assertEquals(xml.command.text, "")
+    self.assertFalse(xml.response)
+    self.assertFalse(xml.find(name = "command-coqdoc"))
+
   def test_entitities(self):
     """ Test that entities in command, response and coqdoc_command are
         exported to the correct entitity codes when exporting to XML. """

@@ -19,8 +19,13 @@ class Coqdoc_Frame(Frame):
   def get_coqdoc_command(self):
     """ Getter for self._command_coqdoc. """
     result = ""
+
+    if not self._command_coqdoc:
+      return result
+
     for part in self._command_coqdoc:
       result += str(part)
+
     return result
     
   def is_scene(self):
@@ -49,8 +54,9 @@ class Coqdoc_Frame(Frame):
     frame_xml = Frame.toxml(self, doc)
     tag = Tag(doc, TAG_COQDOC)
     
-    for part in self._command_coqdoc: 
-      tag.append(self._escape(part))
+    if self._command_coqdoc:
+      for part in self._command_coqdoc: 
+        tag.append(self._escape(part))
       
     frame_xml.append(tag)
     

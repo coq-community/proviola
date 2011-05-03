@@ -71,6 +71,7 @@ class Frame:
   
   def createTextElement(self, doc, elementName, contents):
     """ Convenience method for creating text-containing nodes in doc """
+    contents = contents or ""
     element = Tag(doc, elementName)
     element.append(escape(contents))
     return element 

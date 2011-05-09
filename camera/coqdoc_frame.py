@@ -18,38 +18,26 @@ class Coqdoc_Frame(Frame):
   
   def get_coqdoc_command(self):
     """ Getter for self._command_coqdoc. """
-    result = ""
-
     if not self._command_coqdoc:
-      return result
-
-    for part in self._command_coqdoc:
-      result += str(part)
-
-    return result
+      return ""
+    
+    return "".join([str(part) for part in self._command_coqdoc])
     
   def is_scene(self):
+    """ Tester if this is a scene. In a statically typed language, this would be
+        a point for case analysis (this might mean the algorithm using it should
+        change. """
     return False
+
 
   def fromxml(self, element):
     """ Instantiate the data using the given element.
     """ 
+    Frame.fromxml(self, element)    
+    for child in element.find(TAG_COQDOC):
+      self._command_coqdoc.append(child)
 
-    Frame.fromxml(self, element)
-    self._command_coqdoc = [element.find(TAG_COQDOC)]
-  
-  def _escape(self, node):
-    """ Escape entities in the node's text. """
-    try:
-      return escape(unescape(node))
-    
-    except TypeError:
-      for child in node:
-        child.replaceWith(self._escape(child))
-              
-    return node
-        
-    
+
   def toxml(self, doc):
     """ Convert this frame to XML. """
     frame_xml = Frame.toxml(self, doc)
@@ -57,7 +45,7 @@ class Coqdoc_Frame(Frame):
     
     if self._command_coqdoc:
       for part in self._command_coqdoc: 
-        tag.append(self._escape(part))
+        tag.append(part)
       
     frame_xml.append(tag)
     

@@ -1,6 +1,10 @@
-from external.BeautifulSoup import Tag, Declaration
-from Movie import Movie
+from os import makedirs
+from os.path import exists, dirname
 
+from external.BeautifulSoup import Tag, Declaration, BeautifulStoneSoup
+BeautifulStoneSoup.NESTABLE_TAGS["scene"] = []
+
+from Movie import Movie
 from coqdoc_frame import Coqdoc_Frame
 from scene import Scene
 
@@ -13,7 +17,6 @@ class Coqdoc_Movie(Movie):
 
     self._title = ""
     self._scenes = []
-
   
   def add_scene(self, scene):
     """ Add given scene to the movie. """
@@ -47,6 +50,8 @@ class Coqdoc_Movie(Movie):
 
   def fromxml(self, xml):
     """ Unmarshall the given xml tree into a Coqdoc_movie. """
+    self._frames = []
+    self._scenes = []
     
     for frame_xml in xml.film.findAll(name="frame"):
       frame = Coqdoc_Frame()
@@ -59,6 +64,12 @@ class Coqdoc_Movie(Movie):
       self._replace_frames(scene)
       self.add_scene(scene)
 
+  def from_string(self, xml_string):
+    """ Initialize movie from the given xml tree in string form.
+    """
+    tree = BeautifulStoneSoup(xml_string)
+    return self.fromxml(tree)
+  
   def _is_local(self, link):
     """ Test if a given link element is local or remote. """
     target = link.get("href") 
@@ -73,10 +84,12 @@ class Coqdoc_Movie(Movie):
     for link in links:
       if self._is_local(link):
         url, hash, anchor = link["href"].partition("#")
-        location, dot, extension = url.rpartition(".")
+        location, dot, _ = url.rpartition(".")
         _, dot, new_extension = file_name.rpartition(".")
         link["href"] = location + dot + new_extension + hash + anchor
     
+    if not exists(dirname(file_name)):
+      makedirs(dirname(file_name))
     open(file_name, 'w').write(str(xml))
     
   def _replace_frames(self, scene):

@@ -16,11 +16,34 @@ class Test_Coqdoc_Frame(unittest.TestCase):
     xml = frame.toxml(doc = BeautifulStoneSoup())
     self.assertEquals(xml.command.text, "&amp;")
     self.assertEquals(xml.response.text, "&amp;")
-    self.assertEquals(xml.find(name = "command-coqdoc").text, "&amp;")
   
+  def test_export_entities(self):
+    """ Entities that are already escaped should not be escaped again. """
+    frame = Coqdoc_Frame(command =" ", 
+                         command_cd = BeautifulStoneSoup("<div>&nbsp;</div>"))
+    xml = frame.toxml(doc = BeautifulStoneSoup())
+
+    self.assertEquals(xml.find(name = "command-coqdoc").div.text, 
+                      "&nbsp;")
+  
+  def test_from_xml(self):
+    """ Test that a frame is constructed from XML, properly. """
+    xml = BeautifulStoneSoup("""<film><frame framenumber="0">
+      <command>Spam</command>
+      <response>Eggs</response>
+      <command-coqdoc><div>Spam</div></command-coqdoc>
+    </frame></fiml>
+     """)
+    frame = Coqdoc_Frame()
+    frame.fromxml(xml.frame)
+    
+    self.assertEquals("Spam", frame.getCommand())
+    self.assertEquals("Eggs", frame.getResponse())
+    self.assertEquals("<div>Spam</div>", str(frame.get_coqdoc_command()))
+    
   def test_nested_entities(self):
-    """ Test that nested entities work correctly. """
-    soup = BeautifulStoneSoup("<div>&</div>")
+    """ Test that entities in elements escape correctly. """
+    soup = BeautifulStoneSoup("<div>&amp;</div>")
     frame = Coqdoc_Frame(command = "foo", response = "bar",
                          command_cd = soup)
     

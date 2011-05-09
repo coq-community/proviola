@@ -1,5 +1,4 @@
 from Frame import Frame
-from xml.sax.saxutils import escape, unescape
 from external.BeautifulSoup import Tag
 TAG_COQDOC = "command-coqdoc"
 
@@ -10,7 +9,7 @@ class Coqdoc_Frame(Frame):
                              command_cd = None, 
                              response = None):
     Frame.__init__(self, id = id, command = command, response = response)
-    self._command_coqdoc = command_cd
+    self._command_coqdoc = command_cd or []
 
   def set_number(self, number):
     """ Frames should not keep a scene-number. """
@@ -28,21 +27,11 @@ class Coqdoc_Frame(Frame):
 
   def fromxml(self, element):
     """ Instantiate the data using the given element.
-    """ 
+    """
     Frame.fromxml(self, element)
-    self._command_coqdoc = [element.find(TAG_COQDOC)]
-  
-  def _escape(self, node):
-    """ Escape entities in the node's text. """
-    try:
-      return escape(unescape(node))
     
-    except TypeError:
-      for child in node:
-        child.replaceWith(self._escape(child))
-              
-    return node
-        
+    for child in element.find(TAG_COQDOC):
+      self._command_coqdoc.append(child)
     
   def toxml(self, doc):
     """ Convert this frame to XML. """
@@ -50,7 +39,7 @@ class Coqdoc_Frame(Frame):
     tag = Tag(doc, TAG_COQDOC)
     
     for part in self._command_coqdoc: 
-      tag.append(self._escape(part))
+      tag.append(part)
       
     frame_xml.append(tag)
     

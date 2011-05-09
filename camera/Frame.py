@@ -16,7 +16,7 @@
 # You should have received a copy of the GNU General Public License
 # along with Proof Camera.  If not, see <http://www.gnu.org/licenses/>.
 
-from xml.sax.saxutils import escape
+from xml.sax.saxutils import escape, unescape
 from external.BeautifulSoup import Tag
 
 
@@ -53,8 +53,12 @@ class Frame:
   def fromxml(self, elem):
     """ Fill frame from given elem. """
     self._id = elem["framenumber"]
-    self._command = elem.command.string
-    self._response = elem.response.string if elem.response else None
+    
+    if elem.command and elem.command.string:
+      self._command = unescape(elem.command.string)
+    
+    if elem.response and elem.response.string:
+      self._response = unescape(elem.response.string)
 
   def toxml(self, doc):
     frameElement = Tag(doc, TAG_FRAME)
@@ -64,7 +68,7 @@ class Frame:
 
     if self._response:
       frameElement.append(self.createTextElement(doc, TAG_RES, 
-                                                        self.getResponse()))
+                                            self.getResponse()))
     
     return frameElement 
 

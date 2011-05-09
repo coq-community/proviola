@@ -44,8 +44,7 @@ class Coqdoc_Frame(Frame):
     tag = Tag(doc, TAG_COQDOC)
     
     if self._command_coqdoc:
-      for part in self._command_coqdoc: 
-        tag.append(part)
+      map(tag.append, self._command_coqdoc)
       
     frame_xml.append(tag)
     

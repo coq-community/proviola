@@ -29,15 +29,12 @@ class Coqdoc_Frame(Frame):
         change. """
     return False
 
-
   def fromxml(self, element):
     """ Instantiate the data using the given element.
     """ 
     Frame.fromxml(self, element)    
     
     map(self._command_coqdoc.append, element.find(TAG_COQDOC))
-    #for child in element.find(TAG_COQDOC):
-    #  self._command_coqdoc.append(child)
 
 
   def toxml(self, doc):

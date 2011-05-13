@@ -79,15 +79,6 @@ class Coqdoc_Movie(Movie):
     """ Write the instance to file_name, replacing any internal links with 
         references to the written file. """
     xml = self.toxml(stylesheet) 
-    links = xml.findAll(name = "a")
-    
-    for link in links:
-      if self._is_local(link):
-        url, hash, anchor = link["href"].partition("#")
-        location, dot, _ = url.rpartition(".")
-        _, dot, new_extension = file_name.rpartition(".")
-        link["href"] = location + dot + new_extension + hash + anchor
-    
     if not exists(dirname(file_name)):
       makedirs(dirname(file_name))
     open(file_name, 'w').write(str(xml))

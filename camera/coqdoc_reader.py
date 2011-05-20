@@ -1,5 +1,7 @@
 """ Implements a Reader class for Coqdoc documents. """
-from xml.sax.saxutils import unescape
+from xml.sax.saxutils import unescape, escape
+import copy
+import re
 
 from CoqReader import CoqReader
 from coqdoc_movie import Coqdoc_Movie
@@ -25,8 +27,10 @@ class Coqdoc_Reader(CoqReader):
   def add_code(self, code):
     """ Override of the corresponding method in Reader: makes a 
         BeautifulSoup tree out of the given Coqdoc document. """
-        
-    self._coqdoc_tree = BeautifulSoup(code)
+    massage = copy.copy(BeautifulSoup.MARKUP_MASSAGE)
+    massage.extend([(re.compile('(name|href)="([^"]*)"'),
+          lambda match: match.group(1) + '="' + escape(match.group(2)) +'"')])
+    self._coqdoc_tree = BeautifulSoup(code, markupMassage = massage)
   
   def _find_commands(self, div):
     """ Find the commands. This is a wrapper around parent's parse. """ 

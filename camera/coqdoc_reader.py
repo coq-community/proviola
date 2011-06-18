@@ -43,7 +43,12 @@ class Coqdoc_Reader(CoqReader):
   
   def _replace_html(self, text):
     """ Replace HTML entitities by ASCII equivalents. """
-    replacements = {"&nbsp;": " "}
+    replacements = {"&nbsp;":   " ",
+                    "&rarr;":   "->",
+                    "&forall;": "forall",
+                    "&exists;": "exists",
+                    }
+
     text = unescape(text, replacements)
     return text
   
@@ -71,7 +76,7 @@ class Coqdoc_Reader(CoqReader):
         
         coqdoc = []
     
-    trailing_frame = Coqdoc_Frame(command = ''.join([str(el) for el in coqdoc]), 
+    trailing_frame = Coqdoc_Frame(command = ''.join([str(el) for el in coqdoc]),
                                   command_cd = coqdoc,
                                   response = None)
     frames.append(trailing_frame)
@@ -93,7 +98,11 @@ class Coqdoc_Reader(CoqReader):
         child.text = str(child)
         
       if child_name == "div": 
-        child_frames, child_scene = self._process_div(child)
+        if div.get("class") == "doc":
+          child_frames, child_scene = self._process_doc(child)
+        else:
+          child_frames, child_scene = self._process_div(child)
+      
       else:
         child_scene = Coqdoc_Frame(command = child.text, command_cd = [child],
                                response = None)

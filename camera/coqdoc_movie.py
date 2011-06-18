@@ -38,7 +38,13 @@ class Coqdoc_Movie(Movie):
 
   def toxml(self, stylesheet="proviola.xsl"):
     frame_doc = Movie.toxml(self, stylesheet)    
-    frame_doc.insert(1, Declaration('DOCTYPE movie [<!ENTITY nbsp "&#160;">]'))
+    frame_doc.insert(1, Declaration("""DOCTYPE movie [
+<!ENTITY nbsp   "&#160;"> 
+<!ENTITY rarr   "&#8594;"> 
+<!ENTITY forall "&#8704;"> 
+<!ENTITY mdash  "&#8212;">
+<!ENTITY exists "&#8707;"> 
+      ]"""))
     
     scene_tree = Tag(frame_doc, "scenes")
     frame_doc.movie.append(scene_tree)
@@ -79,7 +85,7 @@ class Coqdoc_Movie(Movie):
     """ Write the instance to file_name, replacing any internal links with 
         references to the written file. """
     xml = self.toxml(stylesheet) 
-    if not exists(dirname(file_name)):
+    if len(dirname(file_name)) > 0 and not exists(dirname(file_name)):
       makedirs(dirname(file_name))
     open(file_name, 'w').write(str(xml))
     

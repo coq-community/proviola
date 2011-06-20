@@ -77,11 +77,9 @@ class CoqReader(Reader):
           open -= 1
 
       char = self.readChar()
-
     return acc
       
   def getCommand(self, acc = ""):
-    
     char = self.readChar()
     while char != None:
       acc += char
@@ -92,11 +90,15 @@ class CoqReader(Reader):
           return self.getComment(acc)
         else:
           return self.getWord(acc)
-
-      elif not(char in string.whitespace): 
+      
+      elif char == '.' and self.peekChar() == '.':
+        acc += self.readChar()
+        return self.getWord(acc)
+        
+      elif not (char in string.whitespace): 
         return self.getWord(acc)
       char = self.readChar()
-      
+
     return acc
 
   def parse(self, buffer):
@@ -113,6 +115,7 @@ class CoqReader(Reader):
       if not (self.isCommand(command) or self.isComment(command)):
         self.unfinished = command
         command = ""
+
       else:
         self.unfinished = ""
         result.append(command)
@@ -120,7 +123,7 @@ class CoqReader(Reader):
     
     if self.unfinished:
       result.append(self.unfinished)
-      
+    
     return result
 
   def isComment(self, text):
@@ -129,10 +132,10 @@ class CoqReader(Reader):
            text.split()[0].startswith("(*") and text.endswith("*)")
   
   def isCommand(self, text):
-    """ Return whether the given text is a Coq comment. """
+    """ Return whether the given text is a Coq command. """
     text = text.rstrip()
     if text:
-      return self.terminator(text.rstrip()[len(text) - 1], 0)
+      return self.terminator(text[len(text) - 1], 0)
   
   def make_frames(self, prover = None):
     """ Splits the file stored in self.script into seperate commands, 

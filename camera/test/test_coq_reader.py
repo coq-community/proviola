@@ -34,7 +34,7 @@ class Test_Coq_Reader(unittest.TestCase):
   ============================
    forall x : Type, x -> x
 """)                    
-    
+  
   def test_slow(self):
     """ Test that a slow script gets processed correctly. """
     prover = Coq_Local("/usr/local/bin/coqtop")
@@ -47,7 +47,7 @@ Qed.
     """)
     movie = self._reader.make_frames(prover = prover)
     self.assertTrue(movie.getFrame(3).getResponse())
-    
+
   @classmethod
   def get_suite(cls):
     return unittest.TestLoader().loadTestsFromTestCase(cls)

@@ -79,7 +79,15 @@ class Test_Coqdoc_Reader(unittest.TestCase):
     
     result = self.reader.make_frames(prover = self.mock_prover)
     self.assertEquals("Notation foo := nat.", result.getFrame(0).getCommand())
-    
+  def test_html_two_dots(self):
+    """ Two dots in the HTML should not be terminators. """
+    self.reader.add_code(self.template.format(body = 
+      '<div class="code"><span class="id" type="keyword">Notation</span> "[ x , .. , y ]" := (<a class="idref" href="Lists.html#NatList.cons"><span class="id" type="constructor">cons</span></a> <span class="id" type="var">x</span> .. (<a class="idref" href="Lists.html#NatList.cons"><span class="id" type="constructor">cons</span></a> <span class="id" type="var">y</span> <a class="idref" href="Lists.html#NatList.nil"><span class="id" type="constructor">nil</span></a>) ..).<br/></div>'))
+
+    result = self.reader.make_frames(prover =  self.mock_prover)
+    self.assertEquals(result.getFrame(0).getCommand(), 
+      'Notation "[ x , .. , y ]" := (cons x .. (cons y nil) ..).')
+
   def test_html_single_code(self):
     """ Code divs should be picked up. """
     self.reader.add_code(self.template.format(body = 

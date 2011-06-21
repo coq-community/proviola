@@ -38,14 +38,27 @@ class Coqdoc_Movie(Movie):
 
   def toxml(self, stylesheet="proviola.xsl"):
     frame_doc = Movie.toxml(self, stylesheet)    
-    frame_doc.insert(1, Declaration("""DOCTYPE movie [
-<!ENTITY nbsp   "&#160;"> 
-<!ENTITY rarr   "&#8594;"> 
-<!ENTITY forall "&#8704;"> 
-<!ENTITY mdash  "&#8212;">
-<!ENTITY exists "&#8707;"> 
-      ]"""))
-    
+    # Entitites taken from Symbols.v in the SF notes.
+    entity_map = {
+      "nbsp":   "&#160;",
+      "mdash":  "&#8212;",
+      "dArr":   "&#8594;",
+      "rArr":   "&#8658;",
+      "rarr":   "&#8594;",
+      "larr":   "&#8592;",
+      "harr":   "&#8596;",
+      "forall": "&#8704;",
+      "exist":  "&#8707;",
+      "exists": "&#8707;",
+      "and":    "&#8743;",
+      "or":     "&#8744;",
+      "Gamma":  "&#915;",
+    }
+
+    entities = "\n".join(
+                ['<!ENTITY %s "%s">'%(key, entity_map[key]) 
+                 for key in entity_map])
+    frame_doc.insert(1, Declaration("DOCTYPE movie [" + entities + "]"))
     scene_tree = Tag(frame_doc, "scenes")
     frame_doc.movie.append(scene_tree)
       

@@ -53,8 +53,5 @@ class Coq_Local(object):
     self._coqtop.stdin.write(command + "\n")
     self._coqtop.stdin.flush()
 
-    result = self._read_coq()
-    return result
-
     return self._read_coq()
     

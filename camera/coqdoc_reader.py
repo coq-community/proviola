@@ -42,11 +42,23 @@ class Coqdoc_Reader(CoqReader):
     return self.parse(text)
   
   def _replace_html(self, text):
-    """ Replace HTML entitities by ASCII equivalents. """
+    """ Replace HTML entitities by ASCII equivalents. 
+        Special entities taken from SF's symbols.v """
     replacements = {"&nbsp;":   " ",
                     "&rarr;":   "->",
+                    "&larr;":   "<-",
+                    "&Gamma;":  "Gamma",
                     "&forall;": "forall",
+                    "&exist;":  "exists",
                     "&exists;": "exists",
+                    "&dArr;":   "||",
+                    "&Arr;":    "==>",
+                    "&harr;":   "<->",
+                    "&and;":    "/\\",
+                    "&or;":     "\/",
+                    "&#8658;":   "~~>",
+                    "&#8660;":   "<~~>",
+                    "&#8866;":   "|-",
                     }
 
     text = unescape(text, replacements)
@@ -112,12 +124,16 @@ class Coqdoc_Reader(CoqReader):
       scene.add_scene(child_scene)
           
     return frames, scene
+  
+  def _is_code(self, div):
+    """ Test whether the given div is a code div. """
+    return div.get("class") and "code" in div.get("class").split()
 
   def _process_div(self, div):
     """ Given a div element, return a list of frames with the div's content, 
         and a scene mimicking its structure.  """
     
-    if div.get("class") == "code":
+    if self._is_code(div):
       return self._process_code(div)
     else: 
       return self._process_doc(div)

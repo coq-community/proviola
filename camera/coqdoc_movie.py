@@ -42,7 +42,7 @@ class Coqdoc_Movie(Movie):
     entity_map = {
       "nbsp":   "&#160;",
       "mdash":  "&#8212;",
-      "dArr":   "&#8595;",
+      "dArr":   "&#8659;",
       "rArr":   "&#8658;",
       "rarr":   "&#8594;",
       "larr":   "&#8592;",

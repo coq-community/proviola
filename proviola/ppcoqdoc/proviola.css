@@ -6,7 +6,6 @@ div.code {
 div.goal {
   width: 50%;
   float: right;
-  overflow: scroll;
 }
 
 div.doc {

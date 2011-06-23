@@ -5,7 +5,9 @@ div.code {
 
 div.goal {
   width: 50%;
-  float: right;
+  position: fixed;
+  left: 55%;
+  bottom: 0;
 }
 
 div.doc {

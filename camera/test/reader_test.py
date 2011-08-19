@@ -1,5 +1,4 @@
 import unittest
-import CoqReader
 
 class Test_Reader(unittest.TestCase):
   """ Test for reader """

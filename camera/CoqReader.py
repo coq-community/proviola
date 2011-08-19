@@ -56,10 +56,12 @@ class CoqReader(Reader):
     return  char == "." and self.peekChar() in string.whitespace and open == 0
 
   def getWord(self, acc, open = 0):
+
     char = self.readChar()
     while char != None:
       acc += char
-
+      
+       
       if self.terminator(char, open):
         break
       if char == "." and self.peekChar() == '.':
@@ -77,10 +79,12 @@ class CoqReader(Reader):
           open -= 1
 
       char = self.readChar()
+
     return acc
       
   def getCommand(self, acc = ""):
     char = self.readChar()
+
     while char != None:
       acc += char
       if char == "(":
@@ -97,6 +101,7 @@ class CoqReader(Reader):
         
       elif not (char in string.whitespace): 
         return self.getWord(acc)
+
       char = self.readChar()
 
     return acc
@@ -135,7 +140,9 @@ class CoqReader(Reader):
     """ Return whether the given text is a Coq command. """
     text = text.rstrip()
     if text:
-      return self.terminator(text[len(text) - 1], 0)
+      return text[-1] == '.' and (
+               (text[-2] != '.' if len(text) >= 2 else True) 
+            or (text[-3] == '.' if len(text) >= 3 else True))
   
   def make_frames(self, prover = None):
     """ Splits the file stored in self.script into seperate commands, 

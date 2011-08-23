@@ -33,35 +33,18 @@ class CoqReader(Reader):
     Reader.__init__(self)
     self.unfinished = None
 
-  def getComment(self, acc, open = 1):
-    char = self.readChar() 
-    while char != None and open > 0:
-      acc = acc + char
-      if char == "*":
-        char2 = self.peekChar()
-        if char2 == ")":
-          acc = acc + self.readChar()
-          open -= 1
-          if open == 0:
-            break
-      elif char == "(":
-        char2 = self.peekChar()
-        if char2 == "*":
-          acc = acc + self.readChar()
-          open += 1
-      char = self.readChar() 
-    return acc
-
   def terminator(self, char, open):
     return  char == "." and self.peekChar() in string.whitespace and open == 0
 
-  def getWord(self, acc, open = 0):
+  def getWord(self, acc = "", open = 0):
     char = self.readChar()
+
     while char != None:
       acc += char
-
+       
       if self.terminator(char, open):
         break
+
       if char == "." and self.peekChar() == '.':
         acc += self.readChar()
 
@@ -70,6 +53,7 @@ class CoqReader(Reader):
         if char2 == "*":
           acc = acc + self.readChar()
           open += 1
+
       elif char == "*":
         char2 = self.peekChar()
         if char2 == ")":
@@ -77,30 +61,9 @@ class CoqReader(Reader):
           open -= 1
 
       char = self.readChar()
-    return acc
-      
-  def getCommand(self, acc = ""):
-    char = self.readChar()
-    while char != None:
-      acc += char
-      if char == "(":
-        char2 = self.peekChar()
-        if char2 == "*":
-          acc = acc + self.readChar()
-          return self.getComment(acc)
-        else:
-          return self.getWord(acc)
-      
-      elif char == '.' and self.peekChar() == '.':
-        acc += self.readChar()
-        return self.getWord(acc)
-        
-      elif not (char in string.whitespace): 
-        return self.getWord(acc)
-      char = self.readChar()
 
     return acc
-
+      
   def parse(self, buffer):
     self.script += buffer
     if self.unfinished:
@@ -108,7 +71,7 @@ class CoqReader(Reader):
     else:
       acc = ""
     
-    command = self.getCommand(acc = acc)
+    command = self.getWord(acc = acc)
     
     result = []
     while (len(command) != 0):
@@ -119,7 +82,7 @@ class CoqReader(Reader):
       else:
         self.unfinished = ""
         result.append(command)
-        command = self.getCommand()
+        command = self.getWord()
     
     if self.unfinished:
       result.append(self.unfinished)
@@ -135,7 +98,9 @@ class CoqReader(Reader):
     """ Return whether the given text is a Coq command. """
     text = text.rstrip()
     if text:
-      return self.terminator(text[len(text) - 1], 0)
+      return text[-1] == '.' and (
+               (text[-2] != '.' if len(text) >= 2 else True) 
+            or (text[-3] == '.' if len(text) >= 3 else True))
   
   def make_frames(self, prover = None):
     """ Splits the file stored in self.script into seperate commands, 
@@ -146,7 +111,7 @@ class CoqReader(Reader):
     """
     
     document = Movie()
-    command = self.getCommand()
+    command = self.getWord()
     
     while command != None and len(command) != 0:
       if self.isComment(command):
@@ -156,7 +121,7 @@ class CoqReader(Reader):
       
       id = 0
       document.addFrame(Frame(id, command, response))
-      command = self.getCommand()
+      command = self.getWord()
 
     return document
 

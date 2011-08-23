@@ -80,7 +80,6 @@ class Coqdoc_Reader(CoqReader):
         command = self._replace_html(commands[0])
         response = self._prover.send(
                              command.encode(self._coqdoc_tree.originalEncoding))
-        
         frame = Coqdoc_Frame(command = command, command_cd = coqdoc,
                            response = response)
         frames.append(frame)

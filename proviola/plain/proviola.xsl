@@ -7,7 +7,7 @@
 <xsl:template match="/">
   <html>
   <head>
-    <link rel="stylesheet" type="text/css" href="proviola_style.css" />
+    <link rel="stylesheet" type="text/css" href="proviola.css" />
 
   <script type = "text/javascript">
     var responses = new Array();
@@ -30,7 +30,7 @@
             </xsl:call-template>
           </xsl:variable>
 
-          i = <xsl:value-of select="@frameNumber"/>;
+          i = <xsl:value-of select="@framenumber"/>;
           data = "<xsl:value-of select="$data"/>";
           responses[i]=data;
         </xsl:for-each>
@@ -54,7 +54,7 @@
       <span class ="command">
         <xsl:attribute name="onmouseover">
         mouseover(
-          <xsl:value-of select="@frameNumber"/>
+          <xsl:value-of select="@framenumber"/>
         )
         </xsl:attribute>
         <xsl:value-of select="command"/>

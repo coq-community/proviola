@@ -47,6 +47,13 @@ Qed.
     """)
     movie = self._reader.make_frames(prover = prover)
     self.assertTrue(movie.getFrame(3).getResponse())
+  
+  def test_comment_cmd(self):
+    """ Comment followed by commands are two commands. """
+    self._reader.add_code("""(** Test *)
+    Proof. """)
+    movie = self._reader.make_frames(prover = self._prover)
+    self.assertEquals(movie.getLength(), 3)
 
   @classmethod
   def get_suite(cls):

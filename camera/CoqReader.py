@@ -59,6 +59,8 @@ class CoqReader(Reader):
         if char2 == ")":
           acc = acc + self.readChar()
           open -= 1
+          if open == 0 and self.isComment(acc):
+            return acc
 
       char = self.readChar()
 
@@ -91,8 +93,8 @@ class CoqReader(Reader):
 
   def isComment(self, text):
     """ Return whether the given text is a comment. """
-    return len(text.split()) <= 0 or\
-           text.split()[0].startswith("(*") and text.endswith("*)")
+    return len(text.strip()) <= 0 or\
+           text.strip().startswith("(*") and text.strip().endswith("*)")
   
   def isCommand(self, text):
     """ Return whether the given text is a Coq command. """
@@ -118,7 +120,6 @@ class CoqReader(Reader):
         response = None
       else:
         response = prover.send(command)
-      
       id = 0
       document.addFrame(Frame(id, command, response))
       command = self.getWord()

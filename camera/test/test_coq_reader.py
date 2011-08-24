@@ -54,7 +54,12 @@ Qed.
     Proof. """)
     movie = self._reader.make_frames(prover = self._prover)
     self.assertEquals(movie.getLength(), 3)
-
+  
+  def test_comment_inline(self):
+    """ Inline comments. """
+    self._reader.add_code("""Blah (* Comment *) blah.""")
+    movie = self._reader.make_frames(prover = self._prover)
+    self.assertEquals(movie.getLength(), 1)
   @classmethod
   def get_suite(cls):
     return unittest.TestLoader().loadTestsFromTestCase(cls)

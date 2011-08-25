@@ -160,3 +160,9 @@ class Movie(object):
   def getFrameById(self, id):
     """ Return the frame identified by the given id. """
     return self.getFrame(self._frameIds[int(id)])
+
+  def add_scene(self, scene):
+    """ Add given scene to the movie. """
+    scene.set_number(len(self._scenes))
+    self._scenes.append(scene)
+ 

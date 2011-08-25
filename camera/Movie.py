@@ -17,13 +17,16 @@
 # along with Proof Camera.  If not, see <http://www.gnu.org/licenses/>.
 
 from external.BeautifulSoup import BeautifulStoneSoup 
-from external.BeautifulSoup import Declaration, ProcessingInstruction
+from external.BeautifulSoup import Tag, Declaration, ProcessingInstruction
 
 from os import makedirs
 from os.path import exists, dirname
 
-from external.BeautifulSoup import Tag
-from Frame import TAG_FRAME, Frame
+
+from frame_factory import make_frame
+from scene import Scene
+BeautifulStoneSoup.NESTABLE_TAGS["scene"] = []
+
 
 TAG_FILM = "film"
 
@@ -54,10 +57,20 @@ class Movie(object):
 
   def fromxml(self, document):
     """ Load the movie frames from the given xml document """
-    for element in document.movie.film:
-      frame = Frame()
-      frame.fromxml(element)
+    self._frames = []
+    self._scenes = []
+
+    for element in document.film.findAll(name="frame"):
+      frame = make_frame(element)
       self.addFrame(frame)
+
+    for scene_xml in document.scenes.findAll(name="scene", recursive = False):
+      scene = Scene()
+      scene.fromxml(scene_xml)
+      self._replace_frames(scene)
+      self.add_scene(scene)
+
+
 
   def addFrame(self, frame):
     frame.setId(self.getLength())
@@ -175,7 +188,15 @@ class Movie(object):
   def _add_scenes(self, document, movie):
     """ Add scene tree to document. """
     scene_tree = Tag(document, "scenes")
-    ?amovie.append(scene_tree)
+    movie.append(scene_tree)
 
     for scene in self._scenes:
      scene_tree.append(scene.toxml(document))      
+
+  def _replace_frames(self, scene):
+    """ Replace the frames in scene by the actual frames in the movie. """
+    for sub in scene.get_subscenes():
+      if sub.is_scene():
+        self._replace_frames(sub)
+      else:
+        scene.replace_frame(sub, self.getFrameById(sub.getId()))

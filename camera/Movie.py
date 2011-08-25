@@ -33,7 +33,18 @@ class Movie(object):
     # For now, however, this suffices.
     self._frames = []
     self._frameIds = {}
-  
+    
+    self._title = ""
+ 
+  def set_title(self, title):
+    """ Sets the argument to the title. """
+    if title:
+      self._title = title
+
+  def get_title(self):
+    """ Getter for title. """
+    return self._title
+
   def fromxml(self, document):
     """ Load the movie frames from the given xml document """
     for element in document.movie.film:

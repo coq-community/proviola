@@ -62,7 +62,13 @@ class Test_Movie(unittest.TestCase):
 
     self.assertEqual(f1, f1ById)
 
+  def test_title(self):
+    """ Test set-get of title. """
+    self.movie.set_title("Test")
+    self.assertEquals("Test", self.movie.get_title())
+                
 
 if __name__ == '__main__':
   suite = unittest.TestLoader().loadTestsFromTestCase(TestMovie)
   unittest.TextTestRunner(verbosity=2).run(suite)
+

@@ -22,20 +22,11 @@ class Coqdoc_Movie(Movie):
     """ Add given scene to the movie. """
     scene.set_number(len(self._scenes))
     self._scenes.append(scene)
-    
-  def get_title(self):
-    """ Returns the title of the movie. """
-    return self._title
   
   def get_scenes(self):
     """ Getter for self._scenes. """
     return self._scenes
   
-  def set_title(self, title):
-    """ Add the argument to the title. """
-    if title:
-      self._title += title
-
   def toxml(self, stylesheet="proviola.xsl"):
     frame_doc = Movie.toxml(self, stylesheet)    
     # Entitites taken from Symbols.v in the SF notes.

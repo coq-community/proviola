@@ -165,4 +165,9 @@ class Movie(object):
     """ Add given scene to the movie. """
     scene.set_number(len(self._scenes))
     self._scenes.append(scene)
+
+  def get_scenes(self):
+    """ Getter for self._scenes. """
+    return self._scenes
+ 
  

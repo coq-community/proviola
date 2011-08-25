@@ -27,7 +27,6 @@ class Coqdoc_Movie(Movie):
  
   def toxml(self, stylesheet="proviola.xsl"):
     frame_doc = Movie.toxml(self, stylesheet)    
-    # Entitites taken from Symbols.v in the SF notes.
     
     scene_tree = Tag(frame_doc, "scenes")
     frame_doc.movie.append(scene_tree)
@@ -53,12 +52,6 @@ class Coqdoc_Movie(Movie):
       self._replace_frames(scene)
       self.add_scene(scene)
 
-  def from_string(self, xml_string):
-    """ Initialize movie from the given xml tree in string form.
-    """
-    tree = BeautifulStoneSoup(xml_string)
-    return self.fromxml(tree)
-  
   def _replace_frames(self, scene):
     """ Replace the frames in scene by the actual frames in the movie. """
     for sub in scene.get_subscenes():

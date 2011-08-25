@@ -88,6 +88,13 @@ class Movie(object):
     """ Add frames to the film """
     for frame in self._frames:
       film.append(frame.toxml(document))
+
+  def from_string(self, xml_string):
+    """ Initialize movie from the given xml tree in string form.
+    """
+    tree = BeautifulStoneSoup(xml_string)
+    return self.fromxml(tree)
+ 
  
   def _add_entities(self, document):
     """ Adds an entity delcaration to the given document. 

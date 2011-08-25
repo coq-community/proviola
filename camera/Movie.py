@@ -39,6 +39,8 @@ class Movie(object):
     self._frames = []
     self._frameIds = {}
     
+    self._scenes = []
+
     self._title = ""
  
   def set_title(self, title):

@@ -12,9 +12,7 @@ class Coqdoc_Movie(Movie):
   def __init__(self):
     """ Initialize an empty Movie. """
     Movie.__init__(self)
-
-    self._scenes = []
-  
+ 
   def add_scene(self, scene):
     """ Add given scene to the movie. """
     scene.set_number(len(self._scenes))

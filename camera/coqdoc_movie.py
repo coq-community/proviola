@@ -8,7 +8,7 @@ from scene import Scene
 
 class Coqdoc_Movie(Movie):
   """ A coqdoc movie is a movie enhanced with scenes. """
-
+  
   def fromxml(self, xml):
     """ Unmarshall the given xml tree into a Coqdoc_movie. """
     self._frames = []

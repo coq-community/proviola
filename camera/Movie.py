@@ -134,6 +134,7 @@ class Movie(object):
 
     film = Tag(doc, TAG_FILM)
     self._add_frames(doc, film)
+    self._add_scenes(doc, movie)
 
     movie.append(film)
     doc.append(movie)
@@ -171,3 +172,12 @@ class Movie(object):
     return self._scenes
  
  
+  def _add_scenes(self, document, movie):
+    """ Add scene tree to document. """
+    scene_tree = Tag(document, "scenes")
+    movie.append(scene_tree)
+
+    for scene in self._scenes:
+     scene_tree.append(scene.toxml(document))      
+
+

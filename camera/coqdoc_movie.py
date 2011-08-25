@@ -12,21 +12,6 @@ class Coqdoc_Movie(Movie):
   def __init__(self):
     """ Initialize an empty Movie. """
     Movie.__init__(self)
- 
-  def get_scenes(self):
-    """ Getter for self._scenes. """
-    return self._scenes
- 
-  def toxml(self, stylesheet="proviola.xsl"):
-    frame_doc = Movie.toxml(self, stylesheet)    
-    
-    scene_tree = Tag(frame_doc, "scenes")
-    frame_doc.movie.append(scene_tree)
-      
-    for scene in self._scenes:
-      scene_tree.append(scene.toxml(frame_doc))      
-        
-    return frame_doc
 
   def fromxml(self, xml):
     """ Unmarshall the given xml tree into a Coqdoc_movie. """

@@ -17,6 +17,9 @@
 # along with Proof Camera.  If not, see <http://www.gnu.org/licenses/>.
 
 from external.BeautifulSoup import BeautifulStoneSoup, ProcessingInstruction 
+from os import makedirs
+from os.path import exists, dirname
+
 from external.BeautifulSoup import Tag
 from Frame import TAG_FRAME, Frame
 
@@ -93,12 +96,17 @@ class Movie(object):
     
     return doc
 
-  def toFile(self, fileName, stylesheet = "proviola.xsl"):
+  def toFile(self, file_name, stylesheet = "proviola.xsl"):
     """ Write the file, in XML, to filmName """
-    filmFile = open(fileName, 'w')
-    
-    filmFile.write(str(self.toxml(stylesheet)))
-    filmFile.close()
+
+    xml = self.toxml(stylesheet) 
+    if len(dirname(file_name)) > 0 and not exists(dirname(file_name)):
+      makedirs(dirname(file_name))
+
+    f = open(file_name, 'w')
+    f.write(str(xml))
+    f.close()
+
 
   def openFile(self, fileName):
     """ Open an XML file and load its data in memory. """

@@ -1,5 +1,3 @@
-from os import makedirs
-from os.path import exists, dirname
 
 from external.BeautifulSoup import Tag, Declaration, BeautifulStoneSoup
 BeautifulStoneSoup.NESTABLE_TAGS["scene"] = []
@@ -85,14 +83,6 @@ class Coqdoc_Movie(Movie):
     target = link.get("href") 
     return target and (not target.startswith("http://"))
   
-  def toFile(self, file_name, stylesheet = "proviola.xsl"):
-    """ Write the instance to file_name, replacing any internal links with 
-        references to the written file. """
-    xml = self.toxml(stylesheet) 
-    if len(dirname(file_name)) > 0 and not exists(dirname(file_name)):
-      makedirs(dirname(file_name))
-    open(file_name, 'w').write(str(xml))
-    
   def _replace_frames(self, scene):
     """ Replace the frames in scene by the actual frames in the movie. """
     for sub in scene.get_subscenes():

@@ -25,6 +25,7 @@ import string
 from Reader import Reader
 from Movie import Movie
 from Frame import Frame
+from scene import Scene
 
 suffix = '.v'
 
@@ -113,6 +114,11 @@ class CoqReader(Reader):
     """
     
     document = Movie()
+    scene = Scene()
+    scene.set_type("code")
+
+    document.add_scene(scene)
+
     command = self.getWord()
     
     while command != None and len(command) != 0:
@@ -121,7 +127,11 @@ class CoqReader(Reader):
       else:
         response = prover.send(command)
       id = 0
-      document.addFrame(Frame(id, command, response))
+
+      f = Frame(id, command, response)
+      document.addFrame(f)
+      scene.add_scene(f)
+
       command = self.getWord()
 
     return document

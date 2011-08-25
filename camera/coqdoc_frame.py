@@ -12,10 +12,6 @@ class Coqdoc_Frame(Frame):
     Frame.__init__(self, id = id, command = command, response = response)
     self._command_coqdoc = command_cd or []
 
-  def set_number(self, number):
-    """ Frames should not keep a scene-number. """
-    pass
-  
   def get_coqdoc_command(self):
     """ Getter for self._command_coqdoc. """
     if not self._command_coqdoc:

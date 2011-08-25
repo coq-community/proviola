@@ -147,9 +147,9 @@ class Coqdoc_Reader(CoqReader):
     self._prover = prover
     
     try:
-      self._movie.add_to_title(self._coqdoc_tree.head.title.text)
+      self._movie.set_title(self._coqdoc_tree.head.title.text)
     except AttributeError:
-      self._movie.add_to_title("")
+      self._movie.set_title("")
     
     
     body = self._coqdoc_tree.body

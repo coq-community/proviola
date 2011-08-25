@@ -56,7 +56,11 @@ class Test_Coqdoc_Movie(unittest.TestCase):
     self.assertEquals(frame.getResponse(), "Eggs")
     self.assertEquals(str(frame.get_coqdoc_command()), "<div>Spam</div>")
     
-              
+
+  def test_title(self):
+    """ Test set-get of title. """
+    self._coqdoc_movie.set_title("Test")
+    self.assertEquals("Test", self._coqdoc_movie.get_title())
                 
     
   

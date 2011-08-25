@@ -31,7 +31,7 @@ class Coqdoc_Movie(Movie):
     """ Getter for self._scenes. """
     return self._scenes
   
-  def add_to_title(self, title):
+  def set_title(self, title):
     """ Add the argument to the title. """
     if title:
       self._title += title

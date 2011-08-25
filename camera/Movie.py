@@ -175,9 +175,7 @@ class Movie(object):
   def _add_scenes(self, document, movie):
     """ Add scene tree to document. """
     scene_tree = Tag(document, "scenes")
-    movie.append(scene_tree)
+    ?amovie.append(scene_tree)
 
     for scene in self._scenes:
      scene_tree.append(scene.toxml(document))      
-
-

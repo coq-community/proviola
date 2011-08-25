@@ -16,7 +16,9 @@
 # You should have received a copy of the GNU General Public License
 # along with Proof Camera.  If not, see <http://www.gnu.org/licenses/>.
 
-from external.BeautifulSoup import BeautifulStoneSoup, ProcessingInstruction 
+from external.BeautifulSoup import BeautifulStoneSoup 
+from external.BeautifulSoup import Declaration, ProcessingInstruction
+
 from os import makedirs
 from os.path import exists, dirname
 
@@ -73,27 +75,59 @@ class Movie(object):
   def getFrame(self, i):  
     return self._frames[i]
 
+  def _add_PIs(self, document, stylesheet):
+    """ Add XML processing instructions to the given document. """
+    document.append(
+      ProcessingInstruction("xml version='1.0' encoding='utf-8'"))
+
+    document.append(
+      ProcessingInstruction(
+        'xml-stylesheet type="text/xsl" href="%s"'%stylesheet))
+  
+  def _add_frames(self, document, film):
+    """ Add frames to the film """
+    for frame in self._frames:
+      film.append(frame.toxml(document))
+ 
+  def _add_entities(self, document):
+    """ Adds an entity delcaration to the given document. 
+        NOTE: Based on Symbols.v, might be made a parameter."""
+
+    entity_map = {
+      "nbsp":   "&#160;",
+      "mdash":  "&#8212;",
+      "dArr":   "&#8659;",
+      "rArr":   "&#8658;",
+      "rarr":   "&#8594;",
+      "larr":   "&#8592;",
+      "harr":   "&#8596;",
+      "forall": "&#8704;",
+      "exist":  "&#8707;",
+      "exists": "&#8707;",
+      "and":    "&#8743;",
+      "or":     "&#8744;",
+      "Gamma":  "&#915;",
+    }
+
+    entities = "\n".join(
+                ['<!ENTITY %s "%s">'%(key, entity_map[key]) 
+                 for key in entity_map])
+    document.insert(1, Declaration("DOCTYPE movie [" + entities + "]"))
+
   def toxml(self, stylesheet="proviola.xsl"):
     """ Marshall the movie to an XML document. """
     doc = BeautifulStoneSoup()
-    docType =  ProcessingInstruction("xml version='1.0' encoding='utf-8'")
-    doc.append(docType)
 
-    styleSheetRef = ProcessingInstruction(
-                'xml-stylesheet type="text/xsl" href="%s"'%stylesheet)
+    self._add_entities(doc)
+    self._add_PIs(doc, stylesheet)
     
-
-    doc.append(styleSheetRef)
-
     movie = Tag(doc, "movie")
-    doc.append(movie)
 
     film = Tag(doc, TAG_FILM)
+    self._add_frames(doc, film)
+
     movie.append(film)
-    
-    for frame in self._frames:
-      film.append(frame.toxml(doc))
-    
+    doc.append(movie)
     return doc
 
   def toFile(self, file_name, stylesheet = "proviola.xsl"):

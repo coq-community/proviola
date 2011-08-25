@@ -6,10 +6,10 @@ from os.path import basename, dirname, join
 from external.BeautifulSoup import BeautifulStoneSoup, Tag
 from coqdoc_frame import Coqdoc_Frame
 
-from coqdoc_movie import Coqdoc_Movie
+from Movie import Movie 
 
 class Test_Coqdoc_Movie(unittest.TestCase):
-  """ Test several aspects of a Coqdoc movie. """
+  """ Test several aspects of a Coqdoc-based movie. """
   
   def setUp(self):
     """ Sets up fixture. """
@@ -19,7 +19,7 @@ class Test_Coqdoc_Movie(unittest.TestCase):
     self._frame = Coqdoc_Frame(command_cd = [self._a], command = "foo", 
                                response = None)
     
-    self._coqdoc_movie = Coqdoc_Movie()
+    self._coqdoc_movie = Movie()
     self._coqdoc_movie.addFrame(self._frame)
 
   

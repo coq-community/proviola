@@ -78,11 +78,6 @@ class Coqdoc_Movie(Movie):
     tree = BeautifulStoneSoup(xml_string)
     return self.fromxml(tree)
   
-  def _is_local(self, link):
-    """ Test if a given link element is local or remote. """
-    target = link.get("href") 
-    return target and (not target.startswith("http://"))
-  
   def _replace_frames(self, scene):
     """ Replace the frames in scene by the actual frames in the movie. """
     for sub in scene.get_subscenes():

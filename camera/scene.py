@@ -69,7 +69,6 @@ class Scene(object):
         
     for key, value in self._attributes:
       element[key] = value
-        
 
     element["scenenumber"] = self._no
     element["class"] = self._type

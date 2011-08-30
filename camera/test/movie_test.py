@@ -65,6 +65,8 @@ class Test_Movie(unittest.TestCase):
   def test_to_XML(self):
     """ Test toXML. """
     self.assertEquals(str(self.movie.toxml()).split()[0], "<?xml")
+    self.assertEquals(1, str(self.movie.toxml()).count("DOCTYPE"))
+
   def test_title(self):
     """ Test set-get of title. """
     self.movie.set_title("Test")

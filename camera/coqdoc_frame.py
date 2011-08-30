@@ -1,5 +1,4 @@
 from Frame import Frame
-from xml.sax.saxutils import escape, unescape
 from external.BeautifulSoup import Tag
 TAG_COQDOC = "command-coqdoc"
 

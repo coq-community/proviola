@@ -60,6 +60,19 @@ Qed.
     self._reader.add_code("""Blah (* Comment *) blah.""")
     movie = self._reader.make_frames(prover = self._prover)
     self.assertEquals(movie.getLength(), 1)
+
+  def test_coqdoc(self):
+    """ Simple escape to 'coqdoc' commands. """
+    self._reader.add_code("Goal forall x, x->x.\nProof.")
+    movie = self._reader.make_frames(prover = self._prover)
+    self.assertEquals(
+      "Goal&nbsp;forall&nbsp;x,&nbsp;x-&gt;x.",
+      movie.getFrame(0).get_coqdoc_command())
+
+    self.assertEquals(
+      "<br/>Proof.",
+      movie.getFrame(1).get_coqdoc_command())
+
   @classmethod
   def get_suite(cls):
     return unittest.TestLoader().loadTestsFromTestCase(cls)

@@ -24,8 +24,9 @@ import string
 
 from Reader import Reader
 from Movie import Movie
-from Frame import Frame
+from coqdoc_frame import Coqdoc_Frame
 from scene import Scene
+from xml.sax.saxutils import escape
 
 suffix = '.v'
 
@@ -105,6 +106,15 @@ class CoqReader(Reader):
                (text[-2] != '.' if len(text) >= 2 else True) 
             or (text[-3] == '.' if len(text) >= 3 else True))
   
+  def _escape_to_html(self, text):
+    """ Escape entities to (pre-formatted) HTML. """
+    entities = {
+      ' ' : '&nbsp;',
+      '\n': '<br/>',
+    }
+  
+    return escape(text, entities)
+
   def make_frames(self, prover = None):
     """ Splits the file stored in self.script into seperate commands, 
         and pairs these commands to their responses as provided by prover.
@@ -127,8 +137,10 @@ class CoqReader(Reader):
       else:
         response = prover.send(command)
       id = 0
-
-      f = Frame(id, command, response)
+      
+      coqdoc_command = self._escape_to_html(command)
+      f = Coqdoc_Frame(id, command = command, command_cd = coqdoc_command,
+                           response = response)
       document.addFrame(f)
       scene.add_scene(f)
 

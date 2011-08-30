@@ -17,3 +17,6 @@ coqdoc.css
 
 experiments/*
 .settings/*
+
+*.vo
+*.glob

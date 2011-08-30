@@ -1,20 +1,18 @@
-<?xml version="1.0" encoding="ISO-8859-1"?>
+<?xml version="1.0" encoding="UTF-8"?>
 
-<xsl:stylesheet version="1.0"
- xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
-
+<xsl:stylesheet version="1.0"  
+                xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 
 <xsl:template match="/">
   <html>
   <head>
     <link rel="stylesheet" type="text/css" href="proviola.css" />
 
-  <script type = "text/javascript">
+    <script type = "text/javascript">
     var responses = new Array();
-    
+
     function mouseover(id) {
-      response = get_response(id);
-      set_response(response);
+      set_response(get_response(id));
     };
 
     function set_array() {
@@ -39,10 +37,14 @@
     function get_response(id) {
       return responses[id];
     };
-  
+
     function set_response(response) {
-      goalSpan =  document.getElementById("goal").getElementsByTagName("span")[0];
-      goalSpan.innerHTML = response.replace(/&#x09;/g, '\n');
+      goalId = "goal";
+      elById = document.getElementById(goalId);
+      if(elById){
+        goalSpan = elById.getElementsByTagName("span")[0];
+        goalSpan.innerHTML = response.replace(/&#x09;/g, '\n');
+      }
     };
   </script>
   </head>
@@ -51,14 +53,13 @@
     <div class = "commands">
     <pre>
     <xsl:for-each select="movie/film/frame">
-      <span class ="command">
-        <xsl:attribute name="onmouseover">
-        mouseover(
-          <xsl:value-of select="@framenumber"/>
-        )
-        </xsl:attribute>
-        <xsl:value-of select="command"/>
-      </span>
+    <span class="command">
+      <xsl:attribute name="onmouseover">
+      mouseover(<xsl:value-of select="@framenumber"/>);
+      </xsl:attribute>
+
+      <xsl:value-of select = "command"/>
+    </span>
     </xsl:for-each>
     </pre>
     </div>
@@ -93,6 +94,5 @@
     </xsl:otherwise>
   </xsl:choose>
 </xsl:template>
-
 
 </xsl:stylesheet>

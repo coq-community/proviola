@@ -4,7 +4,7 @@ import copy
 import re
 
 from CoqReader import CoqReader
-from coqdoc_movie import Coqdoc_Movie
+from Movie import Movie
 from scene import Scene
 from coqdoc_frame import Coqdoc_Frame
 
@@ -20,7 +20,7 @@ class Coqdoc_Reader(CoqReader):
   def __init__(self):
     """ Setup: creates an empty movie. """
     CoqReader.__init__(self)
-    self._movie = Coqdoc_Movie()
+    self._movie = Movie()
     self._prover = None
     self._coqdoc_tree = None
     

@@ -1,6 +1,6 @@
 import CoqReader
-import Isabelle_Reader
 import coqdoc_reader
+import Isabelle_Reader
 import os
 
 def get_reader(extension = None):

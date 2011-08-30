@@ -61,7 +61,10 @@ class Test_Movie(unittest.TestCase):
     f1ById = self.movie.getFrameById(f1.getId())
 
     self.assertEqual(f1, f1ById)
-
+  
+  def test_to_XML(self):
+    """ Test toXML. """
+    self.assertEquals(str(self.movie.toxml()).split()[0], "<?xml")
   def test_title(self):
     """ Test set-get of title. """
     self.movie.set_title("Test")

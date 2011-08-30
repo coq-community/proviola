@@ -92,7 +92,7 @@ class Movie(object):
 
   def _add_PIs(self, document, stylesheet):
     """ Add XML processing instructions to the given document. """
-    document.append(
+    document.insert(0,
       ProcessingInstruction("xml version='1.0' encoding='utf-8'"))
 
     document.append(

@@ -39,9 +39,10 @@ class Coqdoc_Frame(Frame):
     
     if self._command_coqdoc:
       map(tag.append, self._command_coqdoc)
-      
-    frame_xml.append(tag)
     
+    frame_xml.append(tag)
+    frame_xml.command.next = tag
+
     return frame_xml
   
   def __str__(self):

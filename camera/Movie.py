@@ -71,9 +71,19 @@ class Movie(object):
       self.add_scene(scene)
 
 
+  def _get_dependencies(self):
+    """ Get the tip of the dependency-tree (just the last frame in the movie.
+    """ 
+    if self.get_frames():
+      return [self.get_frames()[self.getLength() - 1]]
+    else:
+      return []
 
   def addFrame(self, frame):
+    """ Add frame to the movie. """ 
+    frame.set_dependencies(self._get_dependencies())
     frame.setId(self.getLength())
+
     self._frames.append(frame)
     self._frameIds[frame.getId()] = self.getLength() - 1
 

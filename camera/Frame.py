@@ -34,7 +34,10 @@ class Frame:
     self._id = id
     self._command = command
     self._response = response
+    self._dependencies = []
 
+  def get_dependencies(self):
+    return self._dependencies
 
   def getCommand(self):
     """ Getter for the command field. """
@@ -89,3 +92,7 @@ class Frame:
     ref = Tag(document, "frame-reference")
     ref[TAG_ID] = self.getId()
     return ref
+  
+  def set_dependencies(self, frames):
+    """ Mark which frames this frame depends on. """
+    self._dependencies = frames

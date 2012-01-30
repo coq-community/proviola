@@ -12,7 +12,7 @@ class Test_Coqdoc_Frame(unittest.TestCase):
     xml = frame.toxml(doc = BeautifulStoneSoup())
     self.assertEquals(xml.command.text, "")
     self.assertFalse(xml.response)
-    self.assertFalse(xml.find(name = "command-coqdoc"))
+    self.assertFalse(xml.find(name = "command-coqdoc").text)
 
   def test_entitities(self):
     """ Test that entities in command, response and coqdoc_command are
@@ -24,6 +24,7 @@ class Test_Coqdoc_Frame(unittest.TestCase):
     
     xml = frame.toxml(doc = BeautifulStoneSoup())
     self.assertEquals(xml.command.text, "&amp;")
+    print "XML (test): ", xml
     self.assertEquals(xml.response.text, "&amp;")
   
   def test_export_entities(self):

@@ -41,7 +41,10 @@ class Coqdoc_Frame(Frame):
       map(tag.append, self._command_coqdoc)
     
     frame_xml.append(tag)
-    frame_xml.command.next = tag
+    if frame_xml.response:
+      frame_xml.response.next = tag
+    else:
+      frame_xml.command.next = tag
 
     return frame_xml
   

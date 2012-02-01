@@ -92,7 +92,10 @@ class Frame:
     ref = Tag(document, "frame-reference")
     ref[TAG_ID] = self.getId()
     return ref
-  
+
   def set_dependencies(self, frames):
     """ Mark which frames this frame depends on. """
     self._dependencies = frames
+
+  def flatten(self):
+    return [self]

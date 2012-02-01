@@ -46,6 +46,13 @@ class Scene(object):
     """ Getter for self._subscenes. """
     return self._subscenes
   
+  def flatten(self):
+    """ Flatten all subscenes. """
+    result = []
+    for sub in self._subscenes:
+      result += sub.flatten()
+    return result
+
   def get_type(self):
     """ Getter for self._type. """
     return self._type

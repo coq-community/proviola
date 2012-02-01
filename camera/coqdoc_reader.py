@@ -23,7 +23,11 @@ class Coqdoc_Reader(CoqReader):
     self._movie = Movie()
     self._prover = None
     self._coqdoc_tree = None
-    
+   
+  def add_code_soup(self, tree):
+    """ Add code as a Beautiful Soup tree. """
+    self._coqdoc_tree = tree
+
   def add_code(self, code):
     """ Override of the corresponding method in Reader: makes a 
         BeautifulSoup tree out of the given Coqdoc document. """

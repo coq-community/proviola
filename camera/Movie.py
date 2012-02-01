@@ -69,8 +69,6 @@ class Movie(object):
       scene.fromxml(scene_xml)
       self._replace_frames(scene)
       self.add_scene(scene)
-
-
   def _get_dependencies(self):
     """ Get the tip of the dependency-tree (just the last frame in the movie.
     """ 
@@ -78,6 +76,12 @@ class Movie(object):
       return [self.get_frames()[self.getLength() - 1]]
     else:
       return []
+
+
+
+  def add_frame(self, frame):
+    """ Rename of addFrame. """
+    self.addFrame(frame)
 
   def addFrame(self, frame):
     """ Add frame to the movie. """ 
@@ -210,3 +214,6 @@ class Movie(object):
         self._replace_frames(sub)
       else:
         scene.replace_frame(sub, self.getFrameById(sub.getId()))
+
+  def __len__(self):
+    return len(self._frames)

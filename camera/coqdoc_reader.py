@@ -49,6 +49,7 @@ class Coqdoc_Reader(CoqReader):
     """ Replace HTML entitities by ASCII equivalents. 
         Special entities taken from SF's symbols.v """
     replacements = {"&nbsp;":   " ",
+                    "&#160;":   " ", # Unicode nbsp; should be standard space for Coq
                     "&rarr;":   "->",
                     "&larr;":   "<-",
                     "&Gamma;":  "Gamma",

@@ -49,6 +49,10 @@ class Frame:
   def set_number(self, number):
     """ Frames should not keep a scene-number """
     pass
+  
+  def set_response(self, response):
+    """ Set the response in the frame. """
+    self._response = response
 
   def getResponse(self):
     return self._response

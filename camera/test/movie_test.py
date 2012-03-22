@@ -30,6 +30,13 @@ class Test_Movie(unittest.TestCase):
     self.assertEquals(frame2.get_dependencies(), [frame1])
     self.assertEquals(frame3.getId(), 2)
     self.assertEquals(frame3.get_dependencies(), [frame2])
+  
+  def test_set_response(self):
+    """ Set frame response. """
+    """ TODO: Put this in separate test case? """
+    frame = Frame()
+    frame.set_response("Passed")
+    self.assertEquals("Passed", frame.getResponse())
 
   def _storeOpenAndCompareMovie(self):
     self.movie.toFile(TESTFILM_PATH)

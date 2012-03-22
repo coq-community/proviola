@@ -74,6 +74,8 @@ class Test_Movie(unittest.TestCase):
     f1ById = self.movie.getFrameById(f1.getId())
 
     self.assertEqual(f1, f1ById)
+
+    self.assertIsNone(self.movie.getFrameById(42), "Id out of range")
   
   def test_to_XML(self):
     """ Test toXML. """

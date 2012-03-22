@@ -15,6 +15,7 @@ class Test_Movie(unittest.TestCase):
   def test_AddFrame(self):
     """ Addition of a frame in order should yield correct IDs """
     frame1 = Frame(command = "command1", response = "response1")    
+    self.assertTrue(frame1.is_processed())
     self.movie.addFrame(frame1)
 
     frame2 = Frame(command = "command2", response = "response2")    
@@ -35,8 +36,10 @@ class Test_Movie(unittest.TestCase):
     """ Set frame response. """
     """ TODO: Put this in separate test case? """
     frame = Frame()
+    self.assertFalse(frame.is_processed())
     frame.set_response("Passed")
     self.assertEquals("Passed", frame.getResponse())
+    self.assertTrue(frame.is_processed())
 
   def _storeOpenAndCompareMovie(self):
     self.movie.toFile(TESTFILM_PATH)

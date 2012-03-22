@@ -32,8 +32,10 @@ class Frame:
     """ A frame always has an id and a command, but optionally a response 
     """
     self._id = id
-    self._command = command
+    self._command = command 
     self._response = response
+    self._processed = bool(response)
+
     self._dependencies = []
 
   def get_dependencies(self):
@@ -53,9 +55,13 @@ class Frame:
   def set_response(self, response):
     """ Set the response in the frame. """
     self._response = response
+    self._processed = True
 
   def getResponse(self):
     return self._response
+  
+  def is_processed(self):
+    return self._processed
 
   def getId(self):
     return self._id

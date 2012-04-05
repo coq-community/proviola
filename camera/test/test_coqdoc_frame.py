@@ -50,6 +50,7 @@ class Test_Coqdoc_Frame(unittest.TestCase):
     self.assertEquals("Spam", frame.getCommand())
     self.assertEquals("Eggs", frame.getResponse())
     self.assertEquals("<div>Spam</div>", str(frame.get_coqdoc_command()))
+    self.assertEquals("<div>Spam</div>", str(frame.get_markup_command()))
     
   def test_nested_entities(self):
     """ Test that entities in elements escape correctly. """

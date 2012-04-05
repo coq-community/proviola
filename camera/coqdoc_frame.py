@@ -18,6 +18,10 @@ class Coqdoc_Frame(Frame):
     
     return "".join([str(part) for part in self._command_coqdoc])
     
+  def get_markup_command(self):
+    """ Getter for marked up command. """
+    return self.get_coqdoc_command()
+
   def is_scene(self):
     """ Tester if this is a scene. In a statically typed language, this would be
         a point for case analysis (this might mean the algorithm using it should

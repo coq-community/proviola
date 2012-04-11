@@ -22,12 +22,6 @@ class Coqdoc_Frame(Frame):
     """ Getter for marked up command. """
     return self.get_coqdoc_command()
 
-  def is_scene(self):
-    """ Tester if this is a scene. In a statically typed language, this would be
-        a point for case analysis (this might mean the algorithm using it should
-        change. """
-    return False
-
   def fromxml(self, element):
     """ Instantiate the data using the given element.
     """ 

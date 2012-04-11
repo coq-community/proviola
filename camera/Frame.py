@@ -65,7 +65,10 @@ class Frame:
 
   def getId(self):
     return self._id
- 
+  
+  def is_scene(self):
+    return False
+
   def fromxml(self, elem):
     """ Fill frame from given elem. """
     self._id = elem["framenumber"]

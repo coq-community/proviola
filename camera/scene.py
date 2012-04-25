@@ -28,6 +28,10 @@ class Scene(object):
       result_dict[key] = value
     return result_dict
   
+  def remove_scenes(self):
+    """ Remove all subscenes from this scene. """
+    self._subscenes = []
+
   def add_scene(self, scene):
     """ Add a subscene to this scene.    
     Arguments:

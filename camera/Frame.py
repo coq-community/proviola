@@ -83,7 +83,7 @@ class Frame:
       self._response = unescape(elem.response.string)
     
     dependencies = []
-    for dep in elem.dependencies:
+    for dep in (elem.dependencies or []):
       dependencies.append(int(dep[TAG_ID]))
 
     self.set_dependencies(dependencies)
@@ -102,8 +102,9 @@ class Frame:
     dependencies = Tag(doc, TAG_DEPS)
     for dep in self.get_dependencies():
       dependency = Tag(doc, TAG_DEP)
-      dependency[TAG_ID] = dep.id
+      dependency[TAG_ID] = dep
       dependencies.append(dependency)
+
     frameElement.append(dependencies)
 
     return frameElement 

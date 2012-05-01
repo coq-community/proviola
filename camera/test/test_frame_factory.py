@@ -18,23 +18,28 @@ class Test_Frame_Factory(unittest.TestCase):
         Frame.
     """
     element = self._make_elem("""<command>Test</command>
-      <response>Response</response>""")
+                                 <response>Response</response>
+                                 <dependencies><dependency framenumber="0" /></dependencies>""")
 
     frame = make_frame(element)
 
     self.assertTrue(isinstance(frame, Frame))
     self.assertEquals("Test", frame.getCommand())
     self.assertEquals("Response", frame.getResponse())
+    self.assertEquals([0], frame.get_dependencies())
 
   def test_coqdoc_frame(self):
     """ Frame containing a command-coqdoc section should yield a Coqdoc Frame. 
     """
     element = self._make_elem("""<command>Test</command>
       <command-coqdoc>Test-coqdoc</command-coqdoc>
-      <response>Response</response>""")
+      <response>Response</response>
+      <dependencies><dependency framenumber="1" />
+                    <dependency framenumber="2"/></dependencies>""")
 
     frame = make_frame(element)
     self.assertTrue(isinstance(frame, Coqdoc_Frame))
     self.assertEquals("Test", frame.getCommand())
     self.assertEquals("Test-coqdoc", frame.get_coqdoc_command())
     self.assertEquals("Response", frame.getResponse())
+    self.assertEquals([1,2], frame.get_dependencies())

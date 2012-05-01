@@ -24,6 +24,9 @@ TAG_FRAME = "frame"
 TAG_ID = "framenumber"
 TAG_CMD = "command"
 TAG_RES = "response"
+TAG_DEPS = "dependencies"
+TAG_DEP  = "dependency"
+
 
 class Frame:
   """ A class for frames """
@@ -71,17 +74,24 @@ class Frame:
 
   def fromxml(self, elem):
     """ Fill frame from given elem. """
-    self._id = elem["framenumber"]
-    
+    self._id = elem[TAG_ID]
+
     if elem.command and elem.command.string:
       self._command = unescape(elem.command.string)
     
     if elem.response and elem.response.string:
       self._response = unescape(elem.response.string)
+    
+    dependencies = []
+    for dep in elem.dependencies:
+      dependencies.append(int(dep[TAG_ID]))
+
+    self.set_dependencies(dependencies)
 
   def toxml(self, doc):
     frameElement = Tag(doc, TAG_FRAME)
     frameElement[TAG_ID] = self.getId()
+
     frameElement.append(self.createTextElement(doc, TAG_CMD,
                                             self.getCommand()))
 
@@ -89,6 +99,13 @@ class Frame:
       frameElement.append(self.createTextElement(doc, TAG_RES, 
                                             self.getResponse()))
     
+    dependencies = Tag(doc, TAG_DEPS)
+    for dep in self.get_dependencies():
+      dependency = Tag(doc, TAG_DEP)
+      dependency[TAG_ID] = dep.id
+      dependencies.append(dependency)
+    frameElement.append(dependencies)
+
     return frameElement 
 
   

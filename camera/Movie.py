@@ -69,6 +69,7 @@ class Movie(object):
       scene.fromxml(scene_xml)
       self._replace_frames(scene)
       self.add_scene(scene)
+
   def _get_dependencies(self):
     """ Get the tip of the dependency-tree (just the last frame in the movie.
     """ 
@@ -85,7 +86,7 @@ class Movie(object):
 
   def addFrame(self, frame):
     """ Add frame to the movie. """ 
-    frame.set_dependencies(self._get_dependencies())
+    frame.set_dependencies([f.getId() for f in self._get_dependencies()])
     frame.setId(self.getLength())
 
     self._frames.append(frame)
@@ -121,7 +122,7 @@ class Movie(object):
   def from_string(self, xml_string):
     """ Initialize movie from the given xml tree in string form.
     """
-    tree = BeautifulStoneSoup(xml_string)
+    tree = BeautifulStoneSoup(xml_string, selfClosingTags=["dependencies"])
     return self.fromxml(tree)
  
  

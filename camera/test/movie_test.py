@@ -28,9 +28,9 @@ class Test_Movie(unittest.TestCase):
     self.assertEquals(frame1.getId(), 0)
     self.assertEquals(frame1.get_dependencies(), [])
     self.assertEquals(frame2.getId(), 1)
-    self.assertEquals(frame2.get_dependencies(), [frame1])
+    self.assertEquals(frame2.get_dependencies(), [frame1.getId()])
     self.assertEquals(frame3.getId(), 2)
-    self.assertEquals(frame3.get_dependencies(), [frame2])
+    self.assertEquals(frame3.get_dependencies(), [frame2.getId()])
   
   def test_set_response(self):
     """ Set frame response. """

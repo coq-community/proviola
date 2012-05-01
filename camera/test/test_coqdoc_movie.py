@@ -41,6 +41,7 @@ class Test_Coqdoc_Movie(unittest.TestCase):
                     <command>Spam</command>
                     <response>Eggs</response>
                     <command-coqdoc><div>Spam</div></command-coqdoc>
+                    <dependencies></dependencies>
                   </frame>
                 </film>
                 <scenes>
@@ -55,4 +56,4 @@ class Test_Coqdoc_Movie(unittest.TestCase):
     self.assertEquals(frame.getCommand(), "Spam")
     self.assertEquals(frame.getResponse(), "Eggs")
     self.assertEquals(str(frame.get_coqdoc_command()), "<div>Spam</div>")
-    
+    self.assertEquals([], frame.get_dependencies())

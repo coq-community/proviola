@@ -42,8 +42,9 @@ class Test_Coqdoc_Frame(unittest.TestCase):
       <command>Spam</command>
       <response>Eggs</response>
       <command-coqdoc><div>Spam</div></command-coqdoc>
+      <dependencies />
     </frame></fiml>
-     """)
+     """, selfClosingTags=["dependencies"])
     frame = Coqdoc_Frame()
     frame.fromxml(xml.frame)
     
@@ -51,6 +52,7 @@ class Test_Coqdoc_Frame(unittest.TestCase):
     self.assertEquals("Eggs", frame.getResponse())
     self.assertEquals("<div>Spam</div>", str(frame.get_coqdoc_command()))
     self.assertEquals("<div>Spam</div>", str(frame.get_markup_command()))
+    self.assertEquals([], frame.get_dependencies())
     
   def test_nested_entities(self):
     """ Test that entities in elements escape correctly. """

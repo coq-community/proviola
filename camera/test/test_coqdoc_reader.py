@@ -117,6 +117,7 @@ class Test_Coqdoc_Reader(unittest.TestCase):
     self.assertEquals(result.getFrame(0).getResponse(), "Result")
     self.assertEquals(str(result.getFrame(0).get_coqdoc_command()), span)
     self.assertEquals(str(result.getFrame(1).get_coqdoc_command()), "<br />")
+    self.assertEquals(result.getFrame(1).getCommand(), "\n")
 
   def test_html_marked_code_real(self):
     """ Extracted code should be readable by the PA. """

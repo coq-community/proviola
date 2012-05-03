@@ -39,9 +39,16 @@ class Coqdoc_Reader(CoqReader):
   def _find_commands(self, div):
     """ Find the commands. This is a wrapper around parent's parse. """ 
     try:
-      text = ''.join(div.fetchText(text = True))
+      if div.name == 'br':
+        text = '\n'
+      else:
+        new_div = copy.copy(div)
+        for br in new_div.findAll('br'):
+          br.replaceWith('\n')
+        text = ''.join(new_div.fetchText(text = True))
+
     except AttributeError:
-      text = div
+        text = div
     
     return self.parse(text)
   
@@ -92,7 +99,7 @@ class Coqdoc_Reader(CoqReader):
         
         coqdoc = []
     
-    trailing_frame = Coqdoc_Frame(command = ''.join([str(el) for el in coqdoc]),
+    trailing_frame = Coqdoc_Frame(command = ''.join([el for el in commands]),
                                   command_cd = coqdoc,
                                   response = None)
     frames.append(trailing_frame)

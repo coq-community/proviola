@@ -93,7 +93,7 @@ class Test_Coqdoc_Reader(unittest.TestCase):
 
     result = self.reader.make_frames(prover =  self.mock_prover)
     self.assertEquals(result.getFrame(0).getCommand(), 
-      'Notation "[ x , .. , y ]" := (cons x .. (cons y nil) ..).')
+      'Notation "[ x , .. , y ]" := (cons x .. (cons y nil) ..).\n')
 
   def test_html_single_code(self):
     """ Code divs should be picked up. """
@@ -113,7 +113,7 @@ class Test_Coqdoc_Reader(unittest.TestCase):
     
     result = self.reader.make_frames(prover = self.mock_prover)
     
-    self.assertEquals(result.getFrame(0).getCommand(), "Goal forall x, x->x.")
+    self.assertEquals(result.getFrame(0).getCommand(), "Goal forall x, x->x.\n")
     self.assertEquals(result.getFrame(0).getResponse(), "Result")
     self.assertEquals(str(result.getFrame(0).get_coqdoc_command()), span)
     self.assertEquals(str(result.getFrame(1).get_coqdoc_command()), "<br />")

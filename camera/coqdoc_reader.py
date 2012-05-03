@@ -85,6 +85,7 @@ class Coqdoc_Reader(CoqReader):
     scene.set_type("code")
     
     coqdoc = []
+    frame = None
     for child in div:
       coqdoc.append(child)
       commands = self._find_commands(child)
@@ -98,13 +99,16 @@ class Coqdoc_Reader(CoqReader):
         scene.add_scene(frame)
         
         coqdoc = []
-    
+
+      elif commands and commands[0] == '\n':
+        if frame is not None:
+          frame.set_command(frame.getCommand() + '\n')
+
     trailing_frame = Coqdoc_Frame(command = ''.join([el for el in commands]),
                                   command_cd = coqdoc,
                                   response = None)
     frames.append(trailing_frame)
     scene.add_scene(trailing_frame)
-    
     return frames, scene
   
   def _process_doc(self, div):

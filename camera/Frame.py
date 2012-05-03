@@ -47,6 +47,10 @@ class Frame:
   def getCommand(self):
     """ Getter for the command field. """
     return self._command
+  
+  def set_command(self, cmd):
+    """ Sets a command. """
+    self._command = cmd
 
   def setId(self, id):
     self._id = id

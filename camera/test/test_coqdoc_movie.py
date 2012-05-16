@@ -45,7 +45,8 @@ class Test_Coqdoc_Movie(unittest.TestCase):
                   </frame>
                 </film>
                 <scenes>
-                  <scene id="page" scenenumber="0" class="doc">
+                  <scene id="page" scenenumber="0" class="doc" level="0"
+                         name="foo" identifier="bar" >
                     <frame-reference framenumber="0" />
                   </scene>
                 </scenes>  

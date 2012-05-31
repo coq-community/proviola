@@ -85,6 +85,7 @@ class Coqdoc_Reader(CoqReader):
     scene.set_type("code")
     
     coqdoc = []
+    commands = []
     frame = None
     for child in div:
       coqdoc.append(child)
@@ -99,6 +100,7 @@ class Coqdoc_Reader(CoqReader):
         scene.add_scene(frame)
         
         coqdoc = []
+        commands = []
 
       elif commands and commands[0] == '\n':
         if frame is not None:

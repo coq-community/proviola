@@ -7,7 +7,10 @@ class Scene(object):
     self._subscenes = []
     self._attributes = []
     self._type = None
-  
+    self.name = ""
+    self.id = ""
+    self.level = 0
+
   def set_attributes(self, attrs):
     """ Add a NamedNodeMap of attribute objects to this scene, which is exported
         verbatim to the XML rendering of the scene.
@@ -83,6 +86,10 @@ class Scene(object):
 
     element["scenenumber"] = self._no
     element["class"] = self._type
+    element["level"] = self.level
+    element["name"]  = self.name
+    element["identifier"] = self.id
+
 
     for sub in self._subscenes:
       element.append(sub.get_reference(document))
@@ -97,11 +104,12 @@ class Scene(object):
     try:
       self.set_type(element['class'])
     except KeyError:
-      print "Class does not exist in element {el}, setting to doc.".\
-          format(el = element)
       self.set_type("doc")
 
     self.set_number(['scenenumber'])
+    self.level = int(element['level'])
+    self.name  = element['name']
+    self.id = element['identifier']
 
     for child in element.findAll(recursive = False):
       if child.name == "scene":

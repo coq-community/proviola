@@ -82,7 +82,9 @@ class Frame:
 
     if elem.command and elem.command.string:
       self._command = unescape(elem.command.string)
-    
+    else:
+      self._command = ""
+
     if elem.response and elem.response.string:
       self._response = unescape(elem.response.string)
     

@@ -1,14 +1,23 @@
 from Frame import Frame
 from coqdoc_frame import Coqdoc_Frame
 
-def make_frame(element):
-  """ Factory method creating a frame from XML element, filling it with
-      the data in this element. """
+class frame_maker(object):
+  def __init__(self):
+    self._constructors = {}
 
-  if element.findAll(name = "command-coqdoc"):
-    f = Coqdoc_Frame()
-  else:
-    f = Frame()
+  def __call__(self, element):
+    for name in self._constructors:
+      if element.findAll(name = name):
+        f =  self._constructors[name]()
+        break
+    else:
+      f = Frame()
+
+    f.fromxml(element)
+    return f
   
-  f.fromxml(element)
-  return f
+  def register(self, name, constructor):
+    self._constructors[name] = constructor
+
+make_frame = frame_maker()
+make_frame.register("command-coqdoc", Coqdoc_Frame)

@@ -38,6 +38,8 @@ class Frame:
     self._command = command 
     self._response = response
     self._processed = bool(response)
+    
+    self._is_code = False
 
     self._dependencies = []
 
@@ -136,3 +138,9 @@ class Frame:
 
   def flatten(self):
     return [self]
+  
+  def is_code(self):
+    return self._is_code
+
+  def set_code(self, is_code):
+    self._is_code = is_code

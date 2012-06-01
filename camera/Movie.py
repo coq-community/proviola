@@ -73,8 +73,9 @@ class Movie(object):
   def _get_dependencies(self):
     """ Get the tip of the dependency-tree (just the last frame in the movie.
     """ 
-    if self.get_frames():
-      return [self.get_frames()[self.getLength() - 1]]
+    frames = [f for f in self.get_frames() if f.is_code()]
+    if frames:
+      return [frames[-1]]
     else:
       return []
 

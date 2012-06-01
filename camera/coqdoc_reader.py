@@ -96,6 +96,7 @@ class Coqdoc_Reader(CoqReader):
                              command.encode(self._coqdoc_tree.originalEncoding))
         frame = Coqdoc_Frame(command = command, command_cd = coqdoc,
                            response = response)
+        frame.set_code(True)
         frames.append(frame)
         scene.add_scene(frame)
         
@@ -109,6 +110,7 @@ class Coqdoc_Reader(CoqReader):
     trailing_frame = Coqdoc_Frame(command = ''.join([el for el in commands]),
                                   command_cd = coqdoc,
                                   response = None)
+    trailing_frame.set_code(True)
     frames.append(trailing_frame)
     scene.add_scene(trailing_frame)
     return frames, scene

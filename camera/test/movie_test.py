@@ -15,13 +15,16 @@ class Test_Movie(unittest.TestCase):
   def test_AddFrame(self):
     """ Addition of a frame in order should yield correct IDs """
     frame1 = Frame(command = "command1", response = "response1")    
+    frame1.set_code(True)
     self.assertTrue(frame1.is_processed())
     self.movie.addFrame(frame1)
 
     frame2 = Frame(command = "command2", response = "response2")    
+    frame2.set_code(True)
     self.movie.addFrame(frame2)
 
     frame3 = Frame(command = "command3", response = "response3")    
+    frame3.set_code(True)
     self.movie.addFrame(frame3)
     
     self.assertEquals(self.movie.getLength(), 3)

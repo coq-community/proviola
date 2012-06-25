@@ -19,6 +19,7 @@
 from xml.sax.saxutils import escape, unescape
 from external.BeautifulSoup import Tag
 
+from lxml import etree
 
 TAG_FRAME = "frame"
 TAG_ID = "framenumber"
@@ -95,6 +96,29 @@ class Frame:
       dependencies.append(int(dep[TAG_ID]))
 
     self.set_dependencies(dependencies)
+  
+  def toxml_lxml(self):
+    """ To xml, but using lxml.etree. """
+    element  = etree.Element(TAG_FRAME)
+    element.set(TAG_ID, str(self.getId()))
+    
+    command = etree.SubElement(element, TAG_CMD)
+    command.text = self.getCommand()
+
+    if self.getResponse():
+      response = etree.SubElement(element, TAG_RES)
+      response.text = self.getResponse()
+
+    dependencies = etree.SubElement(element, TAG_DEPS)
+    for dep in self.get_dependencies():
+      dependency = etree.SubElement(dependencies, TAG_DEP)
+      dependency.set(TAG_ID, str(dep))
+
+    return element
+
+
+
+
 
   def toxml(self, doc):
     frameElement = Tag(doc, TAG_FRAME)

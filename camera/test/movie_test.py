@@ -49,7 +49,7 @@ class Test_Movie(unittest.TestCase):
     importMov = Movie()
     importMov.openFile(TESTFILM_PATH)
     
-    self.assertEquals(str(self.movie.toxml()), str(importMov.toxml()))
+    self.assertEquals(str(self.movie), str(importMov))
 
   def testToFromXML(self):
     """ Writing and loading an empty Movie should give the same document """
@@ -82,8 +82,8 @@ class Test_Movie(unittest.TestCase):
   
   def test_to_XML(self):
     """ Test toXML. """
-    self.assertEquals(str(self.movie.toxml()).split()[0], "<?xml")
-    self.assertEquals(1, str(self.movie.toxml()).count("DOCTYPE"))
+    self.assertEquals(str(self.movie).split()[0], "<?xml")
+    self.assertEquals(1, str(self.movie).count("DOCTYPE"))
 
   def test_title(self):
     """ Test set-get of title. """

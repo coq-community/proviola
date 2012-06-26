@@ -32,31 +32,14 @@ class Coqdoc_Frame(Frame):
     map(self._command_coqdoc.append, element.find(TAG_COQDOC))
 
   
-  def toxml_lxml(self):
+  def toxml(self):
     """ Convert this frame to XML, using etree. """
-    frame_xml = Frame.toxml_lxml(self)
+    frame_xml = Frame.toxml(self)
     coqdoc = etree.SubElement(frame_xml, TAG_COQDOC)
     map(coqdoc.append, self._command_coqdoc)
     
     return frame_xml
 
-
-  def toxml(self, doc):
-    """ Convert this frame to XML. """
-    frame_xml = Frame.toxml(self, doc)
-    tag = Tag(doc, TAG_COQDOC)
-    
-    if self._command_coqdoc:
-      map(tag.append, self._command_coqdoc)
-    
-    frame_xml.append(tag)
-    if frame_xml.response:
-      frame_xml.response.next = tag
-    else:
-      frame_xml.command.next = tag
-
-    return frame_xml
-  
   def __str__(self):
     return """
 Frame(id       = {id},

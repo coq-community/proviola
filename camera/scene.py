@@ -78,7 +78,7 @@ class Scene(object):
     """
     self._type = type
   
-  def toxml_lxml(self):
+  def toxml(self):
     """ To XML, using lxml.etree. """
     element = etree.Element("scene")
     
@@ -92,31 +92,10 @@ class Scene(object):
     element.set("identifier", self.id)
     
     for sub in self._subscenes:
-      element.append(sub.get_reference_lxml())
+      element.append(sub.get_reference())
 
     return element
 
-
-  def toxml(self, document):
-    """ Create an XML subtree out of this scene, as generated in document.
-    """
-    element = Tag(document, "scene")
-        
-    for key, value in self._attributes:
-      element[key] = value
-
-    element["scenenumber"] = self._no
-    element["class"] = self._type
-    element["level"] = self.level
-    element["name"]  = self.name
-    element["identifier"] = self.id
-
-
-    for sub in self._subscenes:
-      element.append(sub.get_reference(document))
-        
-    return element
- 
   def fromxml(self, element):
     """ Unmarshall the scene from the given element.
     """
@@ -152,11 +131,6 @@ class Scene(object):
     result += ")"
     return result
   
-  def get_reference_lxml(self):
+  def get_reference(self):
     """ Return a reference to this scene. Subscenes are inlined for now. """
-    return self.toxml_lxml()
-
-  def get_reference(self, document):
-    """ Returns a reference to this scene: for scenes, we inline its XML 
-        rendering. """
-    return self.toxml(document)
+    return self.toxml()

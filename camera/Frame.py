@@ -97,8 +97,8 @@ class Frame:
 
     self.set_dependencies(dependencies)
   
-  def toxml_lxml(self):
-    """ To xml, but using lxml.etree. """
+  def toxml(self):
+    """ To xml. """
     element  = etree.Element(TAG_FRAME)
     element.set(TAG_ID, str(self.getId()))
     
@@ -116,32 +116,6 @@ class Frame:
 
     return element
 
-
-
-
-
-  def toxml(self, doc):
-    frameElement = Tag(doc, TAG_FRAME)
-    frameElement[TAG_ID] = self.getId()
-
-    frameElement.append(self.createTextElement(doc, TAG_CMD,
-                                            self.getCommand()))
-
-    if self._response:
-      frameElement.append(self.createTextElement(doc, TAG_RES, 
-                                            self.getResponse()))
-    
-    dependencies = Tag(doc, TAG_DEPS)
-    for dep in self.get_dependencies():
-      dependency = Tag(doc, TAG_DEP)
-      dependency[TAG_ID] = dep
-      dependencies.append(dependency)
-
-    frameElement.append(dependencies)
-
-    return frameElement 
-
-  
   def createTextElement(self, doc, elementName, contents):
     """ Convenience method for creating text-containing nodes in doc """
     contents = contents or ""
@@ -149,18 +123,11 @@ class Frame:
     element.append(escape(contents))
     return element 
   
-  def get_reference_lxml(self):
+  def get_reference(self):
     """ Give a reference to a frame, as its identifier. """
     element = etree.Element("frame-reference")
     element.set(TAG_ID, str(self.getId()))
     return element
-
-  def get_reference(self,document):
-    """ A Frame is referred to by its identifier. """
-    
-    ref = Tag(document, "frame-reference")
-    ref[TAG_ID] = self.getId()
-    return ref
 
   def set_dependencies(self, frames):
     """ Mark which frames this frame depends on. """

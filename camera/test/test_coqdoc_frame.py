@@ -2,17 +2,18 @@ import unittest
 from external.BeautifulSoup import BeautifulStoneSoup
 from coqdoc_frame import Coqdoc_Frame
 
+from lxml import etree
+
 class Test_Coqdoc_Frame(unittest.TestCase):
   """ Tests of the coqdoc frame. """
   
-
   def test_none(self):
     """ Frames with empty (None) commands/responses should still export. """
     frame = Coqdoc_Frame(command = None, command_cd = None, response = None)
-    xml = frame.toxml(doc = BeautifulStoneSoup())
-    self.assertEquals(xml.command.text, "")
-    self.assertFalse(xml.response)
-    self.assertFalse(xml.find(name = "command-coqdoc").text)
+    xml = frame.toxml()
+    self.assertEquals([], list(xml.find(".//command")))
+    self.assertIsNone(xml.find(".//response"))
+    self.assertEquals([], list(xml.find(".//command-coqdoc")))
 
   def test_entitities(self):
     """ Test that entities in command, response and coqdoc_command are
@@ -22,8 +23,8 @@ class Test_Coqdoc_Frame(unittest.TestCase):
                          command_cd = "&", 
                          response = "&")
     
-    xml = frame.toxml(doc = BeautifulStoneSoup())
-    self.assertEquals(xml.command.text, "&amp;")
+    xml = frame.toxml()
+    self.assertEquals(xml.find(".//command").text, "&amp;")
     print "XML (test): ", xml
     self.assertEquals(xml.response.text, "&amp;")
   
@@ -31,9 +32,9 @@ class Test_Coqdoc_Frame(unittest.TestCase):
     """ Entities that are already escaped should not be escaped again. """
     frame = Coqdoc_Frame(command =" ", 
                          command_cd = BeautifulStoneSoup("<div>&nbsp;</div>"))
-    xml = frame.toxml(doc = BeautifulStoneSoup())
+    xml = frame.toxml()
 
-    self.assertEquals(xml.find(name = "command-coqdoc").div.text, 
+    self.assertEquals(xml.find(".//command-coqdoc")[0].text, 
                       "&nbsp;")
   
   def test_from_xml(self):
@@ -60,6 +61,6 @@ class Test_Coqdoc_Frame(unittest.TestCase):
     frame = Coqdoc_Frame(command = "foo", response = "bar",
                          command_cd = soup)
     
-    xml = frame.toxml(doc = BeautifulStoneSoup())
+    xml = frame.toxml()
     self.assertEquals(str(xml.find(name = "command-coqdoc").div), 
                       "<div>&amp;</div>")

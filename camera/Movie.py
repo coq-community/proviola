@@ -118,18 +118,13 @@ class Movie(object):
       ProcessingInstruction(
         'xml-stylesheet type="text/xsl" href="%s"'%stylesheet))
   
-  def _add_frames(self, document, film):
-    """ Add frames to the film """
-    for frame in self._frames:
-      film.append(frame.toxml(document))
-
   def from_string(self, xml_string):
     """ Initialize movie from the given xml tree in string form.
     """
     tree = BeautifulStoneSoup(xml_string, selfClosingTags=["dependencies"])
     return self.fromxml(tree)
   
-  def _entity_map(self):
+  def _doctype(self):
     """ Returns the entity map as a string. """
     entity_map = {
       "nbsp":   "&#160;",
@@ -147,52 +142,35 @@ class Movie(object):
       "Gamma":  "&#915;",
     }
 
-    return "\n".join(['<!ENTITY %s "%s">'%(key, entity_map[key]) 
+    entities = "\n".join(['<!ENTITY %s "%s">'%(key, entity_map[key]) 
                       for key in entity_map])
+    return "<!DOCTYPE movie [{entities}]>".format(entities = entities)
 
  
-  def _add_entities(self, document):
-    """ Adds an entity delcaration to the given document. 
-        NOTE: Based on Symbols.v, might be made a parameter."""
-    entities = self._entity_map()
-    document.insert(1, Declaration("DOCTYPE movie [" + entities + "]"))
-  
-  def toxml_lxml(self, stylesheet="proviola.xsl"):
+  def toxml(self, stylesheet="proviola.xsl"):
     """ Export to XML. """
     self._stylesheet = stylesheet
+
     root = etree.Element("movie")
 
     root.set("title", self._title)
     
     film = etree.SubElement(root, "film")
     for frame in self._frames:
-      film.append(frame.toxml_lxml())
+      film.append(frame.toxml())
 
     scenes = etree.SubElement(root, "scenes")
     for scene in self._scenes:
-      scenes.append(scene.toxml_lxml())
+      scenes.append(scene.toxml())
 
     return root 
-
-  def toxml(self, stylesheet="proviola.xsl"):
-    """ Marshall the movie to an XML document. """
-    doc = BeautifulStoneSoup()
-
-    self._add_entities(doc)
-    self._add_PIs(doc, stylesheet)
-    
-    movie = Tag(doc, "movie")
-
-    film = Tag(doc, TAG_FILM)
-    self._add_frames(doc, film)
-    self._add_scenes(doc, movie)
-
-    movie.append(film)
-    doc.append(movie)
-    return doc
   
   def __str__(self):
-    return str(self.toxml(self._stylesheet))
+    """ To string returns the XML version of the movie. """
+
+    return etree.tostring(self.toxml(self._stylesheet), xml_declaration=True,
+                          doctype = self._doctype())
+                          
 
   def toFile(self, file_name, stylesheet = "proviola.xsl"):
     """ Write the file, in XML, to filmName """
@@ -230,15 +208,6 @@ class Movie(object):
     """ Getter for self._scenes. """
     return self._scenes
  
- 
-  def _add_scenes(self, document, movie):
-    """ Add scene tree to document. """
-    scene_tree = Tag(document, "scenes")
-    movie.append(scene_tree)
-
-    for scene in self._scenes:
-     scene_tree.append(scene.toxml(document))      
-
   def _replace_frames(self, scene):
     """ Replace the frames in scene by the actual frames in the movie. """
     for sub in scene.get_subscenes():

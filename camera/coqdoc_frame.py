@@ -1,5 +1,7 @@
 from Frame import Frame
 from external.BeautifulSoup import Tag
+from lxml import etree
+
 TAG_COQDOC = "command-coqdoc"
 
 
@@ -9,7 +11,7 @@ class Coqdoc_Frame(Frame):
                              command_cd = None, 
                              response = None):
     Frame.__init__(self, id = id, command = command, response = response)
-    self._command_coqdoc = command_cd or []
+    self._command_coqdoc = command_cd if command_cd is not None else []
 
   def get_coqdoc_command(self):
     """ Getter for self._command_coqdoc. """
@@ -28,6 +30,15 @@ class Coqdoc_Frame(Frame):
     Frame.fromxml(self, element)    
     
     map(self._command_coqdoc.append, element.find(TAG_COQDOC))
+
+  
+  def toxml_lxml(self):
+    """ Convert this frame to XML, using etree. """
+    frame_xml = Frame.toxml_lxml(self)
+    coqdoc = etree.SubElement(frame_xml, TAG_COQDOC)
+    map(coqdoc.append, self._command_coqdoc)
+    
+    return frame_xml
 
 
   def toxml(self, doc):

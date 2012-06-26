@@ -1,6 +1,9 @@
 import unittest
 from lxml import etree
 from Frame import Frame, TAG_ID, TAG_CMD, TAG_RES , TAG_DEPS 
+from scene import Scene
+
+
 class test_toxml(unittest.TestCase):
   """ Testing various toxml methods. """
 
@@ -45,7 +48,6 @@ class test_toxml(unittest.TestCase):
 
   def test_scenes_toxml(self):
     """ Scenes to XML. """
-    from scene import Scene
 
     scene = Scene(no = 42)
     
@@ -65,3 +67,33 @@ class test_toxml(unittest.TestCase):
         self.fail("Unexpected child: " + etree.tostring(child))
 
 
+  def test_movie_toxml(self):
+    """ Movie to XML. """
+    from Movie import Movie
+
+    movie = Movie()
+    movie.set_title("Title")
+
+    frame =  Frame(id = 42, command = "Foo", response = "Bar")
+    movie.addFrame(frame)
+    frame.setId(42)
+
+    scene = Scene()
+    scene.add_scene(frame)
+    movie.add_scene(scene)
+    
+    mov_xml = movie.toxml_lxml()
+    self.assertEquals("Title", mov_xml.get("title"))
+  
+    frames = mov_xml.find(".//film")
+    self.assertEquals(1, len(list(frames)))
+
+    self.assertEquals("Foo", 
+                      frames.find("./frame[@framenumber='42']/command").text)
+                                             
+
+    scenes = mov_xml.find(".//scenes")
+    self.assertEquals(1, len(list(scenes)))
+    self.assertEquals(1, len(scenes.find("./scene")))
+    
+    

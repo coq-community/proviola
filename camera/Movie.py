@@ -19,6 +19,9 @@
 from external.BeautifulSoup import BeautifulStoneSoup 
 from external.BeautifulSoup import Tag, Declaration, ProcessingInstruction
 
+from lxml import etree
+from StringIO import StringIO
+
 from os import makedirs
 from os.path import exists, dirname
 
@@ -125,12 +128,9 @@ class Movie(object):
     """
     tree = BeautifulStoneSoup(xml_string, selfClosingTags=["dependencies"])
     return self.fromxml(tree)
- 
- 
-  def _add_entities(self, document):
-    """ Adds an entity delcaration to the given document. 
-        NOTE: Based on Symbols.v, might be made a parameter."""
-
+  
+  def _entity_map(self):
+    """ Returns the entity map as a string. """
     entity_map = {
       "nbsp":   "&#160;",
       "mdash":  "&#8212;",
@@ -147,10 +147,32 @@ class Movie(object):
       "Gamma":  "&#915;",
     }
 
-    entities = "\n".join(
-                ['<!ENTITY %s "%s">'%(key, entity_map[key]) 
-                 for key in entity_map])
+    return "\n".join(['<!ENTITY %s "%s">'%(key, entity_map[key]) 
+                      for key in entity_map])
+
+ 
+  def _add_entities(self, document):
+    """ Adds an entity delcaration to the given document. 
+        NOTE: Based on Symbols.v, might be made a parameter."""
+    entities = self._entity_map()
     document.insert(1, Declaration("DOCTYPE movie [" + entities + "]"))
+  
+  def toxml_lxml(self, stylesheet="proviola.xsl"):
+    """ Export to XML. """
+    self._stylesheet = stylesheet
+    root = etree.Element("movie")
+
+    root.set("title", self._title)
+    
+    film = etree.SubElement(root, "film")
+    for frame in self._frames:
+      film.append(frame.toxml_lxml())
+
+    scenes = etree.SubElement(root, "scenes")
+    for scene in self._scenes:
+      scenes.append(scene.toxml_lxml())
+
+    return root 
 
   def toxml(self, stylesheet="proviola.xsl"):
     """ Marshall the movie to an XML document. """

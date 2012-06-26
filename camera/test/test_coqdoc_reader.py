@@ -125,11 +125,7 @@ class Test_Coqdoc_Reader(unittest.TestCase):
     self.reader.add_code(self.template.format(body = markup))
     result = self.reader.make_frames(prover = get_prover())
     
-    self.assertEquals(result.getFrame(0).getResponse(), """1 subgoal
-  
-  ============================
-   forall x : Type, x -> x
-""")
+    self.assertIn("forall x : Type, x -> x", result.getFrame(0).getResponse())
   
   def test_html_unicode(self):
     """ Unicode HTML should not give errors. """

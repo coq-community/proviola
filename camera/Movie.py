@@ -43,7 +43,7 @@ class Movie(object):
     self._frameIds = {}
     
     self._scenes = []
-
+    self._stylesheet = "proviola.xsl"
     self._title = ""
  
   def set_title(self, title):
@@ -168,16 +168,20 @@ class Movie(object):
     movie.append(film)
     doc.append(movie)
     return doc
+  
+  def __str__(self):
+    return str(self.toxml(self._stylesheet))
 
   def toFile(self, file_name, stylesheet = "proviola.xsl"):
     """ Write the file, in XML, to filmName """
+    
+    self._stylesheet = stylesheet
 
-    xml = self.toxml(stylesheet) 
     if len(dirname(file_name)) > 0 and not exists(dirname(file_name)):
       makedirs(dirname(file_name))
-
+    
     f = open(file_name, 'w')
-    f.write(str(xml))
+    f.write(str(self))
     f.close()
 
 

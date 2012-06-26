@@ -148,6 +148,12 @@ class Frame:
     element = Tag(doc, elementName)
     element.append(escape(contents))
     return element 
+  
+  def get_reference_lxml(self):
+    """ Give a reference to a frame, as its identifier. """
+    element = etree.Element("frame-reference")
+    element.set(TAG_ID, str(self.getId()))
+    return element
 
   def get_reference(self,document):
     """ A Frame is referred to by its identifier. """

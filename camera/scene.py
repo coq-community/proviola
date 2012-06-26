@@ -1,4 +1,6 @@
 from external.BeautifulSoup import Tag
+from lxml import etree
+
 from coqdoc_frame import Coqdoc_Frame
 
 class Scene(object):
@@ -76,6 +78,25 @@ class Scene(object):
     """
     self._type = type
   
+  def toxml_lxml(self):
+    """ To XML, using lxml.etree. """
+    element = etree.Element("scene")
+    
+    for key, value in self._attributes:
+      element.set(key, value)
+
+    element.set("scenenumber", str(self._no))
+    element.set("class", self._type or "doc")
+    element.set("level", str(self.level))
+    element.set("name", self.name)
+    element.set("identifier", self.id)
+    
+    for sub in self._subscenes:
+      element.append(sub.get_reference_lxml())
+
+    return element
+
+
   def toxml(self, document):
     """ Create an XML subtree out of this scene, as generated in document.
     """
@@ -131,8 +152,11 @@ class Scene(object):
     result += ")"
     return result
   
+  def get_reference_lxml(self):
+    """ Return a reference to this scene. Subscenes are inlined for now. """
+    return self.toxml_lxml()
+
   def get_reference(self, document):
     """ Returns a reference to this scene: for scenes, we inline its XML 
         rendering. """
-    
     return self.toxml(document)

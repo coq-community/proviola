@@ -81,10 +81,13 @@ class Test_Movie(unittest.TestCase):
     self.assertIsNone(self.movie.getFrameById(42), "Id out of range")
   
   def test_to_XML(self):
-    """ Test toXML. """
+    """ Going to string should give well-formed XML, with a stylesheet
+        reference. """
     self.assertEquals(str(self.movie).split()[0], "<?xml")
+    self.assertEquals(1, str(self.movie).count("xml-stylesheet"))
     self.assertEquals(1, str(self.movie).count("DOCTYPE"))
-
+  
+  
   def test_title(self):
     """ Test set-get of title. """
     self.movie.set_title("Test")

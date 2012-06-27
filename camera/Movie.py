@@ -109,15 +109,6 @@ class Movie(object):
   def getFrame(self, i):  
     return self._frames[i]
 
-  def _add_PIs(self, document, stylesheet):
-    """ Add XML processing instructions to the given document. """
-    document.insert(0,
-      ProcessingInstruction("xml version='1.0' encoding='utf-8'"))
-
-    document.append(
-      ProcessingInstruction(
-        'xml-stylesheet type="text/xsl" href="%s"'%stylesheet))
-  
   def from_string(self, xml_string):
     """ Initialize movie from the given xml tree in string form.
     """
@@ -146,7 +137,6 @@ class Movie(object):
                       for key in entity_map])
     return "<!DOCTYPE movie [{entities}]>".format(entities = entities)
 
- 
   def toxml(self, stylesheet="proviola.xsl"):
     """ Export to XML. """
     self._stylesheet = stylesheet
@@ -163,13 +153,19 @@ class Movie(object):
     for scene in self._scenes:
       scenes.append(scene.toxml())
 
-    return root 
-  
+    return root
+
+  def _get_stylesheet_dec(self):
+    return etree.ProcessingInstruction("xml-stylesheet",
+                                       'href="{url}"'.format(url=self._stylesheet))
   def __str__(self):
     """ To string returns the XML version of the movie. """
+    xml_string = etree.tostring(self.toxml(), xml_declaration=True,
+                                doctype=self._doctype())
 
-    return etree.tostring(self.toxml(self._stylesheet), xml_declaration=True,
-                          doctype = self._doctype())
+    doc = etree.parse(StringIO(xml_string))
+    doc.getroot().addprevious(self._get_stylesheet_dec())
+    return etree.tostring(doc, xml_declaration=True)
                           
 
   def toFile(self, file_name, stylesheet = "proviola.xsl"):

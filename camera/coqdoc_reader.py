@@ -32,25 +32,22 @@ class Coqdoc_Reader(CoqReader):
 
   def add_code(self, code):
     """ Override of the corresponding method in Reader: makes a 
-        BeautifulSoup tree out of the given Coqdoc document. """
-    massage = copy.copy(BeautifulSoup.MARKUP_MASSAGE)
-    massage.extend([(re.compile('(name|href)="([^"]*)"'),
-          lambda match: match.group(1) + '="' + escape(match.group(2)) +'"')])
-    self._coqdoc_tree = BeautifulSoup(code, markupMassage = massage)
+        lxml tree out of the given Coqdoc document. """
     self._coqdoc_tree = html.parse(StringIO(code))
 
-  def _find_commands(self, div):
-    """ Find the commands. This is a wrapper around parent's parse. """ 
+  def _get_text(self, div):
+    """ Get the text embedded in div, replacing break tags with newlines. """
     if div.tag == 'br':
-      text = '\n'
-    else:
-      for br in div.findall('.//br'):
-        br.getparent().text += '\n' + br.tail
-        br.getparent().remove(br)
+      return '\n'
 
-      text = html.tostring(div, method='text')
+    div_cp = copy.copy(div)
 
-    return self.parse(text)
+    for br in div_cp.findall(".//br"):
+      br.getparent().text = (br.getparent().text or '') + "\n" + (br.tail or '')
+      br.getparent().remove(br)
+    
+    return html.tostring(div_cp, method='text')
+
   
   def _replace_html(self, text):
     """ Replace HTML entitities by ASCII equivalents. 
@@ -84,42 +81,25 @@ class Coqdoc_Reader(CoqReader):
     scene = Scene()
     scene.set_type("code")
     
-    text = div.text or ''
-    markup = [text]
-
-    commands = self.parse(text)
-    if commands and self.isCommand(commands[0]):
-      command = self._replace_html(commands[0])
-      response = self._prover.send(command.encode(self._coqdoc_tree.docinfo.encoding))
-      frame = Coqdoc_Frame(command = command, command_cd = markup,
-                           response = response)
-      frame.set_code(True)
-      frames.append(frame)
-      scene.add_scene(frame)
-      
-      markup = []
-      commands = []
-  
+    text = [div.text or '']
+    markups = list(text)
+    
     for child in div:
-      markup.append(child)
-      child_copy = copy.copy(child)
+      markups.append(child)
+      text.append(self._get_text(child))
 
-      for br in child_copy.findall(".//br"):
-        br.getparent().text = (br.getparent().text or '') + "\n" + (br.tail or '')
-        br.getparent().remove(br)
-      
-      text = '\n' if child_copy.tag == 'br' else html.tostring(child_copy, method = 'text')
-      commands = self.parse(text)
-
+    markup = []
+    for mkup, code in zip(markups, text):
+      markup.append(mkup)
+      commands = self.parse(code)
       if commands and self.isCommand(commands[0]):
         command = self._replace_html(commands[0])
         response = self._prover.send(command.encode(self._coqdoc_tree.docinfo.encoding))
-        frame = Coqdoc_Frame(command = command, command_cd = markup,
-                             response = response)
+        frame = Coqdoc_Frame(command = command, command_cd = markup, response = response)
         frame.set_code(True)
         frames.append(frame)
         scene.add_scene(frame)
-        
+
         markup = []
         commands = []
 

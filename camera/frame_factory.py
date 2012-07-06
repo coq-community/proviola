@@ -1,13 +1,15 @@
 from Frame import Frame
 from coqdoc_frame import Coqdoc_Frame
 
+from lxml import etree
+
 class frame_maker(object):
   def __init__(self):
     self._constructors = {}
 
   def __call__(self, element):
     for name in self._constructors:
-      if element.findAll(name = name):
+      if element.findall(".//{name}".format(name = name)):
         f =  self._constructors[name]()
         break
     else:

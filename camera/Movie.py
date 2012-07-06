@@ -16,11 +16,8 @@
 # You should have received a copy of the GNU General Public License
 # along with Proof Camera.  If not, see <http://www.gnu.org/licenses/>.
 
-from external.BeautifulSoup import BeautifulStoneSoup 
-from external.BeautifulSoup import Tag, Declaration, ProcessingInstruction
-
 from lxml import etree
-from StringIO import StringIO
+from cStringIO import StringIO
 
 from os import makedirs
 from os.path import exists, dirname
@@ -28,7 +25,6 @@ from os.path import exists, dirname
 
 from frame_factory import make_frame
 from scene import Scene
-BeautifulStoneSoup.NESTABLE_TAGS["scene"] = []
 
 
 TAG_FILM = "film"
@@ -63,7 +59,7 @@ class Movie(object):
     self._frames = []
     self._scenes = []
 
-    for element in document.film.findAll(name="frame"):
+    for element in document.findall(".//film/frame"):
       frame = make_frame(element)
       self.addFrame(frame)
 
@@ -110,7 +106,7 @@ class Movie(object):
   def from_string(self, xml_string):
     """ Initialize movie from the given xml tree in string form.
     """
-    tree = BeautifulStoneSoup(xml_string, selfClosingTags=["dependencies"])
+    tree = etree.parse(StringIO(xml_string))
     return self.fromxml(tree)
   
   def _doctype(self):

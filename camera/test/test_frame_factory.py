@@ -1,6 +1,7 @@
 import unittest
-from external.BeautifulSoup import BeautifulStoneSoup
+from lxml import etree
 from frame_factory import make_frame
+
 from Frame import Frame
 from coqdoc_frame import Coqdoc_Frame
 
@@ -9,9 +10,9 @@ class Test_Frame_Factory(unittest.TestCase):
 
   def _make_elem(self, contents):
     """ Build a frame element from the frame contents. """
-    return BeautifulStoneSoup("""<film><frame framenumber="1">
+    return etree.fromstring("""<film><frame framenumber="1">
       {contents}
-      </frame></film>""".format(contents = contents)).frame
+      </frame></film>""".format(contents = contents)).find(".//frame")
 
   def test_simple_frame(self):
     """ A frame without a Coqdoc command should instantiate to a standard

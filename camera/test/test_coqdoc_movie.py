@@ -3,7 +3,8 @@ from tempfile import NamedTemporaryFile
 from os import remove
 from os.path import basename, dirname, join
 
-from external.BeautifulSoup import BeautifulStoneSoup, Tag
+from lxml import html
+
 from coqdoc_frame import Coqdoc_Frame
 
 from Movie import Movie 
@@ -14,8 +15,7 @@ class Test_Coqdoc_Movie(unittest.TestCase):
   def setUp(self):
     """ Sets up fixture. """
     self._target = NamedTemporaryFile(suffix = ".xml", delete = False)
-    s = BeautifulStoneSoup()
-    self._a = Tag(s, "a") 
+    self._a = html.Element("a") 
     self._frame = Coqdoc_Frame(command_cd = [self._a], command = "foo", 
                                response = None)
     
@@ -33,7 +33,7 @@ class Test_Coqdoc_Movie(unittest.TestCase):
     
   def test_from_string(self):
     """ Import a document from a string representation of the xml. """
-    xml = """<?xml encoding="utf-8" version="1.0" ?>
+    xml = """<?xml version="1.0" encoding="utf-8" ?>
              <?xml-stylesheet type="text/xsl" href="proviola.xsl" ?>
              <movie>
                <film>

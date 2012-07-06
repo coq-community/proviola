@@ -1,5 +1,4 @@
 from Frame import Frame
-from external.BeautifulSoup import Tag
 from lxml import etree
 
 TAG_COQDOC = "command-coqdoc"
@@ -18,8 +17,15 @@ class Coqdoc_Frame(Frame):
     if not self._command_coqdoc:
       return ""
     
-    return "".join([str(part) for part in self._command_coqdoc])
-    
+    return "".join([self._tostring(part) for part in self._command_coqdoc])
+  
+  def _tostring(self, el):
+    """ Converts html.tostring(el) if el is an element, or el itself. """
+    try:
+      return etree.tostring(el)
+    except TypeError:
+      return el
+
   def get_markup_command(self):
     """ Getter for marked up command. """
     return self.get_coqdoc_command()

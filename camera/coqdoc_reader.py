@@ -119,28 +119,44 @@ class Coqdoc_Reader(CoqReader):
     frames = []
     scene = Scene()
     scene.set_type("doc")
-    scene.set_attributes(div.attrs)
+    scene.set_attributes(div.items())
     
+    if div.text is not None:
+      child_scene = Coqdoc_Frame(command = div.text, command_cd = [div.text],
+                                 response = None)
+      scene.add_scene(child_scene)
+      frames.append(child_scene)
+
     for child in div:
       try:
-        child_name = child.name
+        child_name = child.tag
       except AttributeError:
         child_name = "text"
         child.text = str(child)
-        
-      if child_name == "div": 
+
+      if child.tag == 'div':
         if div.get("class") == "doc":
           child_frames, child_scene = self._process_doc(child)
         else:
           child_frames, child_scene = self._process_div(child)
-      
       else:
-        child_scene = Coqdoc_Frame(command = child.text, command_cd = [child],
-                               response = None)
+        # Common markup
+        child_scene = Coqdoc_Frame(command = html.tostring(child, method='text'),
+                             command_cd = [child], response = None)
         child_frames = [child_scene]
+
+
 
       frames += child_frames
       scene.add_scene(child_scene)
+
+      if child.tail is not None:
+        frame = Coqdoc_Frame(command = child.tail, command_cd = [child.tail],
+                             response = None)
+        frames.append(frame)
+        scene.add_scene(frame)
+
+
           
     return frames, scene
   

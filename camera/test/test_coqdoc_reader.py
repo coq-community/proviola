@@ -20,7 +20,7 @@ class Test_Coqdoc_Reader(unittest.TestCase):
   def test_add_code(self):
     """ Test that adding HTML code creates a tree. """
     self.reader.add_code(self.template.format(body = ""))
-    self.assertTrue(self.reader._coqdoc_tree.html.body)
+    self.assertTrue(self.reader._coqdoc_tree.findall(".//body"))
   
   def test_add_soup(self):
     """ Test adding coqdoc tree. """
@@ -73,8 +73,8 @@ class Test_Coqdoc_Reader(unittest.TestCase):
     # Content
     self.assertEquals(len(result.get_frames()), 3)
     self.assertEquals(result.getFrame(0).getCommand(), "Outer ")
-    self.assertEquals(result.getFrame(1).getCommand(), "Nested")    
-    self.assertEquals(result.getFrame(2).getCommand(), "Trail")
+    self.assertEquals(result.getFrame(1).getCommand(), "Nested")
+    self.assertEquals(result.getFrame(2).getCommand(), "Trail")    
     
   
   def test_html_notation(self):  

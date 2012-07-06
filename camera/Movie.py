@@ -82,8 +82,6 @@ class Movie(object):
     else:
       return []
 
-
-
   def add_frame(self, frame):
     """ Rename of addFrame. """
     self.addFrame(frame)
@@ -184,7 +182,6 @@ class Movie(object):
   def openFile(self, fileName):
     """ Open an XML file and load its data in memory. """
     doc = BeautifulStoneSoup(open(fileName, 'r').read())
-
     self.fromxml(doc)
 
   def getFrameById(self, id):
@@ -193,7 +190,6 @@ class Movie(object):
       return self.getFrame(self._frameIds[int(id)])
     except KeyError:
       return None
-
 
   def add_scene(self, scene):
     """ Add given scene to the movie. """

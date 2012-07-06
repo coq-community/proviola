@@ -9,6 +9,7 @@ from scene import Scene
 from coqdoc_frame import Coqdoc_Frame
 
 from external.BeautifulSoup import BeautifulSoup
+from lxml import html
 
 suffix = ".html"
 
@@ -35,7 +36,8 @@ class Coqdoc_Reader(CoqReader):
     massage.extend([(re.compile('(name|href)="([^"]*)"'),
           lambda match: match.group(1) + '="' + escape(match.group(2)) +'"')])
     self._coqdoc_tree = BeautifulSoup(code, markupMassage = massage)
-  
+    self._coqdoc_tree = html.fromstring(code)
+
   def _find_commands(self, div):
     """ Find the commands. This is a wrapper around parent's parse. """ 
     try:
@@ -106,7 +108,7 @@ class Coqdoc_Reader(CoqReader):
       elif commands and commands[0] == '\n':
         if frame is not None:
           frame.set_command(frame.getCommand() + '\n')
-
+    
     trailing_frame = Coqdoc_Frame(command = ''.join([el for el in commands]),
                                   command_cd = coqdoc,
                                   response = None)
@@ -167,15 +169,15 @@ class Coqdoc_Reader(CoqReader):
     self._prover = prover
     
     try:
-      self._movie.set_title(self._coqdoc_tree.head.title.text)
+      self._movie.set_title(self._coqdoc_tree.find(".//head/title").text)
     except AttributeError:
       self._movie.set_title("")
     
     
-    body = self._coqdoc_tree.body
+    body = self._coqdoc_tree.find(".//body")
     
     if body:
-      for div in body.findChildren(name = "div", recursive = False):
+      for div in body.findall("./div"):
         (frames, scene) = self._process_div(div)
           
         for frame in frames:

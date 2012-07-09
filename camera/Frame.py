@@ -81,19 +81,18 @@ class Frame:
 
   def fromxml(self, elem):
     """ Fill frame from given elem. """
-    self._id = elem[TAG_ID]
-
-    if elem.command and elem.command.string:
-      self._command = unescape(elem.command.string)
+    self._id = elem.get(TAG_ID)
+    if elem.find("./command") is not None and elem.find("./command").text:
+      self._command = unescape(elem.find("./command").text)
     else:
       self._command = ""
 
-    if elem.response and elem.response.string:
-      self._response = unescape(elem.response.string)
+    if elem.find("./response") is not None and elem.find("./response").text:
+      self._response = unescape(elem.find("./response").text)
     
     dependencies = []
-    for dep in (elem.dependencies or []):
-      dependencies.append(int(dep[TAG_ID]))
+    for dep in (elem.find("./dependencies") or []):
+      dependencies.append(int(dep.get(TAG_ID)))
 
     self.set_dependencies(dependencies)
   

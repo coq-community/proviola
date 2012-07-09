@@ -39,15 +39,14 @@ class Test_Coqdoc_Frame(unittest.TestCase):
   
   def test_from_xml(self):
     """ Test that a frame is constructed from XML, properly. """
-    xml = BeautifulStoneSoup("""<film><frame framenumber="0">
+    xml = etree.fromstring("""<frame framenumber="0">
       <command>Spam</command>
       <response>Eggs</response>
       <command-coqdoc><div>Spam</div></command-coqdoc>
       <dependencies />
-    </frame></fiml>
-     """, selfClosingTags=["dependencies"])
+    </frame>""")
     frame = Coqdoc_Frame()
-    frame.fromxml(xml.frame)
+    frame.fromxml(xml)
     
     self.assertEquals("Spam", frame.getCommand())
     self.assertEquals("Eggs", frame.getResponse())

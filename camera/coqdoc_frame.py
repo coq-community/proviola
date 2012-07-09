@@ -35,7 +35,12 @@ class Coqdoc_Frame(Frame):
     """ 
     Frame.fromxml(self, element)    
     
-    map(self._command_coqdoc.append, element.find(TAG_COQDOC))
+    el = element.find(TAG_COQDOC)
+    
+    if el.text:
+      self._command_coqdoc.append(el.text)
+    
+    map(self._command_coqdoc.append, el)
 
   
   def toxml(self):

@@ -1,5 +1,5 @@
 """ Implements a Reader class for Coqdoc documents. """
-from xml.sax.saxutils import unescape, escape
+from xml.sax.saxutils import unescape
 import copy
 import re
 
@@ -84,6 +84,7 @@ class Coqdoc_Reader(CoqReader):
       text.append(self._get_text(child))
 
     markup = []
+    frame = None
     for mkup, code in zip(markups, text):
       markup.append(mkup)
       commands = self.parse(code)
@@ -98,9 +99,8 @@ class Coqdoc_Reader(CoqReader):
         markup = []
         commands = []
 
-      elif commands and commands[0] == '\n':
-        if frame is not None:
-          frame.set_command(frame.getCommand() + '\n')
+      elif commands and commands[0] == '\n' and frame is not None:
+        frame.set_command(frame.getCommand() + '\n')
     
     trailing_frame = Coqdoc_Frame(command = ''.join([el for el in commands]),
                                   command_cd = markup,

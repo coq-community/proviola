@@ -99,24 +99,24 @@ class Scene(object):
   def fromxml(self, element):
     """ Unmarshall the scene from the given element.
     """
-    self.set_attributes(element.attrs)
+    self.set_attributes(element.items())
 
     try:
-      self.set_type(element['class'])
+      self.set_type(element.get('class'))
     except KeyError:
       self.set_type("doc")
 
-    self.set_number(['scenenumber'])
-    self.level = int(element['level'])
-    self.name  = element['name']
-    self.id = element['identifier']
+    self.set_number(element.get('scenenumber'))
+    self.level = int(element.get('level'))
+    self.name  = element.get('name')
+    self.id = element.get('identifier')
 
-    for child in element.findAll(recursive = False):
-      if child.name == "scene":
+    for child in element:
+      if child.tag == "scene":
         sub_scene = Scene()
         sub_scene.fromxml(child)
-      elif child.name == "frame-reference":
-        sub_scene = Coqdoc_Frame(id = child["framenumber"])
+      elif child.tag == "frame-reference":
+        sub_scene = Coqdoc_Frame(id = child.get("framenumber"))
 
       self.add_scene(sub_scene)
   

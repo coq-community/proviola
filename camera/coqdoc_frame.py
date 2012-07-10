@@ -47,6 +47,8 @@ class Coqdoc_Frame(Frame):
     """ Convert this frame to XML, using etree. """
     frame_xml = Frame.toxml(self)
     coqdoc = etree.SubElement(frame_xml, TAG_COQDOC)
+   
+    
     map(coqdoc.append, self._command_coqdoc)
     
     return frame_xml

@@ -1,8 +1,7 @@
 import unittest 
-from external.BeautifulSoup import BeautifulStoneSoup
 from coqdoc_frame import Coqdoc_Frame
 
-from lxml import etree
+from lxml import etree, html
 
 class Test_Coqdoc_Frame(unittest.TestCase):
   """ Tests of the coqdoc frame. """
@@ -31,11 +30,11 @@ class Test_Coqdoc_Frame(unittest.TestCase):
   def test_export_entities(self):
     """ Entities that are already escaped should not be escaped again. """
     frame = Coqdoc_Frame(command =" ", 
-                         command_cd = BeautifulStoneSoup("<div>&nbsp;</div>"))
+                         command_cd = [html.fromstring("<div>&nbsp;</div>")])
     xml = frame.toxml()
 
     self.assertEquals(xml.find(".//command-coqdoc")[0].text, 
-                      "&nbsp;")
+                      u"\xa0")
   
   def test_from_xml(self):
     """ Test that a frame is constructed from XML, properly. """
@@ -56,10 +55,10 @@ class Test_Coqdoc_Frame(unittest.TestCase):
     
   def test_nested_entities(self):
     """ Test that entities in elements escape correctly. """
-    soup = BeautifulStoneSoup("<div>&amp;</div>")
+    soup = etree.fromstring("<div>&amp;</div>")
     frame = Coqdoc_Frame(command = "foo", response = "bar",
-                         command_cd = soup)
+                         command_cd = [soup])
     
     xml = frame.toxml()
-    self.assertEquals(str(xml.find(name = "command-coqdoc").div), 
+    self.assertEquals(etree.tostring(xml.find(".//command-coqdoc")[0]), 
                       "<div>&amp;</div>")

@@ -63,7 +63,7 @@ class Movie(object):
       frame = make_frame(element)
       self.addFrame(frame)
 
-    for scene_xml in document.scenes.findAll(name="scene", recursive = False):
+    for scene_xml in document.findall(".//scenes/scene"):
       scene = Scene()
       scene.fromxml(scene_xml)
       self._replace_frames(scene)

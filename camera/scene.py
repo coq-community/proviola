@@ -1,4 +1,3 @@
-from external.BeautifulSoup import Tag
 from lxml import etree
 
 from coqdoc_frame import Coqdoc_Frame

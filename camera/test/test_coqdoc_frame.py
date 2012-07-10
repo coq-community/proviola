@@ -11,7 +11,7 @@ class Test_Coqdoc_Frame(unittest.TestCase):
     frame = Coqdoc_Frame(command = None, command_cd = None, response = None)
     xml = frame.toxml()
     self.assertEquals([], list(xml.find(".//command")))
-    self.assertIsNone(xml.find(".//response"))
+    self.assertEquals([], list(xml.find(".//response")))
     self.assertEquals([], list(xml.find(".//command-coqdoc")))
 
   def test_entitities(self):
@@ -24,8 +24,7 @@ class Test_Coqdoc_Frame(unittest.TestCase):
     
     xml = frame.toxml()
     self.assertEquals(xml.find(".//command").text, "&amp;")
-    print "XML (test): ", xml
-    self.assertEquals(xml.response.text, "&amp;")
+    self.assertEquals(xml.find(".//response").text, "&amp;")
   
   def test_export_entities(self):
     """ Entities that are already escaped should not be escaped again. """

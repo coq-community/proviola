@@ -8,7 +8,6 @@ from Movie import Movie
 from scene import Scene
 from coqdoc_frame import Coqdoc_Frame
 
-from external.BeautifulSoup import BeautifulSoup
 from cStringIO import StringIO
 from lxml import html
 
@@ -26,10 +25,6 @@ class Coqdoc_Reader(CoqReader):
     self._prover = None
     self._coqdoc_tree = None
    
-  def add_code_soup(self, tree):
-    """ Add code as a Beautiful Soup tree. """
-    self._coqdoc_tree = tree
-
   def add_code(self, code):
     """ Override of the corresponding method in Reader: makes a 
         lxml tree out of the given Coqdoc document. """

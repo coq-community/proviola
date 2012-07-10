@@ -17,8 +17,6 @@
 # along with Proof Camera.  If not, see <http://www.gnu.org/licenses/>.
 
 from xml.sax.saxutils import escape, unescape
-from external.BeautifulSoup import Tag
-
 from lxml import etree
 
 TAG_FRAME = "frame"
@@ -91,7 +89,8 @@ class Frame:
       self._response = unescape(elem.find("./response").text)
     
     dependencies = []
-    for dep in (elem.find("./dependencies") or []):
+    deps = elem.find("./dependencies")
+    for dep in (deps if deps is not None else []):
       dependencies.append(int(dep.get(TAG_ID)))
 
     self.set_dependencies(dependencies)
@@ -100,13 +99,15 @@ class Frame:
     """ To xml. """
     element  = etree.Element(TAG_FRAME)
     element.set(TAG_ID, str(self.getId()))
+   
     
     command = etree.SubElement(element, TAG_CMD)
-    command.text = self.getCommand()
+    if self.getCommand():
+      command.text = escape(self.getCommand())
 
+    response = etree.SubElement(element, TAG_RES)
     if self.getResponse():
-      response = etree.SubElement(element, TAG_RES)
-      response.text = self.getResponse()
+      response.text = escape(self.getResponse())
 
     dependencies = etree.SubElement(element, TAG_DEPS)
     for dep in self.get_dependencies():
@@ -115,13 +116,6 @@ class Frame:
 
     return element
 
-  def createTextElement(self, doc, elementName, contents):
-    """ Convenience method for creating text-containing nodes in doc """
-    contents = contents or ""
-    element = Tag(doc, elementName)
-    element.append(escape(contents))
-    return element 
-  
   def get_reference(self):
     """ Give a reference to a frame, as its identifier. """
     element = etree.Element("frame-reference")

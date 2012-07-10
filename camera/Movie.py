@@ -177,7 +177,7 @@ class Movie(object):
 
   def openFile(self, fileName):
     """ Open an XML file and load its data in memory. """
-    doc = BeautifulStoneSoup(open(fileName, 'r').read())
+    doc = etree.parse(fileName)
     self.fromxml(doc)
 
   def getFrameById(self, id):

@@ -4,7 +4,6 @@ from coqdoc_reader import Coqdoc_Reader
 
 from mock import Mock
 from Prover import get_prover
-from BeautifulSoup import BeautifulSoup
 
 class Test_Coqdoc_Reader(unittest.TestCase):
   """ Test cases exercising a Coqdoc reader. """
@@ -22,11 +21,6 @@ class Test_Coqdoc_Reader(unittest.TestCase):
     self.reader.add_code(self.template.format(body = ""))
     self.assertTrue(self.reader._coqdoc_tree.findall(".//body"))
   
-  def test_add_soup(self):
-    """ Test adding coqdoc tree. """
-    tree = BeautifulSoup(self.template.format(body = "Goal forall x, x->x."))
-    self.reader.add_code_soup(tree)
-    self.assertEquals(self.reader._coqdoc_tree, tree)
   
   def test_html_empty(self):
     """ Test that an empty HTML file leads to no frames, no scenes. """

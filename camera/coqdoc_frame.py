@@ -1,4 +1,5 @@
 from Frame import Frame
+from functools import partial
 from lxml import etree
 
 TAG_COQDOC = "command-coqdoc"
@@ -43,13 +44,20 @@ class Coqdoc_Frame(Frame):
     map(self._command_coqdoc.append, el)
 
   
+  def _append_etree(self, root, element):
+    """ Append element to root. If element is text, it will overwrite root.text.
+    """
+    try:
+      root.append(element)
+    except TypeError:
+      root.text = element
+
   def toxml(self):
     """ Convert this frame to XML, using etree. """
     frame_xml = Frame.toxml(self)
     coqdoc = etree.SubElement(frame_xml, TAG_COQDOC)
    
-    
-    map(coqdoc.append, self._command_coqdoc)
+    map(partial(self._append_etree, coqdoc), self._command_coqdoc)
     
     return frame_xml
 

@@ -41,7 +41,8 @@ class Coqdoc_Reader(CoqReader):
       br.getparent().text = (br.getparent().text or '') + "\n" + (br.tail or '')
       br.getparent().remove(br)
     
-    return html.tostring(div_cp, method='text')
+    return html.tostring(div_cp, method='text',
+                         encoding=self._coqdoc_tree.docinfo.encoding)
 
   
   def _replace_html(self, text):
@@ -90,7 +91,7 @@ class Coqdoc_Reader(CoqReader):
       commands = self.parse(code)
       if commands and self.isCommand(commands[0]):
         command = self._replace_html(commands[0])
-        response = self._prover.send(command.encode(self._coqdoc_tree.docinfo.encoding))
+        response = self._prover.send(command)
         frame = Coqdoc_Frame(command = command, command_cd = markup, response = response)
         frame.set_code(True)
         frames.append(frame)

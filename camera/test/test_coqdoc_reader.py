@@ -155,3 +155,13 @@ class Test_Coqdoc_Reader(unittest.TestCase):
     self.assertEquals("doc", attrs["class"])
   
   
+
+  def test_newline(self):
+    """ Break tags to newlines in the 'code' section. """
+    self.reader.add_code(self.template.format(
+      body = """<div class="code">Foo.<br/><span>Bar.</span><br/>Spam.</div>"""))
+
+    frames = self.reader.make_frames(prover = self.mock_prover).get_frames()
+    self.assertEquals("Foo.\n", frames[0].getCommand())
+    self.assertEquals("Bar.", frames[1].getCommand())
+    self.assertEquals("\nSpam.", frames[2].getCommand())

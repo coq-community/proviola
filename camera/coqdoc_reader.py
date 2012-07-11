@@ -33,14 +33,18 @@ class Coqdoc_Reader(CoqReader):
   def _get_text(self, div):
     """ Get the text embedded in div, replacing break tags with newlines. """
     if div.tag == 'br':
-      return '\n'
+      return '\n' + (div.tail or '')
 
     div_cp = copy.copy(div)
-
     for br in div_cp.findall(".//br"):
-      br.getparent().text = (br.getparent().text or '') + "\n" + (br.tail or '')
+      prev = br.getprevious()
+      if prev is not None:
+        prev.tail = (prev.tail or '') + "\n"
+      else:
+        br.getparent().text = (br.getparent().text or '') + "\n" + (br.tail or '')
+
       br.getparent().remove(br)
-    
+
     return html.tostring(div_cp, method='text',
                          encoding=self._coqdoc_tree.docinfo.encoding)
 
@@ -82,7 +86,9 @@ class Coqdoc_Reader(CoqReader):
     
     for child in div:
       markups.append(child)
-      text.append(self._get_text(child))
+      txt = self._get_text(child)
+      text.append(txt)
+    
 
     markup = []
     frame = None

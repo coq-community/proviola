@@ -78,23 +78,36 @@ class Coqdoc_Reader(CoqReader):
     """
     frames = []
   
-    scene = Scene()
-    scene.set_type("code")
+    scene = result_scene = Scene()
+    result_scene.set_type("code")
     
     text = [div.text or '']
     markups = list(text)
-    
+     
     for child in div:
-      markups.append(child)
-      txt = self._get_text(child)
-      text.append(txt)
-    
+      if child.get("class") == "proof":
+        scene = Scene()
+        scene.set_type("code")
+        result_scene.add_scene(scene)
+        
+        if child.text:
+          text.append(child.text)
+          markups.append(child.text)
+  
+        for grandchild in child:
+          markups.append(grandchild)
+          text.append(self._get_text(grandchild))
+
+      else:
+        markups.append(child)
+        text.append(self._get_text(child))
 
     markup = []
     frame = None
     for mkup, code in zip(markups, text):
       markup.append(mkup)
       commands = self.parse(code)
+      
       if commands and self.isCommand(commands[0]):
         command = self._replace_html(commands[0])
         response = self._prover.send(command)
@@ -108,6 +121,8 @@ class Coqdoc_Reader(CoqReader):
 
       elif commands and commands[0] == '\n' and frame is not None:
         frame.set_command(frame.getCommand() + '\n')
+        frame.append_to_markup(markup[0])
+        markup = markup[1:]
     
     trailing_frame = Coqdoc_Frame(command = ''.join([el for el in commands]),
                                   command_cd = markup,
@@ -115,7 +130,7 @@ class Coqdoc_Reader(CoqReader):
     trailing_frame.set_code(True)
     frames.append(trailing_frame)
     scene.add_scene(trailing_frame)
-    return frames, scene
+    return frames, result_scene
   
   def _process_doc(self, div):
     frames = []

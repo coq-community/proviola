@@ -101,16 +101,15 @@ class Test_Coqdoc_Reader(unittest.TestCase):
   
   def test_html_marked_code(self):
     """ Code divs can (will) be marked up. """
-    span = '<span class="id" type="keyword">Goal</span> <span class="id" type="keyword">forall</span> <span class="id" type="var">x</span>, <span class="id" type="var">x</span>-&gt;<span class="id" type="var">x</span>.' 
-    markup = '<div class="code">' + span + '<br /></div>'
+    span = '<span class="id" type="keyword">Goal</span> <span class="id" type="keyword">forall</span> <span class="id" type="var">x</span>, <span class="id" type="var">x</span>-&gt;<span class="id" type="var">x</span>.<br/>' 
+    markup = '<div class="code">' + span + '</div>'
     self.reader.add_code(self.template.format(body = markup))
     
     result = self.reader.make_frames(prover = self.mock_prover)
     
     self.assertEquals(result.getFrame(0).getCommand(), "Goal forall x, x->x.\n")
     self.assertEquals(result.getFrame(0).getResponse(), "Result")
-    self.assertEquals(str(result.getFrame(0).get_coqdoc_command()), span)
-    self.assertEquals(str(result.getFrame(1).get_coqdoc_command()), "<br/>")
+    self.assertMultiLineEqual(str(result.getFrame(0).get_coqdoc_command()), span)
     self.assertEquals(result.getFrame(1).getCommand(), "\n")
 
   def test_html_marked_code_real(self):
@@ -165,3 +164,21 @@ class Test_Coqdoc_Reader(unittest.TestCase):
     self.assertEquals("Foo.\n", frames[0].getCommand())
     self.assertEquals("Bar.", frames[1].getCommand())
     self.assertEquals("\nSpam.", frames[2].getCommand())
+
+
+  def test_newline_group(self):
+    """ Grouped proof with newlines-as-breaks. """
+    self.reader.add_code(self.template.format(
+      body = """<div class="code">
+      <span class="proof"><span>Proof</span>.<br/>
+      <span>trivial</span>.<br/>
+      <span>Qed</span>.<br/>
+      </span></div>"""))
+    frames = self.reader.make_frames(prover = self.mock_prover).get_frames()
+    self.assertEquals(4, len(frames))
+    self.assertEquals("Proof.\n", frames[0].getCommand())
+    self.assertEquals("trivial.\n", frames[1].getCommand())
+    self.assertEquals("Qed.\n", frames[2].getCommand())
+
+
+

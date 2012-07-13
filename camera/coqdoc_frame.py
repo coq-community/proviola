@@ -19,7 +19,11 @@ class Coqdoc_Frame(Frame):
       return ""
     
     return "".join([self._tostring(part) for part in self._command_coqdoc])
-  
+
+  def append_to_markup(self, element):
+    """ Append element to markup. """
+    self._command_coqdoc.append(element)
+
   def _tostring(self, el):
     """ Converts html.tostring(el) if el is an element, or el itself. """
     try:

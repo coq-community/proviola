@@ -5,6 +5,8 @@ from coqdoc_reader import Coqdoc_Reader
 from mock import Mock
 from Prover import get_prover
 
+from lxml import etree
+
 class Test_Coqdoc_Reader(unittest.TestCase):
   """ Test cases exercising a Coqdoc reader. """
   
@@ -175,10 +177,21 @@ class Test_Coqdoc_Reader(unittest.TestCase):
       <span>Qed</span>.<br/>
       </span></div>"""))
     frames = self.reader.make_frames(prover = self.mock_prover).get_frames()
-    self.assertEquals(4, len(frames))
+    self.assertEquals(5, len(frames))
     self.assertEquals("Proof.\n", frames[0].getCommand())
     self.assertEquals("trivial.\n", frames[1].getCommand())
     self.assertEquals("Qed.\n", frames[2].getCommand())
 
 
+  def test_scenes(self):
+    """ Grouped proof should go in a scene. """
+    self.reader.add_code(self.template.format(
+      body = """<div class="code"><span>Lemma.</span>
+      <span class="proof"><span>Proof.</span></span></div>"""))
+    movie = self.reader.make_frames(prover = self.mock_prover)
+    scenes = movie.get_scenes()[0].get_subscenes()
+
+    self.assertEquals(3, len(scenes))
+    self.assertEquals("Lemma.", scenes[0].getCommand())
+    self.assertEquals("Proof.", scenes[1].get_subscenes()[0].getCommand())
 

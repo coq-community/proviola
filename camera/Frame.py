@@ -41,6 +41,10 @@ class Frame:
     self._is_code = False
 
     self._dependencies = []
+    
+  def __eq__(self, other):
+    """ Comparison based on attributes. """
+    return self.__dict__ == other.__dict__
 
   def get_dependencies(self):
     return self._dependencies

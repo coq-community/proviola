@@ -32,22 +32,24 @@ class Coqdoc_Reader(CoqReader):
 
   def _get_text(self, div):
     """ Get the text embedded in div, replacing break tags with newlines. """
-    if div.tag == 'br':
-      return '\n' + (div.tail or '')
+    try:
+      if div.tag == 'br':
+        return '\n' + (div.tail or '')
 
-    div_cp = copy.copy(div)
-    for br in div_cp.findall(".//br"):
-      prev = br.getprevious()
-      if prev is not None:
-        prev.tail = (prev.tail or '') + "\n"
-      else:
-        br.getparent().text = (br.getparent().text or '') + "\n" + (br.tail or '')
+      div_cp = copy.copy(div)
+      for br in div_cp.findall(".//br"):
+        prev = br.getprevious()
+        if prev is not None:
+          prev.tail = (prev.tail or '') + "\n"
+        else:
+          br.getparent().text = (br.getparent().text or '') + "\n" + (br.tail or '')
 
-      br.getparent().remove(br)
+        br.getparent().remove(br)
 
-    return html.tostring(div_cp, method='text',
-                         encoding=self._coqdoc_tree.docinfo.encoding)
-
+      return html.tostring(div_cp, method='text',
+                           encoding=self._coqdoc_tree.docinfo.encoding)
+    except AttributeError, TypeError:
+      return div
   
   def _replace_html(self, text):
     """ Replace HTML entitities by ASCII equivalents. 
@@ -78,44 +80,50 @@ class Coqdoc_Reader(CoqReader):
     """
     frames = []
   
-    scene = Scene()
-    scene.set_type("code")
+    result_scene = Scene()
+    result_scene.set_type("code")
     
-    text = [div.text or '']
-    markups = list(text)
-    
-    for child in div:
-      markups.append(child)
-      txt = self._get_text(child)
-      text.append(txt)
-    
-
     markup = []
     frame = None
-    for mkup, code in zip(markups, text):
-      markup.append(mkup)
-      commands = self.parse(code)
-      if commands and self.isCommand(commands[0]):
-        command = self._replace_html(commands[0])
-        response = self._prover.send(command)
-        frame = Coqdoc_Frame(command = command, command_cd = markup, response = response)
-        frame.set_code(True)
-        frames.append(frame)
-        scene.add_scene(frame)
+    
+    for child in [div.text or ''] + list(div):
+      try:
+        child_class = child.get('class')
+      except AttributeError:
+        child_class = '' 
+      
+      if child_class == "proof":
+        subframes, subscene = self._process_code(child)
+        frames += subframes
+        result_scene.add_scene(subscene)
 
-        markup = []
-        commands = []
+      else:
+        markup.append(child)
+        commands = self.parse(self._get_text(child))
 
-      elif commands and commands[0] == '\n' and frame is not None:
-        frame.set_command(frame.getCommand() + '\n')
+        if commands and self.isCommand(commands[0]):
+          command = self._replace_html(commands[0])
+          response = self._prover.send(command)
+          frame = Coqdoc_Frame(command = command, command_cd = markup, response = response)
+          frame.set_code(True)
+          frames.append(frame)
+          result_scene.add_scene(frame)
+
+          markup = []
+          commands = []
+
+        elif commands and commands[0] == '\n' and frame is not None:
+          frame.set_command(frame.getCommand() + '\n')
+          frame.append_to_markup(markup[0])
+          markup = markup[1:]
     
     trailing_frame = Coqdoc_Frame(command = ''.join([el for el in commands]),
                                   command_cd = markup,
                                   response = None)
     trailing_frame.set_code(True)
     frames.append(trailing_frame)
-    scene.add_scene(trailing_frame)
-    return frames, scene
+    result_scene.add_scene(trailing_frame)
+    return frames, result_scene
   
   def _process_doc(self, div):
     frames = []

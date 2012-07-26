@@ -27,7 +27,7 @@ TAG_DEPS = "dependencies"
 TAG_DEP  = "dependency"
 
 
-class Frame:
+class Frame(object):
   """ A class for frames """
 
   def __init__(self, id = -1, command = None, response = None):

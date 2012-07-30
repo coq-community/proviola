@@ -80,6 +80,8 @@ class Frame:
   def fromxml(self, elem):
     """ Fill frame from given elem. """
     self._id = elem.get(TAG_ID)
+    self.set_code(elem.get("is_code", default=False))
+
     if elem.find("./command") is not None and elem.find("./command").text:
       self._command = unescape(elem.find("./command").text)
     else:
@@ -99,8 +101,9 @@ class Frame:
     """ To xml. """
     element  = etree.Element(TAG_FRAME)
     element.set(TAG_ID, str(self.getId()))
-   
-    
+    if self.is_code():
+      element.set("is_code", "true")
+
     command = etree.SubElement(element, TAG_CMD)
     if self.getCommand():
       command.text = escape(self.getCommand())

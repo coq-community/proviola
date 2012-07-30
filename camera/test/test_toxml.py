@@ -32,6 +32,7 @@ class test_toxml(unittest.TestCase):
                            response = "Bar").toxml()
 
     self.assertEquals("42", element.get(TAG_ID))
+    self.assertIsNone(element.get("is_code"))
 
     self.assertEquals(4, len(list(element)))
     for child in element:
@@ -45,7 +46,12 @@ class test_toxml(unittest.TestCase):
         self.assertEquals("Bar", child.text)
       else:
         self.fail("Unexpected element: " + etree.tostring(child))
-
+  
+  def test_frame_code_toxml(self):
+    """ Frames can have an is_code boolean. """
+    f = Frame()
+    f.set_code(True)
+    self.assertTrue(f.toxml().get("is_code"))
   def test_scenes_toxml(self):
     """ Scenes to XML. """
 

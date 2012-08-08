@@ -53,7 +53,7 @@ Qed.
     self._reader.add_code("""(** Test *)
     Proof. """)
     movie = self._reader.make_frames(prover = self._prover)
-    self.assertEquals(movie.getLength(), 3)
+    self.assertEquals(movie.getLength(), 2)
   
   def test_comment_inline(self):
     """ Inline comments. """
@@ -66,11 +66,11 @@ Qed.
     self._reader.add_code("Goal forall x, x->x.\nProof.")
     movie = self._reader.make_frames(prover = self._prover)
     self.assertEquals(
-      "Goal&nbsp;forall&nbsp;x,&nbsp;x-&gt;x.",
+      "Goal&nbsp;forall&nbsp;x,&nbsp;x-&gt;x.<br/>",
       movie.getFrame(0).get_coqdoc_command())
 
     self.assertEquals(
-      "<br/>Proof.",
+      "Proof.",
       movie.getFrame(1).get_coqdoc_command())
 
   @classmethod

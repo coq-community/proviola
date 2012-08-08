@@ -190,7 +190,7 @@ class Test_Coqdoc_Reader(unittest.TestCase):
     scenes = movie.get_scenes()[0].get_subscenes()
 
     self.assertEquals(3, len(scenes))
-    self.assertEquals("Lemma.", scenes[0].getCommand())
+    self.assertEquals("Lemma.\n", scenes[0].getCommand())
     self.assertEquals("Proof.", scenes[1].get_subscenes()[0].getCommand())
   
   def test_markup(self):

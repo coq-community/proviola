@@ -45,6 +45,9 @@ class CoqReader(Reader):
       acc += char
        
       if self.terminator(char, open):
+        c = self.readChar()
+        if c is not None:
+          acc += c
         break
 
       if char == "." and self.peekChar() == '.':

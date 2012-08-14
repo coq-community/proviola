@@ -54,7 +54,14 @@ Qed.
     Proof. """)
     movie = self._reader.make_frames(prover = self._prover)
     self.assertEquals(movie.getLength(), 2)
-  
+ 
+  def test_comment_whitespace(self):
+    """ Whitespace following comments should be placed in the frame. """
+    self._reader.add_code("""(** Test *)
+                          """)
+    movie = self._reader.make_frames(prover=self._prover)
+    self.assertEquals(1, movie.getLength())
+
   def test_comment_inline(self):
     """ Inline comments. """
     self._reader.add_code("""Blah (* Comment *) blah.""")

@@ -65,6 +65,15 @@ class CoqReader(Reader):
           acc = acc + self.readChar()
           open -= 1
           if open == 0 and self.isComment(acc):
+            while self.peekChar() in string.whitespace:
+              c = self.readChar()
+              if c is not None:
+                acc += c
+              else:
+                # At end of text, peekChar will return whitespace, but readChar
+                # returns None, so break out of loop.
+                break
+
             return acc
 
       char = self.readChar()

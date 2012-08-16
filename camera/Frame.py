@@ -37,6 +37,7 @@ class Frame:
     self._command = command 
     self._response = response
     self._processed = bool(response)
+    self.post_state = -1
     
     self._is_code = False
 

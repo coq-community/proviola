@@ -153,6 +153,7 @@ class CoqReader(Reader):
       coqdoc_command = self._escape_to_html(command)
       f = Coqdoc_Frame(id, command = command, command_cd = coqdoc_command,
                            response = response)
+      f.set_code(True)
       document.addFrame(f)
       scene.add_scene(f)
 

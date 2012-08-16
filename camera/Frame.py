@@ -37,11 +37,19 @@ class Frame:
     self._command = command 
     self._response = response
     self._processed = bool(response)
-    self.post_state = -1
+    self.__post_state = -1
     
     self._is_code = False
 
     self._dependencies = []
+
+  def get_post(self):
+    return self.__post_state
+
+  def set_post(self, st):
+    self.__post_state = st
+
+  post_state = property(get_post, set_post)
 
   def get_dependencies(self):
     return self._dependencies

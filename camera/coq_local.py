@@ -12,6 +12,7 @@ class Coq_Local(object):
       - coqtop: Location of coqtop executable.
       - timeout: How long to wait for coqtop to print to stdout. 
     """
+    self.error = ""
     self._coqtop = subprocess.Popen(shlex.split(coqtop) + ["-emacs"],
                                     stdin  = subprocess.PIPE,
                                     stdout = subprocess.PIPE,
@@ -32,7 +33,9 @@ class Coq_Local(object):
         error = self._coqtop.stderr.read()
       except IOError:
         time.sleep(.1)
-   
+
+    self.error= error
+
     try:
       output = self._clean(self._coqtop.stdout.read())
     except IOError:

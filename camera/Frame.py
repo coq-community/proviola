@@ -124,7 +124,7 @@ class Frame:
     dependencies = etree.SubElement(element, TAG_DEPS)
     for dep in self.get_dependencies():
       dependency = etree.SubElement(dependencies, TAG_DEP)
-      dependency.set(TAG_ID, str(dep))
+      dependency.set(TAG_ID, str(dep.getId()))
 
     return element
 

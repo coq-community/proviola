@@ -45,6 +45,9 @@ class CoqReader(Reader):
       acc += char
        
       if self.terminator(char, open):
+        c = self.readChar()
+        if c is not None:
+          acc += c
         break
 
       if char == "." and self.peekChar() == '.':
@@ -62,6 +65,15 @@ class CoqReader(Reader):
           acc = acc + self.readChar()
           open -= 1
           if open == 0 and self.isComment(acc):
+            while self.peekChar() in string.whitespace:
+              c = self.readChar()
+              if c is not None:
+                acc += c
+              else:
+                # At end of text, peekChar will return whitespace, but readChar
+                # returns None, so break out of loop.
+                break
+
             return acc
 
       char = self.readChar()
@@ -141,6 +153,7 @@ class CoqReader(Reader):
       coqdoc_command = self._escape_to_html(command)
       f = Coqdoc_Frame(id, command = command, command_cd = coqdoc_command,
                            response = response)
+      f.set_code(True)
       document.addFrame(f)
       scene.add_scene(f)
 

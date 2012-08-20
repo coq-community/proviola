@@ -155,8 +155,6 @@ class Test_Coqdoc_Reader(unittest.TestCase):
     self.assertTrue("class" in attrs.keys())
     self.assertEquals("doc", attrs["class"])
   
-  
-
   def test_newline(self):
     """ Break tags to newlines in the 'code' section. """
     self.reader.add_code(self.template.format(
@@ -192,6 +190,16 @@ class Test_Coqdoc_Reader(unittest.TestCase):
     scenes = movie.get_scenes()[0].get_subscenes()
 
     self.assertEquals(3, len(scenes))
-    self.assertEquals("Lemma.", scenes[0].getCommand())
+    self.assertEquals("Lemma.\n", scenes[0].getCommand())
     self.assertEquals("Proof.", scenes[1].get_subscenes()[0].getCommand())
-
+  
+  def test_markup(self):
+    """ Markup in coqdoc should carry over correctly. """
+    self.reader.add_code(self.template.format(
+      body="""<div class="doc">
+      The quick brown fox, <i>etc</i>. not really</div>"""))
+    movie = self.reader.make_frames(prover = self.mock_prover)
+    frames = movie.get_frames()
+    self.assertEquals(2, len(frames))
+    self.assertMultiLineEqual("\n      The quick brown fox, ", frames[0].get_markup_command())
+    self.assertMultiLineEqual("<i>etc</i>. not really", frames[1].get_markup_command())

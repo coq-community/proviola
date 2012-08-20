@@ -50,8 +50,19 @@ class Test_Coqdoc_Frame(unittest.TestCase):
     self.assertEquals("Eggs", frame.getResponse())
     self.assertEquals("<div>Spam</div>", str(frame.get_coqdoc_command()))
     self.assertEquals("<div>Spam</div>", str(frame.get_markup_command()))
+    self.assertFalse(frame.is_code())
     self.assertEquals([], frame.get_dependencies())
-    
+
+  def test_fromxml_code(self):
+    """ Frames with an is_code attribute should have this set to True in the
+        instantiated class.  """
+    xml = etree.fromstring("""<frame framenumber="0" is_code="true">
+                           <command>foo</command><command-coqdoc/></frame>""")
+    frame = Coqdoc_Frame()
+    frame.fromxml(xml)
+    self.assertTrue(frame.is_code())
+
+
   def test_nested_entities(self):
     """ Test that entities in elements escape correctly. """
     soup = etree.fromstring("<div>&amp;</div>")

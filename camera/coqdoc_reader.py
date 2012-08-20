@@ -138,6 +138,8 @@ class Coqdoc_Reader(CoqReader):
       frames.append(child_scene)
 
     for child in div:
+      tail_frame = None
+
       try:
         child_name = child.tag
       except AttributeError:
@@ -149,6 +151,11 @@ class Coqdoc_Reader(CoqReader):
           child_frames, child_scene = self._process_doc(child)
         else:
           child_frames, child_scene = self._process_div(child)
+
+        if child.tail is not None:
+          tail_frame = Coqdoc_Frame(command=child.tail, response=None,
+                                    command_cd=[child.tail])
+
       else:
         # Common markup
         child_scene = Coqdoc_Frame(command = html.tostring(child, method='text'),
@@ -156,18 +163,13 @@ class Coqdoc_Reader(CoqReader):
         child_frames = [child_scene]
 
 
-
       frames += child_frames
       scene.add_scene(child_scene)
 
-      if child.tail is not None:
-        frame = Coqdoc_Frame(command = child.tail, command_cd = [child.tail],
-                             response = None)
-        frames.append(frame)
-        scene.add_scene(frame)
+      if tail_frame:
+        frames.append(tail_frame)
+        scene.add_scene(tail_frame)
 
-
-          
     return frames, scene
   
   def _is_code(self, div):

@@ -61,6 +61,8 @@ class Movie(object):
 
     for element in document.findall(".//film/frame"):
       frame = make_frame(element)
+      frame.set_dependencies([self.getFrameById(id) for id in
+                              frame.get_dependencies()])
       self.addFrame(frame)
 
     for scene_xml in document.findall(".//scenes/scene"):
@@ -84,7 +86,7 @@ class Movie(object):
 
   def addFrame(self, frame):
     """ Add frame to the movie. """ 
-    frame.set_dependencies([f.getId() for f in self._get_dependencies()])
+    frame.set_dependencies([f for f in self._get_dependencies()])
     frame.setId(self.getLength())
 
     self._frames.append(frame)

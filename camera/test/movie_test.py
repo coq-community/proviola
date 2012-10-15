@@ -11,7 +11,6 @@ class Test_Movie(unittest.TestCase):
     """ Setup: just construct a movie """
     self.movie = Movie()
   
-   
   def test_AddFrame(self):
     """ Addition of a frame in order should yield correct IDs """
     frame1 = Frame(command = "command1", response = "response1")    
@@ -31,9 +30,9 @@ class Test_Movie(unittest.TestCase):
     self.assertEquals(frame1.getId(), 0)
     self.assertEquals(frame1.get_dependencies(), [])
     self.assertEquals(frame2.getId(), 1)
-    self.assertEquals(frame2.get_dependencies(), [frame1.getId()])
+    self.assertEquals(frame2.get_dependencies(), [frame1])
     self.assertEquals(frame3.getId(), 2)
-    self.assertEquals(frame3.get_dependencies(), [frame2.getId()])
+    self.assertEquals(frame3.get_dependencies(), [frame2])
   
   def test_set_response(self):
     """ Set frame response. """

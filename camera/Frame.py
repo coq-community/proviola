@@ -37,7 +37,7 @@ class Frame(object):
     self._command = command 
     self._response = response
     self._processed = bool(response)
-    self.post_state = -1
+    self.__post_state = -1
     
     self._is_code = False
 
@@ -46,6 +46,14 @@ class Frame(object):
   def __eq__(self, other):
     """ Comparison based on attributes. """
     return self.__dict__ == other.__dict__
+
+  def get_post(self):
+    return self.__post_state
+
+  def set_post(self, st):
+    self.__post_state = st
+
+  post_state = property(get_post, set_post)
 
   def get_dependencies(self):
     return self._dependencies
@@ -120,7 +128,7 @@ class Frame(object):
     dependencies = etree.SubElement(element, TAG_DEPS)
     for dep in self.get_dependencies():
       dependency = etree.SubElement(dependencies, TAG_DEP)
-      dependency.set(TAG_ID, str(dep))
+      dependency.set(TAG_ID, str(dep.getId()))
 
     return element
 

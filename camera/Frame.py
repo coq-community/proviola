@@ -16,7 +16,6 @@
 # You should have received a copy of the GNU General Public License
 # along with Proof Camera.  If not, see <http://www.gnu.org/licenses/>.
 
-from xml.sax.saxutils import escape, unescape
 from lxml import etree
 
 TAG_FRAME = "frame"
@@ -96,12 +95,12 @@ class Frame(object):
     self.set_code(elem.get("is_code", default=False))
 
     if elem.find("./command") is not None and elem.find("./command").text:
-      self._command = unescape(elem.find("./command").text)
+      self._command = elem.find("./command").text
     else:
       self._command = ""
 
     if elem.find("./response") is not None and elem.find("./response").text:
-      self._response = unescape(elem.find("./response").text)
+      self._response = elem.find("./response").text
     
     dependencies = []
     deps = elem.find("./dependencies")
@@ -119,11 +118,11 @@ class Frame(object):
 
     command = etree.SubElement(element, TAG_CMD)
     if self.getCommand():
-      command.text = escape(self.getCommand())
+      command.text = self.getCommand()
 
     response = etree.SubElement(element, TAG_RES)
     if self.getResponse():
-      response.text = escape(self.getResponse())
+      response.text = self.getResponse()
 
     dependencies = etree.SubElement(element, TAG_DEPS)
     for dep in self.get_dependencies():

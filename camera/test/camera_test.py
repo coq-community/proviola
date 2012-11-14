@@ -1,6 +1,7 @@
+# coding=utf-8
 import unittest
 from tempfile import NamedTemporaryFile
-from mock import Mock, patch 
+from mock import MagicMock, Mock, patch 
 from camera import camera
 
 _mock_get_prover = Mock()
@@ -59,7 +60,8 @@ class TestCamera(unittest.TestCase):
     self.assertEquals(results_long.prover,     "isabelle")
     self.assertEquals(results_long.stylesheet, "new.xsl")
     self.assertEquals(results_long.movie, "movie.xml")
-      
+  
+
   def test_parse_help(self):
     """ Test requesting help. """
     try:
@@ -73,7 +75,7 @@ class TestCamera(unittest.TestCase):
       self.fail("SystemExit exception expected.")
 
   @patch('camera.camera.get_prover', _mock_get_prover)
-  def test_use_specified_coqtop(self):
+  def test_user_specified_coqtop(self):
     """ Use the prover (Coqtop) specified in make_film. """
     f = NamedTemporaryFile(suffix = ".v")
     camera.make_film(f.name, coqtop = "/usr/bin/coqtop")
@@ -81,6 +83,7 @@ class TestCamera(unittest.TestCase):
     
     self.assertTrue("/usr/bin/coqtop" in _mock_get_prover.call_args[1].values(),
                     "Specified path not used.")
+
   @patch('camera.camera.get_prover', _mock_get_prover)  
   def test_use_specified_proofweb(self):
     """ Use the prover (ProofWeb) specified in make_film. """
@@ -92,7 +95,31 @@ class TestCamera(unittest.TestCase):
     self.assertTrue("http://prover.example.com" in
                      _mock_get_prover.call_args[1].values(),
                     "Specified path not used.")
-    
+  
+  @patch("camera.camera.get_prover", MagicMock())
+  def test_unicode_file(self):
+    """ A Unicode file should be 'converted' to a Unicode string."""
+    with patch("camera.camera.get_reader", MagicMock()) as fake_reader:
+      f = NamedTemporaryFile(suffix=".html")
+      f.write(u"ζ".encode("utf-8"))
+      f.flush()
+
+      camera.make_film(f.name)
+      fake_reader.return_value.add_code.assert_called_with(u"ζ")
+      
+      f.close()
+
+      f = NamedTemporaryFile(suffix=".html")
+      f.write("Foo")
+      f.flush()
+      camera.make_film(f.name)
+      fake_reader.return_value.add_code.assert_called_with("Foo")
+      f.close()
+
+
 if __name__ == '__main__':
   suite = unittest.TestLoader().loadTestsFromTestCase(TestCamera)
   unittest.TextTestRunner(verbosity=2).run(suite)
+
+  
+ 

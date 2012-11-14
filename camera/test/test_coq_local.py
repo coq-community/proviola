@@ -16,7 +16,7 @@ class Test_Coq_Local(unittest.TestCase):
     """ Sending correct data to Coqtop should work. """
     self.assertIn("forall x : Type, x -> x",
       self._coq.send("Goal forall x, x->x."))
-    self.assertEquals("", self._coq.send("Proof."))
+    self.assertIn("forall x : Type, x -> x", self._coq.send("Proof."))
 
   def test_send_utf8(self):
     """ Sending utf-8 should just work. """

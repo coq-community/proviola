@@ -25,6 +25,7 @@ import sys
 import os
 from os.path import splitext
 import logging
+import codecs
 from argparse import ArgumentParser
 from Prover import get_prover
 
@@ -140,7 +141,8 @@ def make_film(filename, pwurl = None, group = "nogroup",
 
   extension = splitext(filename)[1] 
   reader = get_reader(extension = extension)
-  reader.add_code(open(filename, 'r').read())
+  with codecs.open(filename, 'r', encoding="utf-8") as f:
+    reader.add_code(f.read())
   
   
   prover = get_prover(path = coqtop, url = pwurl, group = group)

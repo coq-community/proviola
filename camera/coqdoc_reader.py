@@ -28,13 +28,18 @@ class Coqdoc_Reader(CoqReader):
   def add_code(self, code):
     """ Override of the corresponding method in Reader: makes a 
         lxml tree out of the given Coqdoc document. """
+#    code = unicode(code, encoding='utf-8')
     self._coqdoc_tree = html.parse(StringIO(code))
 
   def _get_text(self, div):
     """ Get the text embedded in div, replacing break tags with newlines. """
     try:
       if div.tag == 'br':
-        return '\n' + (div.tail or '')
+        if div.tail:
+          tail = html.tostring(div, method='text', encoding='utf-8')
+        else:
+          tail = ""
+        return '\n' + tail
 
       div_cp = copy.copy(div)
       for br in div_cp.findall(".//br"):
@@ -45,8 +50,7 @@ class Coqdoc_Reader(CoqReader):
           br.getparent().text = (br.getparent().text or '') + "\n" + (br.tail or '')
 
         br.getparent().remove(br)
-      
-      return html.tostring(div_cp, method='text', encoding="utf-8")    
+      return html.tostring(div_cp, method='text', encoding="utf-8")
 
     except AttributeError, TypeError:
       return div
@@ -99,11 +103,17 @@ class Coqdoc_Reader(CoqReader):
 
       else:
         markup.append(child)
-        commands = self.parse(self._get_text(child))
+        t = self._get_text(child)
+        commands = self.parse(t)
 
         if commands and self.isCommand(commands[0]):
           command = self._replace_html(commands[0])
-          command = command.replace(u"\xa0", " ")
+          if type(command) == type(u""):
+            command = command.replace(u"\xa0", " ")
+          else:
+            command = command.decode("utf-8").replace(u"\xa0", " ")
+            command = command.encode("utf-8")
+
           response = self._prover.send(command)
           frame = Coqdoc_Frame(command = command, command_cd = markup, response = response)
           frame.set_code(True)

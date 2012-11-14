@@ -1,3 +1,4 @@
+# coding=utf-8
 import unittest
 import CoqReader
 from coq_local import Coq_Local
@@ -67,6 +68,13 @@ Qed.
     self._reader.add_code("""Blah (* Comment *) blah.""")
     movie = self._reader.make_frames(prover = self._prover)
     self.assertEquals(movie.getLength(), 1)
+  
+  def test_unicode(self):
+    """ Unicode code. """
+    self._reader.add_code(u"∀ x, x->x.")
+    movie = self._reader.make_frames(prover = self._prover)
+    self.assertEquals(u"∀ x, x->x.", movie.getFrame(0).getCommand())
+
 
   def test_coqdoc(self):
     """ Simple escape to 'coqdoc' commands. """

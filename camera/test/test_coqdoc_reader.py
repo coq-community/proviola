@@ -128,11 +128,20 @@ class Test_Coqdoc_Reader(unittest.TestCase):
     """ Unicode HTML should not give errors. """
     markup = u'<div class="code">' +\
              u'Lemma foo : ∀ (x y z : nat), x + y + z = y + x + z.</div>'
-    self.reader.add_code(self.template.format(body = markup))
+    self.reader.add_code(self.template.format(body=markup).encode("utf-8"))
     self.reader.make_frames(prover = self.mock_prover)
     self.mock_prover.send.assert_called_with(
       u"Lemma foo : ∀ (x y z : nat), x + y + z = y + x + z.")
         
+  def test_html_unicode_nbsp(self):
+    """ Non-breaking spaces cause hiccups with unicode encoding. """
+    markup = u'<div class="code">' +\
+             u'Lemma foo: ∀ x,&nbsp;x -> x.</div>'
+    self.reader.add_code(self.template.format(body=markup).encode("utf-8"))
+    self.reader.make_frames(prover = self.mock_prover)
+    self.mock_prover.send.assert_called_with(
+      u"Lemma foo: ∀ x, x -> x.")
+
   def test_title(self):
     """ Set a title if provided. """  
     self.reader.add_code("<html><head><title>Foo</title></head></html>")

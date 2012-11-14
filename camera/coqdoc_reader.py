@@ -195,12 +195,9 @@ class Coqdoc_Reader(CoqReader):
         - prover: handle to the prover to use to generate output. 
     """
     self._prover = prover
-    
-    try:
-      self._movie.set_title(self._coqdoc_tree.find(".//head/title").text)
-    except AttributeError:
-      self._movie.set_title("")
-    
+    title_el = self._coqdoc_tree.find(".//head/title")
+    title = title_el.text if  title_el is not None else ""
+    self._movie.set_title(title)
     
     body = self._coqdoc_tree.find(".//body")
     

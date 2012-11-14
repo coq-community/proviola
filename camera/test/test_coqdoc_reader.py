@@ -16,8 +16,10 @@ class Test_Coqdoc_Reader(unittest.TestCase):
     
     self.mock_prover = Mock()
     self.mock_prover.send = Mock(return_value = "Result")
-    self.template = "<html><body>{body}</body></html>"
-    
+    self.template = u"""<html>
+      <head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /></head>
+      <body>{body}</body></html>"""    
+
   def test_add_code(self):
     """ Test that adding HTML code creates a tree. """
     self.reader.add_code(self.template.format(body = ""))
@@ -124,11 +126,12 @@ class Test_Coqdoc_Reader(unittest.TestCase):
   
   def test_html_unicode(self):
     """ Unicode HTML should not give errors. """
-    markup = '<div class="code">' +\
-             'Lemma foo : ∀ (x y z : nat), x + y + z = y + x + z.</div>'
+    markup = u'<div class="code">' +\
+             u'Lemma foo : ∀ (x y z : nat), x + y + z = y + x + z.</div>'
     self.reader.add_code(self.template.format(body = markup))
     self.reader.make_frames(prover = self.mock_prover)
-        
+    self.mock_prover.send.assert_called_with(
+      u"Lemma foo : ∀ (x y z : nat), x + y + z = y + x + z.")
         
   def test_title(self):
     """ Set a title if provided. """  

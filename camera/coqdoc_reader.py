@@ -8,7 +8,7 @@ from Movie import Movie
 from scene import Scene
 from coqdoc_frame import Coqdoc_Frame
 
-from cStringIO import StringIO
+from StringIO import StringIO
 from lxml import html
 
 suffix = ".html"
@@ -46,9 +46,8 @@ class Coqdoc_Reader(CoqReader):
 
         br.getparent().remove(br)
       
-      return html.tostring(div_cp, method='text',
-                           encoding=self._coqdoc_tree.docinfo.encoding).decode(
-                        self._coqdoc_tree.docinfo.encoding)
+      return html.tostring(div_cp, method='text', encoding="utf-8")    
+
     except AttributeError, TypeError:
       return div
   

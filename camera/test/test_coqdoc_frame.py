@@ -23,8 +23,8 @@ class Test_Coqdoc_Frame(unittest.TestCase):
                          response = "&")
     
     xml = frame.toxml()
-    self.assertEquals(xml.find(".//command").text, "&amp;")
-    self.assertEquals(xml.find(".//response").text, "&amp;")
+    self.assertEquals(html.tostring(xml.find(".//command")), "<command>&amp;</command>")
+    self.assertEquals(html.tostring(xml.find(".//response")), "<response>&amp;</response>")
   
   def test_export_entities(self):
     """ Entities that are already escaped should not be escaped again. """

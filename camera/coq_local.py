@@ -13,6 +13,7 @@ class Coq_Local(object):
       - timeout: How long to wait for coqtop to print to stdout. 
     """
     self.error = ""
+    self._coqtop = None
     self._coqtop = subprocess.Popen(shlex.split(coqtop) + ["-emacs"],
                                     stdin  = subprocess.PIPE,
                                     stdout = subprocess.PIPE,
@@ -27,19 +28,29 @@ class Coq_Local(object):
 
   def _read_coq(self):
     """ Read data from Coqtop. Read stdout after the  """
-    error = False
-    while not error:
+    error = ""
+    output = ""
+
+    while not error or not (error.find("</prompt>") >= 0):
       try:
         error = self._coqtop.stderr.read()
       except IOError:
+        # Unclog stdout.
+        try:
+          output += self._clean(self._coqtop.stdout.read())
+        except IOError:
+          pass
+
         time.sleep(.1)
 
     self.error= error
 
-    try:
-      output = self._clean(self._coqtop.stdout.read())
-    except IOError:
-      output = ""
+    stop = False
+    while not stop:
+      try:
+        output += self._clean(self._coqtop.stdout.read())
+      except IOError:
+        stop = True
     
     return output
 
@@ -49,7 +60,8 @@ class Coq_Local(object):
   
   def __del__(self):
     """ Clean up: stop Coq process. """
-    self._coqtop.terminate()
+    if self._coqtop:
+      self._coqtop.kill()
     
   def send(self, command):
     """ Send data to Coqtop, returning the result. """

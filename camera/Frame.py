@@ -117,8 +117,11 @@ class Frame(object):
       element.set("is_code", "true")
 
     command = etree.SubElement(element, TAG_CMD)
-    if self.getCommand():
-      command.text = unicode(self.getCommand(), 'utf-8')
+    cmd = self.getCommand()
+    if cmd:
+      if type(cmd) != type(u""):
+        cmd = unicode(cmd, 'utf-8')
+      command.text = cmd
 
     response = etree.SubElement(element, TAG_RES)
     if self.getResponse():

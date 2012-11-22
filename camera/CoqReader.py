@@ -149,10 +149,9 @@ class CoqReader(Reader):
         response = None
       else:
         response = prover.send(command)
-      id = 0
       
       coqdoc_command = self._escape_to_html(command)
-      f = Coqdoc_Frame(id, command = command, command_cd = coqdoc_command,
+      f = Coqdoc_Frame(command = command, command_cd = coqdoc_command,
                            response = response)
       f.set_code(True)
 

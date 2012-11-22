@@ -81,12 +81,11 @@ class test_toxml(unittest.TestCase):
     movie.set_title("Title")
 
     frame =  Frame(id = 42, command = "Foo", response = "Bar")
-    movie.addFrame(frame)
-    frame.setId(42)
 
     scene = Scene()
     scene.add_scene(frame)
     movie.add_scene(scene)
+    frame.setId(42)
     
     mov_xml = movie.toxml()
     self.assertEquals("Title", mov_xml.get("title"))

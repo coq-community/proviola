@@ -1,6 +1,7 @@
 import unittest
 from Movie import Movie
 from Frame import Frame
+from scene import Scene
 from camera.camera import setupParser
 
 TESTFILM_PATH = "/tmp/testFilm.flm"
@@ -12,26 +13,31 @@ class Test_Movie(unittest.TestCase):
     self.movie = Movie()
   
   def test_AddFrame(self):
-    """ Addition of a frame in order should yield correct IDs """
-    frame1 = Frame(command = "command1", response = "response1")    
+    """ Addition of a frame. """
+    s = Scene()
+    self.movie.add_scene(s)
+
+    frame1 = Frame(command = "command1", response = "response1")
     frame1.set_code(True)
     self.assertTrue(frame1.is_processed())
-    self.movie.addFrame(frame1)
+
+    s.add_scene(frame1)
 
     frame2 = Frame(command = "command2", response = "response2")    
     frame2.set_code(True)
-    self.movie.addFrame(frame2)
+    frame2.set_dependencies([frame1])
+
+    s.add_scene(frame2)
+
 
     frame3 = Frame(command = "command3", response = "response3")    
     frame3.set_code(True)
-    self.movie.addFrame(frame3)
+    frame3.set_dependencies([frame2])
+    s.add_scene(frame3)
     
     self.assertEquals(self.movie.getLength(), 3)
-    self.assertEquals(frame1.getId(), 0)
     self.assertEquals(frame1.get_dependencies(), [])
-    self.assertEquals(frame2.getId(), 1)
     self.assertEquals(frame2.get_dependencies(), [frame1])
-    self.assertEquals(frame3.getId(), 2)
     self.assertEquals(frame3.get_dependencies(), [frame2])
   
   def test_set_response(self):
@@ -55,23 +61,31 @@ class Test_Movie(unittest.TestCase):
     self._storeOpenAndCompareMovie()
       
   def testAddToFromXML(self):
-    self.movie.addFrame(Frame(command="cmd", response="resp"))
+    scene = Scene()
+    scene.add_scene(Frame(command="cmd", response="resp"))
+    self.movie.add_scene(scene)
     self._storeOpenAndCompareMovie()
   
   def testSemiEmptyExport(self):
-    self.movie.addFrame(Frame(command="cmd", response=""))
+    s = Scene()
+    s.add_scene(Frame(command="cmd", response=""))
+    self.movie.add_scene(s)
     self._storeOpenAndCompareMovie()
 
   def testEmptyExport(self):
-    self.movie.addFrame(Frame(command="cmd"))
+    scene = Scene()
+    scene.add_scene(Frame(command="cmd"))
+    self.movie.add_scene(scene)
     self._storeOpenAndCompareMovie()
 
   def testIds(self):
     """ Test if getFrameById works """
+    s = Scene()
     f1 = Frame(command = "cmd1", response = "rsp1")
     f2 = Frame(command = "cmd2", response = "rsp2")
-    self.movie.addFrame(f1)
-    self.movie.addFrame(f2)
+    s.add_scene(f1)
+    s.add_scene(f2)
+    self.movie.add_scene(s)
     
     f1ById = self.movie.getFrameById(f1.getId())
 

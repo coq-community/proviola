@@ -33,6 +33,7 @@ suffix = '.v'
 class CoqReader(Reader):
   def __init__(self):
     Reader.__init__(self)
+    self._deps = []
     self.unfinished = None
 
   def terminator(self, char, open):
@@ -154,7 +155,10 @@ class CoqReader(Reader):
       f = Coqdoc_Frame(id, command = command, command_cd = coqdoc_command,
                            response = response)
       f.set_code(True)
-      document.addFrame(f)
+
+      f.set_dependencies(self._deps)
+      self._deps = [f]
+      
       scene.add_scene(f)
 
       command = self.getWord()

@@ -15,7 +15,7 @@
 # 
 # You should have received a copy of the GNU General Public License
 # along with Proof Camera.  If not, see <http://www.gnu.org/licenses/>.
-
+import uuid
 from lxml import etree
 
 TAG_FRAME = "frame"
@@ -32,7 +32,11 @@ class Frame(object):
   def __init__(self, id = -1, command = None, response = None):
     """ A frame always has an id and a command, but optionally a response 
     """
-    self._id = id
+    if id == -1:
+      self._id = uuid.uuid4()
+    else:
+      self._id = id
+
     self._command = command 
     self._response = response
     self._processed = bool(response)

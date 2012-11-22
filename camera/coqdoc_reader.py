@@ -82,8 +82,6 @@ class Coqdoc_Reader(CoqReader):
   def _process_code(self, div):
     """ Process a code div, returning a scene and the frames referenced.
     """
-    frames = []
-  
     result_scene = Scene()
     result_scene.set_type("code")
     
@@ -97,8 +95,7 @@ class Coqdoc_Reader(CoqReader):
         child_class = '' 
       
       if child_class == "proof":
-        subframes, subscene = self._process_code(child)
-        frames += subframes
+        subscene = self._process_code(child)
         result_scene.add_scene(subscene)
 
       else:
@@ -117,7 +114,10 @@ class Coqdoc_Reader(CoqReader):
           response = self._prover.send(command)
           frame = Coqdoc_Frame(command = command, command_cd = markup, response = response)
           frame.set_code(True)
-          frames.append(frame)
+
+          frame.set_dependencies(self._deps)
+          self._deps = [frame]
+
           result_scene.add_scene(frame)
 
           markup = []
@@ -132,12 +132,12 @@ class Coqdoc_Reader(CoqReader):
                                   command_cd = markup,
                                   response = None)
     trailing_frame.set_code(True)
-    frames.append(trailing_frame)
+    trailing_frame.set_dependencies(self._deps)
+    self._deps = [trailing_frame]
     result_scene.add_scene(trailing_frame)
-    return frames, result_scene
+    return result_scene
   
   def _process_doc(self, div):
-    frames = []
     scene = Scene()
     scene.set_type("doc")
     scene.set_attributes(div.items())
@@ -146,7 +146,6 @@ class Coqdoc_Reader(CoqReader):
       child_scene = Coqdoc_Frame(command = div.text, command_cd = [div.text],
                                  response = None)
       scene.add_scene(child_scene)
-      frames.append(child_scene)
 
     for child in div:
       tail_frame = None
@@ -159,9 +158,9 @@ class Coqdoc_Reader(CoqReader):
 
       if child.tag == 'div':
         if div.get("class") == "doc":
-          child_frames, child_scene = self._process_doc(child)
+          child_scene = self._process_doc(child)
         else:
-          child_frames, child_scene = self._process_div(child)
+          child_scene = self._process_div(child)
 
         if child.tail is not None:
           tail_frame = Coqdoc_Frame(command=child.tail, response=None,
@@ -171,17 +170,14 @@ class Coqdoc_Reader(CoqReader):
         # Common markup
         child_scene = Coqdoc_Frame(command = html.tostring(child, method='text'),
                              command_cd = [child], response = None)
-        child_frames = [child_scene]
 
 
-      frames += child_frames
       scene.add_scene(child_scene)
 
       if tail_frame:
-        frames.append(tail_frame)
         scene.add_scene(tail_frame)
 
-    return frames, scene
+    return scene
   
   def _is_code(self, div):
     """ Test whether the given div is a code div. """
@@ -212,11 +208,7 @@ class Coqdoc_Reader(CoqReader):
     
     if body is not None:
       for div in body.findall("./div"):
-        (frames, scene) = self._process_div(div)
-          
-        for frame in frames:
-          self._movie.addFrame(frame)
-          
+        scene = self._process_div(div)
         self._movie.add_scene(scene)
         
     return self._movie

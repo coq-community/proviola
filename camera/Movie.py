@@ -22,8 +22,8 @@ from cStringIO import StringIO
 from os import makedirs
 from os.path import exists, dirname
 
-
 from frame_factory import make_frame
+from Frame import TAG_ID
 from scene import Scene
 
 
@@ -54,21 +54,21 @@ class Movie(object):
     """ Getter for title. """
     return self._title
 
+  def _frame_from_xml(self, element):
+    frame = make_frame(element)
+    frame.set_dependencies([self.getFrameById(id) for id in
+                            frame.get_dependencies()])
+    return frame
+
   def fromxml(self, document):
     """ Load the movie frames from the given xml document """
-    self._frames = []
     self._scenes = []
 
-    for element in document.findall(".//film/frame"):
-      frame = make_frame(element)
-      frame.set_dependencies([self.getFrameById(id) for id in
-                              frame.get_dependencies()])
-      self.addFrame(frame)
 
     for scene_xml in document.findall(".//scenes/scene"):
       scene = Scene()
       scene.fromxml(scene_xml)
-      self._replace_frames(scene)
+      self._replace_frames(scene, document)
       self.add_scene(scene)
 
   def _get_dependencies(self):
@@ -80,30 +80,15 @@ class Movie(object):
     else:
       return []
 
-  def add_frame(self, frame):
-    """ Rename of addFrame. """
-    self.addFrame(frame)
-
-  def addFrame(self, frame):
-    """ Add frame to the movie. """ 
-    frame.set_dependencies([f for f in self._get_dependencies()])
-    frame.setId(self.getLength())
-
-    self._frames.append(frame)
-    self._frameIds[frame.getId()] = self.getLength() - 1
-
-  def removeFrame(self, frame):
-    self._frames.remove(frame)
-  
   def get_frames(self):
-    return self._frames
+    return [f for s in self._scenes for f in s.flatten()]
 
   def getLength(self):
     """ The length of a movie is the number of its frames """
-    return len(self._frames)
+    return len(self.get_frames())
 
   def getFrame(self, i):  
-    return self._frames[i]
+    return self.get_frames()[i]
 
   def from_string(self, xml_string):
     """ Initialize movie from the given xml tree in string form.
@@ -113,25 +98,7 @@ class Movie(object):
   
   def _doctype(self):
     """ Returns the entity map as a string. """
-    entity_map = {
-      "nbsp":   "&#160;",
-      "mdash":  "&#8212;",
-      "dArr":   "&#8659;",
-      "rArr":   "&#8658;",
-      "rarr":   "&#8594;",
-      "larr":   "&#8592;",
-      "harr":   "&#8596;",
-      "forall": "&#8704;",
-      "exist":  "&#8707;",
-      "exists": "&#8707;",
-      "and":    "&#8743;",
-      "or":     "&#8744;",
-      "Gamma":  "&#915;",
-    }
-
-    entities = "\n".join(['<!ENTITY %s "%s">'%(key, entity_map[key]) 
-                      for key in entity_map])
-    return "<!DOCTYPE movie [{entities}]>".format(entities = entities)
+    return "<!DOCTYPE movie >"
 
   def toxml(self, stylesheet="proviola.xsl"):
     """ Export to XML. """
@@ -142,7 +109,7 @@ class Movie(object):
     root.set("title", self._title)
     
     film = etree.SubElement(root, "film")
-    for frame in self._frames:
+    for frame in self.get_frames():
       film.append(frame.toxml())
 
     scenes = etree.SubElement(root, "scenes")
@@ -184,10 +151,11 @@ class Movie(object):
 
   def getFrameById(self, id):
     """ Return the frame identified by the given id. """
-    try:
-      return self.getFrame(self._frameIds[int(id)])
-    except KeyError:
-      return None
+    for frame in self.get_frames():
+      if frame.getId() == id:
+        return frame
+
+    return None
 
   def add_scene(self, scene):
     """ Add given scene to the movie. """
@@ -198,13 +166,16 @@ class Movie(object):
     """ Getter for self._scenes. """
     return self._scenes
  
-  def _replace_frames(self, scene):
+  def _replace_frames(self, scene, document):
     """ Replace the frames in scene by the actual frames in the movie. """
     for sub in scene.get_subscenes():
       if sub.is_scene():
-        self._replace_frames(sub)
+        self._replace_frames(sub, document)
       else:
-        scene.replace_frame(sub, self.getFrameById(sub.getId()))
+        frame_xml = document.find(".//film/frame[@{tag}='{id}']".format(
+            tag=TAG_ID, id=sub.getId()))
+        frame = self._frame_from_xml(frame_xml)
+        scene.replace_frame(sub, frame)
 
   def __len__(self):
-    return len(self._frames)
+    return len(self.get_frames())

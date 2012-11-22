@@ -204,6 +204,18 @@ class Test_Coqdoc_Reader(unittest.TestCase):
     self.assertEquals(3, len(scenes))
     self.assertEquals("Lemma.\n", scenes[0].getCommand())
     self.assertEquals("Proof.", scenes[1].get_subscenes()[0].getCommand())
+
+  def test_dependencies(self):
+    """ Dependency graphs for coqdoc. """
+    self.reader.add_code(self.template.format(
+      body="""<div class="code"><span>Lemma.</span><span>Proof.</span></div><div class="doc">Foo</div><div class="code">Qed.</div>"""))
+    movie = self.reader.make_frames(prover=self.mock_prover)
+
+    self.assertEquals(6, len(movie.get_frames()))
+    self.assertEquals([movie.getFrame(0)], movie.getFrame(1).get_dependencies())
+    self.assertEquals([movie.getFrame(2)], movie.getFrame(4).get_dependencies())
+
+                
   
   def test_markup(self):
     """ Markup in coqdoc should carry over correctly. """

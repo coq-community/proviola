@@ -87,6 +87,13 @@ Qed.
     self.assertEquals(
       "Proof.",
       movie.getFrame(1).get_coqdoc_command())
+  
+  def test_dependencies(self):
+    """ Scripts have a linear dependency graph. """
+    self._reader.add_code("Goal forall x, x->x.\nProof.")
+    movie = self._reader.make_frames(prover = self._prover)
+    self.assertEquals([movie.getFrame(0)], 
+                      movie.getFrame(1).get_dependencies())
 
   @classmethod
   def get_suite(cls):

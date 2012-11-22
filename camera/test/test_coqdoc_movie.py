@@ -6,6 +6,7 @@ from os.path import basename, dirname, join
 from lxml import html
 
 from coqdoc_frame import Coqdoc_Frame
+from scene import Scene
 
 from Movie import Movie 
 
@@ -19,8 +20,11 @@ class Test_Coqdoc_Movie(unittest.TestCase):
     self._frame = Coqdoc_Frame(command_cd = [self._a], command = "foo", 
                                response = None)
     
+    s = Scene()
+    s.add_scene(self._frame)
+
     self._coqdoc_movie = Movie()
-    self._coqdoc_movie.addFrame(self._frame)
+    self._coqdoc_movie.add_scene(s)
 
   
   def test_to_file_parents(self):

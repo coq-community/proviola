@@ -214,8 +214,6 @@ class Test_Coqdoc_Reader(unittest.TestCase):
     self.assertEquals(6, len(movie.get_frames()))
     self.assertEquals([movie.getFrame(0)], movie.getFrame(1).get_dependencies())
     self.assertEquals([movie.getFrame(2)], movie.getFrame(4).get_dependencies())
-
-                
   
   def test_markup(self):
     """ Markup in coqdoc should carry over correctly. """

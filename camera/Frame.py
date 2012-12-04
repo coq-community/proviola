@@ -109,7 +109,7 @@ class Frame(object):
     dependencies = []
     deps = elem.find("./dependencies")
     for dep in (deps if deps is not None else []):
-      dependencies.append(int(dep.get(TAG_ID)))
+      dependencies.append(dep.get(TAG_ID))
 
     self.set_dependencies(dependencies)
   

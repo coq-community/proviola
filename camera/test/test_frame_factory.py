@@ -27,7 +27,7 @@ class Test_Frame_Factory(unittest.TestCase):
     self.assertTrue(isinstance(frame, Frame))
     self.assertEquals("Test", frame.getCommand())
     self.assertEquals("Response", frame.getResponse())
-    self.assertEquals([0], frame.get_dependencies())
+    self.assertEquals(['0'], frame.get_dependencies())
 
   def test_coqdoc_frame(self):
     """ Frame containing a command-coqdoc section should yield a Coqdoc Frame. 
@@ -43,4 +43,4 @@ class Test_Frame_Factory(unittest.TestCase):
     self.assertEquals("Test", frame.getCommand())
     self.assertEquals("Test-coqdoc", frame.get_coqdoc_command())
     self.assertEquals("Response", frame.getResponse())
-    self.assertEquals([1,2], frame.get_dependencies())
+    self.assertEquals(['1','2'], frame.get_dependencies())

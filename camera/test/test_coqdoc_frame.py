@@ -52,7 +52,7 @@ class Test_Coqdoc_Frame(unittest.TestCase):
     self.assertEquals("<div>Spam</div>", str(frame.get_markup_command()))
     self.assertFalse(frame.is_code())
     self.assertEquals([], frame.get_dependencies())
-
+    
   def test_fromxml_code(self):
     """ Frames with an is_code attribute should have this set to True in the
         instantiated class.  """

@@ -62,3 +62,36 @@ class Test_Coqdoc_Movie(unittest.TestCase):
     self.assertEquals(frame.getResponse(), "Eggs")
     self.assertEquals(str(frame.get_coqdoc_command()), "<div>Spam</div>")
     self.assertEquals([], frame.get_dependencies())
+
+  def test_from_string_deps(self):
+    """ Import with dependencies. """
+    xml = """<?xml version="1.0" encoding="utf-8" ?>
+             <?xml-stylesheet type="text/xsl" href="proviola.xsl" ?>
+             <movie>
+               <film>
+                  <frame framenumber="0">
+                    <command>Spam</command>
+                    <response>Eggs</response>
+                    <command-coqdoc><div>Spam</div></command-coqdoc>
+                    <dependencies></dependencies>
+                  </frame>
+                  <frame framenumber="1">
+                    <command>Vikings</command>
+                    <dependencies><dependency framenumber="0"/></dependencies>
+                  </frame>
+                </film>
+                <scenes>
+                  <scene id="page" scenenumber="0" class="doc" level="0"
+                         name="foo" identifier="bar" >
+                    <frame-reference framenumber="0" />
+                    <frame-reference framenumber="1" />
+                  </scene>
+                </scenes>  
+              </movie>"""
+              
+    self._coqdoc_movie.from_string(xml)
+    frame = self._coqdoc_movie.get_frames()[1]
+    self.assertEquals(frame.getCommand(), "Vikings")
+    self.assertEquals([self._coqdoc_movie.get_frames()[0]], frame.get_dependencies())
+
+

@@ -100,7 +100,6 @@ class Test_Movie(unittest.TestCase):
     self.assertEquals(1, str(self.movie).count("xml-stylesheet"))
     self.assertEquals(1, str(self.movie).count("DOCTYPE"))
   
-  
   def test_title(self):
     """ Test set-get of title. """
     self.movie.set_title("Test")

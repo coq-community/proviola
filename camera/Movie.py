@@ -68,8 +68,8 @@ class Movie(object):
     for scene_xml in document.findall(".//scenes/scene"):
       scene = Scene()
       scene.fromxml(scene_xml)
-      self._replace_frames(scene, document)
       self.add_scene(scene)
+      self._replace_frames(scene, document)
 
   def _get_dependencies(self):
     """ Get the tip of the dependency-tree (just the last frame in the movie.

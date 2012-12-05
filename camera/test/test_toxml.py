@@ -10,7 +10,7 @@ class test_toxml(unittest.TestCase):
   def test_frame_toxml(self):
     """ Frames to XML. """
 
-    frame_xml = Frame(id = 42,command = "Foo", response = "Bar").toxml()
+    frame_xml = Frame(id="42",command="Foo", response="Bar").toxml()
     
     self.assertEquals("42", frame_xml.get(TAG_ID))
     for child in frame_xml:
@@ -27,7 +27,7 @@ class test_toxml(unittest.TestCase):
     """ Coqdoc frames. """
     from coqdoc_frame import Coqdoc_Frame, TAG_COQDOC
     from lxml import html
-    element = Coqdoc_Frame(id = 42, command = "Foo", 
+    element = Coqdoc_Frame(id="42", command = "Foo", 
                            command_cd = [html.Element("b")],
                            response = "Bar").toxml()
 
@@ -58,7 +58,7 @@ class test_toxml(unittest.TestCase):
     scene = Scene(no = 42)
     
     scene.add_scene(Scene(no = 481))
-    scene.add_scene(Frame(id = 1337, command = "Foo"))
+    scene.add_scene(Frame(id="1337", command="Foo"))
     
     xml = scene.toxml()
     self.assertEquals('42', xml.get("scenenumber"))
@@ -80,12 +80,12 @@ class test_toxml(unittest.TestCase):
     movie = Movie()
     movie.set_title("Title")
 
-    frame =  Frame(id = 42, command = "Foo", response = "Bar")
+    frame =  Frame(id="42", command = "Foo", response = "Bar")
 
     scene = Scene()
     scene.add_scene(frame)
     movie.add_scene(scene)
-    frame.setId(42)
+    frame.setId("42")
     
     mov_xml = movie.toxml()
     self.assertEquals("Title", mov_xml.get("title"))

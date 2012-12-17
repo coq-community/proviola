@@ -1,10 +1,9 @@
 """ Implements protocol for talking to local Coq installation.
 """
 
-import subprocess, shlex
+import shlex
 import time
-# The solutions here are *Nix-specific.
-import fcntl, os 
+from toplevel import Toplevel
 
 class Coq_Local(object):
   def __init__(self, coqtop = "/usr/bin/coqtop"):
@@ -14,12 +13,7 @@ class Coq_Local(object):
     """
     self.error = ""
     self._coqtop = None
-    self._coqtop = subprocess.Popen(shlex.split(coqtop) + ["-emacs"],
-                                    stdin  = subprocess.PIPE,
-                                    stdout = subprocess.PIPE,
-                                    stderr = subprocess.PIPE)
-    fcntl.fcntl(self._coqtop.stdout, fcntl.F_SETFL, os.O_NONBLOCK) 
-    fcntl.fcntl(self._coqtop.stderr, fcntl.F_SETFL, os.O_NONBLOCK)
+    self._coqtop = Toplevel(shlex.split(coqtop) + ['-emacs'])
     
     # Clear Coq greeting.
     data = self._read_coq()

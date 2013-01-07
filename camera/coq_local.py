@@ -59,7 +59,10 @@ class Coq_Local(object):
     
   def send(self, command):
     """ Send data to Coqtop, returning the result. """
-    self._coqtop.stdin.write(command + "\n")
+    if not command.endswith("\n"):
+      command += "\n"
+
+    self._coqtop.stdin.write(command)
     self._coqtop.stdin.flush()
 
     return self._read_coq()

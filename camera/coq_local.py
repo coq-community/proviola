@@ -6,7 +6,7 @@ import time
 from toplevel import Toplevel
 
 class Coq_Local(object):
-  def __init__(self, coqtop = "/usr/bin/coqtop"):
+  def __init__(self, coqtop="/usr/bin/coqtop"):
     """ Open a Coq process. 
       - coqtop: Location of coqtop executable.
       - timeout: How long to wait for coqtop to print to stdout. 

@@ -8,6 +8,7 @@ class Scene(object):
     self._subscenes = []
     self._attributes = []
     self._type = None
+    self._lang = "unknown"
     self.name = ""
     self.id = ""
     self.level = 0
@@ -68,7 +69,13 @@ class Scene(object):
   def set_number(self, number):
     """ Set this scene's scenenumber (self._no) """
     self._no = number
-    
+  
+  def set_lang(self, lang):
+    self._lang = lang
+
+  def get_lang(self):
+    return self._lang
+
   def set_type(self, type):
     """ Set this scene's type.
     
@@ -88,6 +95,7 @@ class Scene(object):
     element.set("class", self._type or "doc")
     element.set("level", str(self.level))
     element.set("name", self.name)
+    element.set("lang", self._lang)
     element.set("identifier", self.id)
     
     for sub in self._subscenes:
@@ -101,10 +109,11 @@ class Scene(object):
     self.set_attributes(element.items())
 
     try:
-      self.set_type(element.get('class'))
+      self.set_type(element.get('class', default="doc"))
     except KeyError:
       self.set_type("doc")
 
+    self._lang  = element.get('lang', default="unknown")
     self.set_number(element.get('scenenumber'))
     self.level = int(element.get('level'))
     self.name  = element.get('name')

@@ -84,6 +84,7 @@ class Coqdoc_Reader(CoqReader):
     """
     result_scene = Scene()
     result_scene.set_type("code")
+    result_scene.set_lang("coq")
     
     markup = []
     frame = None
@@ -140,6 +141,7 @@ class Coqdoc_Reader(CoqReader):
   def _process_doc(self, div):
     scene = Scene()
     scene.set_type("doc")
+    scene.set_lang("coq")
     scene.set_attributes(div.items())
     
     if div.text is not None:

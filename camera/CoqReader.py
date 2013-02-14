@@ -108,16 +108,24 @@ class CoqReader(Reader):
 
   def isComment(self, text):
     """ Return whether the given text is a comment. """
-    return len(text.strip()) <= 0 or\
-           text.strip().startswith("(*") and text.strip().endswith("*)")
-  
+    return (len(text.strip()) <= 0 or
+            (text.strip().startswith("(*") and text.strip().endswith("*)") and
+             self._balanced_comments(text)))
+
+
+  def _has_terminator(self, text):
+    return text[-1] == '.' and (
+               (text[-2] != '.' if len(text) >= 2 else True) 
+            or (text[-3] == '.' if len(text) >= 3 else True))
+
+  def _balanced_comments(self, text):
+    """ Balanced comment tokens. """
+    return text.count("(*") == text.count("*)")
   def isCommand(self, text):
     """ Return whether the given text is a Coq command. """
     text = text.rstrip()
     if text:
-      return text[-1] == '.' and (
-               (text[-2] != '.' if len(text) >= 2 else True) 
-            or (text[-3] == '.' if len(text) >= 3 else True))
+      return self._balanced_comments(text) and self._has_terminator(text)
   
   def _escape_to_html(self, text):
     """ Escape entities to (pre-formatted) HTML. """

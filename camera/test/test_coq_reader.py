@@ -22,6 +22,9 @@ class Test_Coq_Reader(unittest.TestCase):
     result = self._reader.make_frames(prover = self._prover)
     self.assertEquals(result.getLength(), 0)
   
+  def test_open_comment_non_command(self):
+    """ Non-balances comment tokens. """
+    self.assertFalse(self._reader.isCommand("(* Foo. "))
   def test_single(self):
     """ Single commands should return a goal. """
     self._reader.add_code("Goal forall x, x->x.")

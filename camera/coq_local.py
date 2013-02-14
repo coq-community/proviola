@@ -4,6 +4,7 @@
 import shlex
 import time
 from toplevel import Toplevel
+import signal
 
 class Coq_Local(object):
   def __init__(self, coqtop="/usr/bin/coqtop"):
@@ -66,4 +67,6 @@ class Coq_Local(object):
     self._coqtop.stdin.flush()
 
     return self._read_coq()
-    
+   
+  def interrupt(self):
+    self._coqtop.send_signal(signal.SIGINT)

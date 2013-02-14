@@ -2,6 +2,7 @@
 import unittest
 from coq_local import Coq_Local
 from mock import Mock, patch
+import threading
 
 _mock_select = Mock(return_value = ([], [], []))
 
@@ -40,3 +41,19 @@ class Test_Coq_Local(unittest.TestCase):
   def test_arguments(self):
     """ Passing arguments in the coqtop string should work. """
     Coq_Local(coqtop = '/usr/local/bin/coqtop -R /path ""')
+
+  def test_interrupt(self):
+    """ Interrupting the prover. """
+    self.result = ""
+    def send_data():
+      self.result = self._coq.send("Fail Timeout 20 repeat rewrite plus_comm.")
+    
+    self._coq.send("Require Import Arith.")
+    self._coq.send("Lemma loop x y: x + y = y + x.")
+
+    t = threading.Thread(target=send_data)
+    t.start()
+    self._coq.interrupt()
+    t.join()
+    self.assertIn("User interrupt.", self.result)
+

@@ -152,7 +152,7 @@ class Movie(object):
   def getFrameById(self, id):
     """ Return the frame identified by the given id. """
     for frame in self.get_frames():
-      if frame.getId() == id:
+      if str(frame.getId()) == str(id):
         return frame
 
     return None

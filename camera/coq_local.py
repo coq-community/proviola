@@ -26,6 +26,7 @@ class Coq_Local(object):
     error = ""
     output = ""
 
+
     while not error or not (error.find("</prompt>") >= 0):
       try:
         error = self._coqtop.stderr.read()
@@ -46,11 +47,13 @@ class Coq_Local(object):
         output += self._clean(self._coqtop.stdout.read())
       except IOError:
         stop = True
-    
     return output
 
   def _clean(self, string):
     """ Clean a string. """
+    string = string.lstrip()
+    string = string.replace("User interrupt.", "")
+    string = string.lstrip()
     return "".join([c for c in string if ord(c) != 253])
   
   def __del__(self):
@@ -65,7 +68,6 @@ class Coq_Local(object):
 
     self._coqtop.stdin.write(command)
     self._coqtop.stdin.flush()
-
     return self._read_coq()
    
   def interrupt(self):

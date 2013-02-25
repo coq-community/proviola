@@ -68,7 +68,7 @@ class Reader:
     self.script += code
 
   def make_frames(self):
-    root = Scene
+    root = Scene()
     root.set_type("raw")
     for frame in (Frame(command=c) for c in self.script.splitlines(True)):
       root.add_scene(frame)

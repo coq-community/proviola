@@ -1,5 +1,6 @@
 import unittest
 import CoqReader
+import Reader
 
 class Test_Reader(unittest.TestCase):
   """ Test for reader """
@@ -46,6 +47,15 @@ class Test_Reader(unittest.TestCase):
     
     actual = self.reader.parse(command2)
     self.assertEquals(actual, [command1 + command2])
+
+  def test_simple(self):
+    """ Raw reader. """
+    reader = Reader.Reader()
+    reader.add_code("Frame1\nFrame2\n")
+    movie = reader.make_frames()
+    self.assertEquals(2, len(movie.get_frames()))
+    self.assertEquals("Frame1\n", movie.get_frames()[0].getCommand())
+    self.assertEquals("Frame2\n", movie.get_frames()[1].getCommand())
 
 if __name__ == "__main__":
   suite = unittest.TestLoader().loadTestsFromTestCase(Test_Reader)

@@ -15,6 +15,9 @@
 # 
 # You should have received a copy of the GNU General Public License
 # along with Proof Camera.  If not, see <http://www.gnu.org/licenses/>.
+from Movie import Movie
+from scene import Scene
+from Frame import Frame
 
 class Reader:
   def __init__(self):
@@ -64,6 +67,15 @@ class Reader:
     """ Add the given code to the managed script. """
     self.script += code
 
-      
+  def make_frames(self):
+    root = Scene
+    root.set_type("raw")
+    for frame in (Frame(command=c) for c in self.script.splitlines(True)):
+      root.add_scene(frame)
+    
+    movie = Movie()
+    movie.add_scene(root)
+    return movie
+
 
 

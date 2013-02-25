@@ -3,8 +3,8 @@
 
 import shlex
 import time
-from toplevel import Toplevel
 import signal
+import pexpect
 
 class Coq_Local(object):
   def __init__(self, coqtop="/usr/bin/coqtop"):
@@ -14,7 +14,8 @@ class Coq_Local(object):
     """
     self.error = ""
     self._coqtop = None
-    self._coqtop = Toplevel(shlex.split(coqtop) + ['-emacs'])
+    self._coqtop = pexpect.spawn(coqtop + ' -emacs')
+    self._coqtop.setecho(False)
     
     # Clear Coq greeting.
     data = self._read_coq()
@@ -23,52 +24,26 @@ class Coq_Local(object):
 
   def _read_coq(self):
     """ Read data from Coqtop. Read stdout after the  """
-    error = ""
-    output = ""
-
-
-    while not error or not (error.find("</prompt>") >= 0):
-      try:
-        error = self._coqtop.stderr.read()
-      except IOError:
-        # Unclog stdout.
-        try:
-          output += self._clean(self._coqtop.stdout.read())
-        except IOError:
-          pass
-
-        time.sleep(.1)
-
-    self.error= error
-
-    stop = False
-    while not stop:
-      try:
-        output += self._clean(self._coqtop.stdout.read())
-      except IOError:
-        stop = True
-    return output
+    self._coqtop.expect("<prompt>.*</prompt>")
+    self.error= self._coqtop.after
+    return self._clean(self._coqtop.before)
 
   def _clean(self, string):
     """ Clean a string. """
     string = string.lstrip()
-    string = string.replace("User interrupt.", "")
+    string = string.replace("\r", "")
     string = string.lstrip()
     return "".join([c for c in string if ord(c) != 253])
   
   def __del__(self):
     """ Clean up: stop Coq process. """
     if self._coqtop:
-      self._coqtop.kill()
+      self._coqtop.close()
     
   def send(self, command):
     """ Send data to Coqtop, returning the result. """
-    if not command.endswith("\n"):
-      command += "\n"
-
-    self._coqtop.stdin.write(command)
-    self._coqtop.stdin.flush()
+    self._coqtop.sendline(command)
     return self._read_coq()
    
   def interrupt(self):
-    self._coqtop.send_signal(signal.SIGINT)
+    self._coqtop.kill(signal.SIGINT)

@@ -26,7 +26,7 @@ class Test_Coq_Local(unittest.TestCase):
   def test_send_incorrect(self):
     """ Sending incorrect data should give an error report. """
     self.assertEquals(self._coq.send("Bogus."),
-                      "Error: Unknown command of the non proof-editing mode.\n")
+                      "Error: Unknown command of the non proof-editing mode.\n\n")
     
   def test_slow(self):
     """ Slow results should still be partitioned. """

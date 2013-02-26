@@ -1,6 +1,5 @@
 """ Implements protocol for talking to local Coq installation.
 """
-
 import shlex
 import time
 import signal
@@ -25,7 +24,7 @@ class Coq_Local(object):
   def _read_coq(self):
     """ Read data from Coqtop. Read stdout after the  """
     self._coqtop.expect("<prompt>.*</prompt>")
-    self.error= self._coqtop.after
+    self.error = self._coqtop.after
     return self._clean(self._coqtop.before)
 
   def _clean(self, string):

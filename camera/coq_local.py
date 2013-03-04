@@ -46,3 +46,7 @@ class Coq_Local(object):
    
   def interrupt(self):
     self._coqtop.kill(signal.SIGINT)
+
+  def close(self):
+    if self._coqtop:
+      self._coqtop.close()

@@ -170,7 +170,8 @@ class Coqdoc_Reader(CoqReader):
 
       else:
         # Common markup
-        child_scene = Coqdoc_Frame(command = html.tostring(child, method='text'),
+        child_scene = Coqdoc_Frame(command = html.tostring(child, method='text',
+                                                          encoding="utf-8"),
                              command_cd = [child], response = None)
 
 

@@ -128,8 +128,11 @@ class Frame(object):
       command.text = cmd
 
     response = etree.SubElement(element, TAG_RES)
-    if self.getResponse():
-      response.text = unicode(self.getResponse(), 'utf-8')
+    resp = self.getResponse()
+    if resp:
+      if type(resp) != type(u""):
+        resp = unicode(resp, 'utf-8', errors="ignore")
+      response.text = resp
 
     dependencies = etree.SubElement(element, TAG_DEPS)
     for dep in self.get_dependencies():

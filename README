@@ -1,10 +1,16 @@
 Proviola, a tool for proof reanimation.
 
-- Description: TODO
+Usage:
+======
+Run coqdoc on your sources, run the camera.py script on the generated HTML file. Optionally provide an output file.
+On the generated xml file (default extension: .flm), run an XSL processor such as xsltproc (linux) to get an HTML page.
+The default XSL template is proviola/coq/proviola.xsl, which includes the required JavaScript and CSS.
 
-- Dependencies: 
-== Beatiful soup ==
-  - This tool (in particular: the coqdoc_to_flm extension) requires a stable installation of the BeautifulSoup library (the 3.2 branch), as can be found at http://pypi.python.org/pypi/BeautifulSoup/3.2.0 . 
-  - Apply the patch in workarounds/beatifulstonesoup.stylesheet.patch to the installed BeautifulSoup.py: this fixes a bug where the <? xml-stylesheet ...> PI gets replaced by the <? xml ...> PI.
+There is a known bug in processing 'plain' scripts, not pre-processed by Coqdoc.
 
-Do *not* use the 3.1 branch provided in aptitude, as this branch is buggy and won't work with the Proviola.
+
+Dependencies: 
+=============
+- The lxml library.  (lxml.de)
+
+ 

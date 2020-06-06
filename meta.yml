@@ -1,0 +1,43 @@
+---
+fullname: Proviola
+shortname: proviola
+organization: coq-community
+community: true
+
+synopsis: Tool for reanimation of Coq proofs
+
+description: |-
+  Proviola is a tool for creating "proof movies" out of proof scripts,
+  in particular, scripts for the Coq and Isabelle proof assistants,
+  and transforming these movies into "dynamic" HTML pages.
+
+publications:
+- pub_url: https://arxiv.org/abs/1005.2672
+  pub_title: 'Proviola: a Tool for Proof Re-animation'
+  pub_doi: 10.1007/978-3-642-14128-7_37
+
+authors:
+- name: Carst Tankink
+  initial: true
+
+maintainers:
+- name: Jason Gross
+  nickname: JasonGross
+
+license:
+  fullname: GNU General Public License v3.0 or later
+  identifier: GPL-3.0-or-later
+
+dependencies:
+- description: |-
+    [lxml library](https://lxml.de)
+
+build: |-
+  ## Usage
+
+  Run coqdoc on your sources, then run the `camera.py` script on the generated HTML file. Optionally provide an output file.
+  On the generated xml file (default extension: .flm), run an XSL processor such as xsltproc (linux) to get an HTML page.
+  The default XSL template is proviola/coq/proviola.xsl, which includes the required JavaScript and CSS.
+
+  There is a known bug in processing "plain" scripts, not pre-processed by coqdoc.
+---
